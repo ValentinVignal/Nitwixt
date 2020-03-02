@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>659127710694-hgidrd36h2dmpkt0l8lh0lub3d3b032k.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.659127710694-hgidrd36h2dmpkt0l8lh0lub3d3b032k</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAgTMpoEJ5ZRARDxJmc9nLjavI4DFBW9Rw</string>
+	<key>GCM_SENDER_ID</key>
+	<string>659127710694</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.textwit</string>
+	<key>PROJECT_ID</key>
+	<string>textwit-7a20b</string>
+	<key>STORAGE_BUCKET</key>
+	<string>textwit-7a20b.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:659127710694:ios:025b46c9b3134a7a9f5c27</string>
+	<key>DATABASE_URL</key>
+	<string>https://textwit-7a20b.firebaseio.com</string>
+</dict>
+</plist>
