@@ -1,6 +1,6 @@
 # textwit
 
-A crossplatform messaging app
+A new Flutter application to communicate with world
 
 ## Getting Started
 
