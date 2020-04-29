@@ -1,6 +1,6 @@
 # textwit
 
-A new Flutter application to communicate with world
+A new Flutter application.
 
 ## Getting Started
 
