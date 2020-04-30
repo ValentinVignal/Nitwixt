@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:textwit/services/auth.dart';
 
+import 'package:textwit/shared/constants.dart';
+import 'package:textwit/shared/loading.dart';
+
 class SignIn extends StatefulWidget {
 
   final Function toggleView;
@@ -13,6 +16,7 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
+  bool loading = false;
 
   // text filed state
   String email = '';
@@ -21,7 +25,7 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return loading ? Loading() : Scaffold(
       backgroundColor: Colors.green[100],
       appBar: AppBar(
         backgroundColor: Colors.green[400],
@@ -45,6 +49,7 @@ class _SignInState extends State<SignIn> {
             children: <Widget>[
               SizedBox(height: 20.0),
               TextFormField(
+                decoration: textInputDecoration.copyWith(hintText: 'Email'),
                 validator: (val) => val.isEmpty ? 'Enter an email' : null,
                 onChanged: (val) {
                   setState(() => email = val);
@@ -52,6 +57,7 @@ class _SignInState extends State<SignIn> {
               ),
               SizedBox(height: 20.0),
               TextFormField(
+                decoration: textInputDecoration.copyWith(hintText: 'Password'),
                 validator: (val) =>
                   val.length < 6 ? 'Enter a password 6+ chars long' : null,
                 obscureText: true,
@@ -70,9 +76,13 @@ class _SignInState extends State<SignIn> {
                 ),
                 onPressed: () async {
                   if (_formKey.currentState.validate()) {
+                    setState(() => loading = true);
                     dynamic result = await _auth.signInEmailPassword(email, password);
                     if (result == null) {
-                      setState(() => error = 'Could not sign in with those credentials');
+                      setState(() {
+                        error = 'Could not sign in with those credentials';
+                        loading = false;
+                      });
                     }
                   }
                 },
