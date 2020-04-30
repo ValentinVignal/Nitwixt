@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:textwit/models/user.dart';
 
 class AuthService {
@@ -31,10 +32,30 @@ class AuthService {
   }
 
   // Sign in with email and password
+  Future signInEmailPassword(String email, String password) async {
+    try {
+      AuthResult result = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      FirebaseUser user = result.user;
+      return _userFromFirebaseUser(user);
+  } catch (e) {
+      print(e.toString());
+      return null;
+    }
+}
 
   // Register with Google
 
   // Register with email and password
+  Future registerEmailPassword(String email, String password) async {
+    try {
+      AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      FirebaseUser user = result.user;
+      return _userFromFirebaseUser(user);
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+}
 
   // Sign out
   Future signOut() async {
