@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:textwit/models/brew.dart';
+import 'package:textwit/models/user.dart';
 
 class DatabaseService {
   final String uid;
@@ -14,6 +15,16 @@ class DatabaseService {
       'name': name,
       'strength': strength
     });
+  }
+
+  // userData from snapshot
+  UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
+    return UserData(
+      uid: uid,
+      name: snapshot.data['name'],
+      sugars: snapshot.data['sugars'],
+      strength: snapshot.data['strength'],
+    );
   }
 
   //Brew lit from Snapshot
@@ -32,6 +43,12 @@ class DatabaseService {
   Stream<List<Brew>> get brews {
     return brewCollection.snapshots()
         .map(_brewListFromSnapshot);
+  }
+
+  // get user doc stream
+  Stream<UserData> get userData {
+    return brewCollection.document(uid).snapshots()
+        .map(_userDataFromSnapshot);
   }
 
 }
