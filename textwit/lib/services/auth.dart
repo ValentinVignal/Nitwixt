@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:textwit/models/user.dart';
+import 'package:textwit/services/database.dart';
 
 class AuthService {
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Create user obj based on FirebaseUser
@@ -16,7 +16,6 @@ class AuthService {
     return _auth.onAuthStateChanged
         // .map((FirebaseUser user) => _userFromFirebaseUser(user));
         .map(_userFromFirebaseUser);
-
   }
 
   // Sign in Google
@@ -37,11 +36,11 @@ class AuthService {
       AuthResult result = await _auth.signInWithEmailAndPassword(email: email, password: password);
       FirebaseUser user = result.user;
       return _userFromFirebaseUser(user);
-  } catch (e) {
+    } catch (e) {
       print(e.toString());
       return null;
     }
-}
+  }
 
   // Register with Google
 
@@ -50,12 +49,15 @@ class AuthService {
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       FirebaseUser user = result.user;
+
+      // create a new document for the with the uid
+      await DatabaseService(uid: user.uid).updateUserData('0', 'new crew member', 100);
       return _userFromFirebaseUser(user);
-    } catch(e) {
+    } catch (e) {
       print(e.toString());
       return null;
     }
-}
+  }
 
   // Sign out
   Future signOut() async {
