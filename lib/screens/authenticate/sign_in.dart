@@ -15,7 +15,7 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  final AuthService _auth = AuthService();
+  final AuthEmailPassword _auth = AuthEmailPassword();
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
   bool _passwordVisible = false;

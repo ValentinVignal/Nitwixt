@@ -21,10 +21,10 @@ class _SettingsFormState extends State<SettingsForm> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
+    final user = Provider.of<UserAuth>(context);
 
     return StreamBuilder<UserData>(
-        stream: DatabaseService(uid: user.uid).userData,
+        stream: DatabaseUserData(uid: user.id).userData,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
 
@@ -77,7 +77,7 @@ class _SettingsFormState extends State<SettingsForm> {
                     child: Text('Update', style: TextStyle(color: Colors.white)),
                     onPressed: () async {
                       if(_formKey.currentState.validate()) {
-                        await DatabaseService(uid: user.uid).updateUserData(
+                        await DatabaseUserData(uid: user.id).updateUserData(
                           _currentSugars ?? userData.sugars,
                           _currentName ?? userData.name,
                           _currentStrength ?? userData.strength,

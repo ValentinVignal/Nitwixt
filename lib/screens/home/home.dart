@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:textwit/screens/account/account.dart';
+import 'package:textwit/screens/settings/settings.dart';
 import 'package:textwit/services/auth.dart';
 import 'package:textwit/services/database.dart';
 import 'package:provider/provider.dart';
@@ -6,24 +8,32 @@ import 'package:textwit/screens/home/brew_list.dart';
 import 'package:textwit/models/brew.dart';
 import 'settings_from.dart';
 
-enum Options { settings, logout }
 
-PopupMenuItem<Options> menuItemFromOption(Options option) {
+// Different options in the popup menu
+enum PopupMenuOptions { account, settings, logout }
+
+// Get the popup menu item from the option in the enum class
+PopupMenuItem<PopupMenuOptions> menuItemFromOption(PopupMenuOptions option) {
   IconData icon;
   String text;
   switch (option) {
-    case Options.settings: {
+    case PopupMenuOptions.account: {
+      icon = Icons.account_circle;
+      text = 'Account';
+      break;
+    }
+    case PopupMenuOptions.settings: {
       icon = Icons.settings;
       text = 'Settings';
       break;
     }
-    case (Options.logout): {
-      icon = Icons.people;
+    case PopupMenuOptions.logout: {
+      icon = Icons.power_settings_new;
       text = 'Logout';
       break;
     }
   }
-  return PopupMenuItem<Options>(
+  return PopupMenuItem<PopupMenuOptions>(
     value: option,
     child: FlatButton.icon(
       icon: Icon(icon, color: Colors.grey),
@@ -33,14 +43,15 @@ PopupMenuItem<Options> menuItemFromOption(Options option) {
   );
 }
 
+
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
 
+
 class _HomeState extends State<Home> {
   final AuthService _auth = AuthService();
-
   @override
   Widget build(BuildContext context) {
     void _showSettingsPanel() {
@@ -55,7 +66,7 @@ class _HomeState extends State<Home> {
     }
 
     return StreamProvider<List<Brew>>.value(
-      value: DatabaseService().brews,
+      value: DatabaseUserData().brews,
       child: Scaffold(
         backgroundColor: Colors.white70,
         appBar: AppBar(
@@ -63,22 +74,29 @@ class _HomeState extends State<Home> {
           backgroundColor: Colors.blueGrey,
           elevation: 0.0,
           actions: <Widget>[
-            PopupMenuButton<Options>(
+            PopupMenuButton<PopupMenuOptions>(
               color: Colors.black,
               onSelected: (selected) async {
                 switch(selected) {
-                  case Options.settings: {
-                    _showSettingsPanel();
+                  case PopupMenuOptions.account: {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => Account()));
                     break;
                   }
-                  case Options.logout: {
+                  case PopupMenuOptions.settings: {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Settings())
+                    );
+                    break;
+                  }
+                  case PopupMenuOptions.logout: {
                     await _auth.signOut();
                     break;
                   }
                 }
               },
               itemBuilder: (BuildContext context) {
-                return Options.values.map((option) {
+                return PopupMenuOptions.values.map((option) {
                   return menuItemFromOption(option);
                 }).toList();
               },
@@ -91,16 +109,3 @@ class _HomeState extends State<Home> {
   }
 }
 
-//class Choice {
-//  const Choice({ this.title, this.icon, this.action });
-//
-//  final String title;
-//  final IconData icon;
-//  final Function action;
-//}
-//
-//const List<Choice> choices = const <Choice>[
-//  const Choice(title: 'Logout', icon: Icons.person, action: null),
-//  const Choice(title: 'Settings', icon: Icons.settings, action: null),
-//];
-//

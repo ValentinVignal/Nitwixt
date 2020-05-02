@@ -28,3 +28,8 @@ bool validateEmail(String value) {
   RegExp regex = new RegExp(pattern);
   return (!regex.hasMatch(value)) ? false : true;
 }
+
+
+const textStyleInfo = TextStyle(
+  fontSize: 20.0,
+);
