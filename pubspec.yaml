@@ -54,6 +54,7 @@ flutter:
   assets:
     - assets/images/image.png
     - assets/images/T.png
+    - assets/images/message.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
