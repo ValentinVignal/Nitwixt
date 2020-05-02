@@ -4,7 +4,7 @@ import 'package:textwit/models/user.dart';
 import 'home/home.dart';
 import 'authenticate/authenticate.dart';
 
-class Wrapper extends StatelessWidget {
+class Start extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
