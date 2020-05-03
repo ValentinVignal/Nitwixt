@@ -102,4 +102,8 @@ class DatabaseChat {
       name: snapshot.data['name'],
     );
   }
+
+  Stream<Chat> get chat {
+    return chatCollection.document(id).snapshots().map(_chatFromSnapshot);
+  }
 }

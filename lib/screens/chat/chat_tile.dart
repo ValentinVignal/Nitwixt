@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:textwit/models/chat.dart';
 import 'package:textwit/models/user.dart';
+import 'package:textwit/screens/chat/chat.dart';
 
 class ChatTile extends StatelessWidget {
   final UserChat chat;
-  ChatTile({ this.chat });
+
+  ChatTile({this.chat});
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +21,14 @@ class ChatTile extends StatelessWidget {
           ),
           title: Text(chat.name),
           subtitle: Text('Speak with your friends !'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ChatWidget(id: chat.id)),
+            );
+          },
         ),
       ),
     );
   }
 }
-

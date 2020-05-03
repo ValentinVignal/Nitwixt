@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:textwit/screens/account/account.dart';
-import 'package:textwit/screens/chats/chat_list.dart';
+import 'package:textwit/screens/chat/chat_list.dart';
 import 'package:textwit/screens/settings/settings.dart';
 import 'package:textwit/services/auth.dart';
 import 'package:textwit/services/database.dart';
