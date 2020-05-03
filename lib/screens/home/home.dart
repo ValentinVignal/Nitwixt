@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:textwit/screens/account/account.dart';
+import 'package:textwit/screens/chats/chat_list.dart';
 import 'package:textwit/screens/settings/settings.dart';
 import 'package:textwit/services/auth.dart';
 import 'package:textwit/services/database.dart';
@@ -7,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:textwit/screens/home/brew_list.dart';
 import 'package:textwit/models/brew.dart';
 import 'settings_from.dart';
+import 'package:textwit/models/user.dart';
 
 
 // Different options in the popup menu
@@ -51,22 +53,15 @@ class Home extends StatefulWidget {
 
 
 class _HomeState extends State<Home> {
+
   final AuthService _auth = AuthService();
+
   @override
   Widget build(BuildContext context) {
-    void _showSettingsPanel() {
-      showModalBottomSheet(
-          context: context,
-          builder: (context) {
-            return Container(
-              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
-              child: SettingsForm(),
-            );
-          });
-    }
+    final user = Provider.of<UserAuth>(context);
 
-    return StreamProvider<List<Brew>>.value(
-      value: DatabaseUserData().brews,
+    return StreamProvider<List<UserChat>>.value(
+      value: DatabaseUser(uid: user.id).userChatList,
       child: Scaffold(
         backgroundColor: Colors.white70,
         appBar: AppBar(
@@ -103,7 +98,7 @@ class _HomeState extends State<Home> {
             ),
           ],
         ),
-        body: BrewList(),
+        body: ChatList(),
       ),
     );
   }

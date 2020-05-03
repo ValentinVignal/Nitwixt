@@ -31,7 +31,7 @@ class _AccountInfoState extends State<AccountInfo> {
                     Expanded(child: Text('Username:', style: textStyleInfo)),
                     Expanded(
                         child: Text(
-                      '@:' + user.username,
+                      '@' + user.username,
                       style: textStyleInfo,
                     )),
                   ],

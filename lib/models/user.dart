@@ -10,16 +10,19 @@ class User {
   final String id;
   final String username;
   String name;
+  Map<String, UserChat> chats = new Map();
 
-  User({this.id, this.username, this.name});
+  User({this.id, this.username, this.name, this.chats});
 }
 
-// Private user
-class UserSetting {
+// Information of a chat in a user profile
+class UserChat {
   final String id;
+  String name;
 
-  UserSetting({this.id});
+  UserChat({ this.id, this.name });
 }
+
 
 // From coffee tutorial
 class UserData {
