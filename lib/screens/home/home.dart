@@ -74,7 +74,9 @@ class _HomeState extends State<Home> {
               onSelected: (selected) async {
                 switch(selected) {
                   case PopupMenuOptions.account: {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => Account()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => Account(
+
+                    )));
                     break;
                   }
                   case PopupMenuOptions.settings: {

@@ -23,7 +23,7 @@ class _ChatWidgetState extends State<ChatWidget> {
           Navigator.pop(context);
         }),
       ),
-      body: ChatMessages(),
+      body: ChatMessages(chatid: widget.id),
     );
   }
 }

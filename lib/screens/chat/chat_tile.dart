@@ -20,7 +20,7 @@ class ChatTile extends StatelessWidget {
             backgroundImage: AssetImage('assets/images/message.png'),
           ),
           title: Text(chat.name),
-          subtitle: Text('Speak with your friends !'),
+          subtitle: Text(chat.id),
           onTap: () {
             Navigator.push(
               context,

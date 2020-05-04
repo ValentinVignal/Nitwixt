@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:textwit/models/brew.dart';
 import 'package:textwit/models/user.dart';
 import 'package:textwit/models/chat.dart';
+import 'package:textwit/models/message.dart';
 
 class DatabaseUserData {
   final String uid;
@@ -73,11 +74,11 @@ class DatabaseUser {
 
   List<UserChat> _userChatListFromSnapshot(DocumentSnapshot snapshot) {
     return snapshot.data['chats'].map<String, UserChat>((key, value) {
-      String key;
+      String key_ = key;
       return MapEntry(
-        key,
+        key_,
         UserChat(
-          id: key,
+          id: key_,
           name: value['name'],
         ),
       );
@@ -106,4 +107,30 @@ class DatabaseChat {
   Stream<Chat> get chat {
     return chatCollection.document(id).snapshots().map(_chatFromSnapshot);
   }
+
+  List<Message> _chatMessagesFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.documents.map((doc) {
+      print('data');
+      print(doc.data);
+      UserChat user  = UserChat(
+        id: doc.data['user']['id'] ?? '',
+        name:  doc.data['user']['name'] ?? 'Unkown user',
+      );
+      print('here');
+      Message message = Message(
+        id: doc.documentID,
+        date: doc.data['date'],
+        text: doc.data['text'],
+        user: user,
+      );
+      print('message');
+      print(message);
+      return message;
+    }).toList();
+  }
+
+  Stream<List<Message>> get messageList {
+    return chatCollection.document(id).collection('messages').snapshots().map(_chatMessagesFromSnapshot);
+  }
+
 }
