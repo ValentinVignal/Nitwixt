@@ -7,7 +7,7 @@ import 'package:textwit/services/database.dart';
 import 'package:provider/provider.dart';
 import 'package:textwit/screens/home/brew_list.dart';
 import 'package:textwit/models/brew.dart';
-import 'settings_from.dart';
+import '../settings/settings_from.dart';
 import 'package:textwit/models/user.dart';
 
 
@@ -58,10 +58,11 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserAuth>(context);
+    final UserAuth user = Provider.of<UserAuth>(context);
+    final DatabaseUser databaseUser = DatabaseUser(uid: user.id);
 
     return StreamProvider<List<UserChat>>.value(
-      value: DatabaseUser(uid: user.id).userChatList,
+      value: databaseUser.userChatList,
       child: Scaffold(
         backgroundColor: Colors.white70,
         appBar: AppBar(
@@ -74,9 +75,7 @@ class _HomeState extends State<Home> {
               onSelected: (selected) async {
                 switch(selected) {
                   case PopupMenuOptions.account: {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => Account(
-
-                    )));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => Account(                      )));
                     break;
                   }
                   case PopupMenuOptions.settings: {

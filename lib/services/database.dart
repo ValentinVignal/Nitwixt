@@ -73,16 +73,19 @@ class DatabaseUser {
   }
 
   List<UserChat> _userChatListFromSnapshot(DocumentSnapshot snapshot) {
-    return snapshot.data['chats'].map<String, UserChat>((key, value) {
-      String key_ = key;
-      return MapEntry(
-        key_,
-        UserChat(
-          id: key_,
-          name: value['name'],
-        ),
-      );
-    }).values.toList();
+    return snapshot.data['chats']
+        .map<String, UserChat>((key, value) {
+          String key_ = key;
+          return MapEntry(
+            key_,
+            UserChat(
+              id: key_,
+              name: value['name'],
+            ),
+          );
+        })
+        .values
+        .toList();
   }
 
   Stream<List<UserChat>> get userChatList {
@@ -112,9 +115,9 @@ class DatabaseChat {
     return snapshot.documents.map((doc) {
       print('data');
       print(doc.data);
-      UserChat user  = UserChat(
+      UserChat user = UserChat(
         id: doc.data['user']['id'] ?? '',
-        name:  doc.data['user']['name'] ?? 'Unkown user',
+        name: doc.data['user']['name'] ?? 'Unkown user',
       );
       print('here');
       Message message = Message(
@@ -133,4 +136,16 @@ class DatabaseChat {
     return chatCollection.document(id).collection('messages').snapshots().map(_chatMessagesFromSnapshot);
   }
 
+  Future sendMessage(String text, UserChat user) async {
+    return await chatCollection.document(id).collection('messages').add(
+      {
+        'text': text,
+        'date': Timestamp.now(),
+        'user': {
+          'id': user.id,
+          'name': user.name,
+        },
+      },
+    );
+  }
 }
