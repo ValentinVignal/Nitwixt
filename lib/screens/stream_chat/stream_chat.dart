@@ -3,28 +3,44 @@ import 'package:stream_chat_flutter/stream_chat_flutter.dart' as scf;
 
 class MyAppScf extends StatelessWidget {
   final scf.Client client;
-  final scf.Channel channel;
 
-  MyAppScf(this.client, this.channel);
+  MyAppScf(this.client);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: scf.StreamChat(
-        client: client,
-        child: scf.StreamChannel(
-          channel: channel,
-          child: ChannelPage(),
-          ),
+        home: Container(
+            child: scf.StreamChat(
+      client: client,
+      child: ChannelListPage(),
+    )));
+  }
+}
+
+class ChannelListPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: scf.ChannelListView(
+        filter: {
+          'members': {
+            '\$in': [scf.StreamChat.of(context).user.id],
+          }
+        },
+        sort: [scf.SortOption('last_message_at')],
+        pagination: scf.PaginationParams(
+          limit: 20,
         ),
-      );
+        channelWidget: ChannelPage(),
+      ),
+    );
   }
 }
 
 class ChannelPage extends StatelessWidget {
   const ChannelPage({
-                      Key key,
-                    }) : super(key: key);
+    Key key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,10 +50,10 @@ class ChannelPage extends StatelessWidget {
         children: <Widget>[
           Expanded(
             child: scf.MessageListView(),
-            ),
+          ),
           scf.MessageInput(),
         ],
-        ),
-      );
+      ),
+    );
   }
 }

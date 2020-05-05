@@ -18,12 +18,7 @@ void main() async {
     'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZnJvc3R5LWJhbmQtNSJ9.ivA1qnzwJWxwAstbCqqRgNPYgfi2fz4KMcR4R_hj3qg',
   );
 
-  final channel = client.channel('messaging', id: 'godevs');
-
-  // ignore: unawaited_futures
-  channel.watch();
-
-  runApp(MyAppScf(client, channel));
+  runApp(MyAppScf(client));
 //  runApp(MyApp());
 }
 
