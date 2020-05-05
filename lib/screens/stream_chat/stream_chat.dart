@@ -27,6 +27,7 @@ class ChannelListPage extends StatelessWidget {
             '\$in': [scf.StreamChat.of(context).user.id],
           }
         },
+        channelPreviewBuilder: _channelPreviewBuilder,
         sort: [scf.SortOption('last_message_at')],
         pagination: scf.PaginationParams(
           limit: 20,
@@ -36,6 +37,35 @@ class ChannelListPage extends StatelessWidget {
     );
   }
 }
+
+Widget _channelPreviewBuilder(BuildContext context, scf.Channel channel) {
+  final lastMessage = channel.state.messages.reversed
+      .firstWhere((message) => message.type != "deleted", orElse: () => null);
+
+  final subtitle = (lastMessage == null ? "nothing yet" : lastMessage.text);
+  final opacity = channel.state.unreadCount > .0 ? 1.0 : 0.5;
+
+  return ListTile(
+    leading: scf.ChannelImage(
+      channel: channel,
+      ),
+    title: scf.ChannelName(
+      channel: channel,
+      textStyle:
+      scf.StreamChatTheme.of(context).channelPreviewTheme.title.copyWith(
+        color: Colors.blue.withOpacity(opacity),
+        ),
+      ),
+    subtitle: Text(subtitle),
+    trailing: channel.state.unreadCount > 0
+              ? CircleAvatar(
+      radius: 10,
+      child: Text(channel.state.unreadCount.toString()),
+      )
+              : SizedBox(),
+    );
+}
+
 
 class ChannelPage extends StatelessWidget {
   const ChannelPage({
