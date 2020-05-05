@@ -19,7 +19,7 @@ class ChatMessages extends StatefulWidget {
 }
 
 class _ChatMessagesState extends State<ChatMessages> {
-  String _currentMessage = '';
+  TextEditingController textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +44,7 @@ class _ChatMessagesState extends State<ChatMessages> {
                 Expanded(
                   child: ListView.builder(
                     itemCount: messageList.length,
+                    reverse: true,
                     itemBuilder: (context, index) {
                       return MessageTile(message: messageList[index],);
                     },
@@ -51,7 +52,7 @@ class _ChatMessagesState extends State<ChatMessages> {
                   ),
                 ),
                 TextFormField(
-                  initialValue: _currentMessage,
+                  controller: textController,
                   decoration: textInputDecoration.copyWith(
                     hintText: 'Type your message',
                     suffixIcon: IconButton(
@@ -59,21 +60,22 @@ class _ChatMessagesState extends State<ChatMessages> {
                         Icons.send
                       ),
                       onPressed: () {
-                        if (_currentMessage.isNotEmpty) {
+                        if (textController.text.isNotEmpty) {
                           _databaseChat.sendMessage(
-                            _currentMessage,
+                            textController.text,
                             UserChat(
                               id: _user.id,
                               name: _user.name,
                             ),
                           );
+                          textController.text = '';
                         }
                       },
                     ),
                   ),
-                  onChanged: (val) {
-                    setState(() => _currentMessage = val);
-                  },
+//                  onChanged: (val) {
+//                    textController.text = val;
+//                  },
                 ),
               ],
             ),

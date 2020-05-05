@@ -133,11 +133,11 @@ class DatabaseChat {
   }
 
   Stream<List<Message>> get messageList {
-    return chatCollection.document(id).collection('messages').snapshots().map(_chatMessagesFromSnapshot);
+    return chatCollection.document(id).collection('messages').orderBy('date', descending: true).snapshots().map(_chatMessagesFromSnapshot);
   }
 
-  Future sendMessage(String text, UserChat user) async {
-    return await chatCollection.document(id).collection('messages').add(
+  Future sendMessage(String text, UserChat user) {
+    return chatCollection.document(id).collection('messages').add(
       {
         'text': text,
         'date': Timestamp.now(),
