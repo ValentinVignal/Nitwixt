@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:textwit/models/message.dart';
@@ -20,6 +22,24 @@ class ChatMessages extends StatefulWidget {
 
 class _ChatMessagesState extends State<ChatMessages> {
   TextEditingController textController = TextEditingController();
+  int _nbMessages = 10;
+  ScrollController _scrollController;
+
+  _scrollListener () {
+    if (_scrollController.position.maxScrollExtent == _scrollController.position.pixels) {
+      setState(() {
+        _nbMessages += 10;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +47,9 @@ class _ChatMessagesState extends State<ChatMessages> {
     final DatabaseChat _databaseChat = DatabaseChat(id: widget.chatid);
     final User _user = Provider.of<User>(context);
 
+
     return StreamBuilder<List<Message>>(
-      stream: _databaseChat.messageList,
+      stream: _databaseChat.getMessageList(limit: _nbMessages),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Loading();
@@ -43,6 +64,7 @@ class _ChatMessagesState extends State<ChatMessages> {
               children: <Widget>[
                 Expanded(
                   child: ListView.builder(
+                    controller: _scrollController,
                     itemCount: messageList.length,
                     reverse: true,
                     itemBuilder: (context, index) {
@@ -73,10 +95,16 @@ class _ChatMessagesState extends State<ChatMessages> {
                       },
                     ),
                   ),
-//                  onChanged: (val) {
-//                    textController.text = val;
-//                  },
                 ),
+                RaisedButton(
+                  child: Text('+5'),
+                  onPressed: () {
+                    setState(() {
+                      _nbMessages += 5;
+                    });
+                    print('nb messages $_nbMessages');
+                  },
+                )
               ],
             ),
           );

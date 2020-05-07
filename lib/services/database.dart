@@ -113,27 +113,34 @@ class DatabaseChat {
 
   List<Message> _chatMessagesFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
-      print('data');
-      print(doc.data);
       UserChat user = UserChat(
         id: doc.data['user']['id'] ?? '',
         name: doc.data['user']['name'] ?? 'Unkown user',
       );
-      print('here');
       Message message = Message(
         id: doc.documentID,
         date: doc.data['date'],
         text: doc.data['text'],
         user: user,
       );
-      print('message');
-      print(message);
       return message;
     }).toList();
   }
 
   Stream<List<Message>> get messageList {
+
     return chatCollection.document(id).collection('messages').orderBy('date', descending: true).snapshots().map(_chatMessagesFromSnapshot);
+  }
+
+  Stream<List<Message>> getMessageList({DocumentSnapshot startAfter, int limit = 10}) {
+    Query q = chatCollection.document(id).collection('messages').orderBy('date', descending: true);
+    if (startAfter != null) {
+      q = q.startAt([startAfter.data]);
+    }
+    q = q.limit(limit);
+//    QuerySnapshot querySnapshot = await q.getDocuments();
+    return q.snapshots().map(_chatMessagesFromSnapshot);
+
   }
 
   Future sendMessage(String text, UserChat user) {
