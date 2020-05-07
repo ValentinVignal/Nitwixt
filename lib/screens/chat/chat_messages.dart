@@ -22,13 +22,13 @@ class ChatMessages extends StatefulWidget {
 
 class _ChatMessagesState extends State<ChatMessages> {
   TextEditingController textController = TextEditingController();
-  int _nbMessages = 10;
+  int _nbMessages = 8;
   ScrollController _scrollController;
 
   _scrollListener () {
     if (_scrollController.position.maxScrollExtent == _scrollController.position.pixels) {
       setState(() {
-        _nbMessages += 10;
+        _nbMessages += 8;
       });
     }
   }
@@ -96,15 +96,6 @@ class _ChatMessagesState extends State<ChatMessages> {
                     ),
                   ),
                 ),
-                RaisedButton(
-                  child: Text('+5'),
-                  onPressed: () {
-                    setState(() {
-                      _nbMessages += 5;
-                    });
-                    print('nb messages $_nbMessages');
-                  },
-                )
               ],
             ),
           );

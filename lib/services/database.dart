@@ -55,7 +55,7 @@ class DatabaseUser {
 
   final CollectionReference userCollection = Firestore.instance.collection('users');
 
-  User _userFromSnapshot(DocumentSnapshot snapshot) {
+  User userFromSnapshot(DocumentSnapshot snapshot) {
     Map<String, UserChat> chatsMap = new Map();
     //    final AuthService _auth = AuthService();
     snapshot.data['chats'].forEach((key, value) {
@@ -65,11 +65,11 @@ class DatabaseUser {
       );
     });
 
-    return User(id: uid, username: snapshot.data['username'], name: snapshot.data['name'], chats: chatsMap);
+    return User(id: snapshot.documentID, username: snapshot.data['username'], name: snapshot.data['name'], chats: chatsMap);
   }
 
   Stream<User> get user {
-    return userCollection.document(uid).snapshots().map(_userFromSnapshot);
+    return userCollection.document(uid).snapshots().map(userFromSnapshot);
   }
 
   List<UserChat> _userChatListFromSnapshot(DocumentSnapshot snapshot) {
