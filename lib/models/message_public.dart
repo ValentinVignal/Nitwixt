@@ -1,17 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:textwit/models/message_public.dart';
+import 'package:textwit/models/user_public.dart';
 
-class Message {
+class MessagePublic {
   final String id;    // Id of the message
   final Timestamp date;   // When the message has been sent
   String text;      // The text of the message
-  String userid;    // The user who sent the message
+  String userid;    // The id of the user who sent it
 
-  Message({this.id, this.date, this.text, this.userid});
-
-  MessagePublic toMessagePublic() {
-    return MessagePublic(id: this.id, date: this.date, text: this.text, userid: this.userid);
-  }
+  MessagePublic({this.id, this.date, this.text, this.userid});
 
   Map<String, Object> toFirebaseObject() {
 
@@ -25,12 +21,10 @@ class Message {
     return firebaseObject;
   }
 
-  Message.fromFirebaseObject(Map firebaseObject):
+  MessagePublic.fromFirebaseObject(Map firebaseObject):
         id = firebaseObject['id'],
         date = firebaseObject['date'] {
     this.text = firebaseObject.containsKey('text') ? firebaseObject['text'] : '';
     this.userid = firebaseObject.containsKey('userid') ? firebaseObject['userid'] : '';
   }
-
-
 }
