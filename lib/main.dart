@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:textwit/screens/start.dart';
 import 'package:textwit/services/auth.dart';
 
-import 'models/user.dart';
+import 'models/user_auth.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,6 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<UserAuth>.value(
+      // * Provides the UserAuth to all the app
       value: AuthService().user,
       child: Start(),
     );

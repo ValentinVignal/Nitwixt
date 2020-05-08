@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:textwit/models/user.dart';
 import 'package:provider/provider.dart';
-import 'package:textwit/services/database.dart';
+import 'package:textwit/services/database/database_old.dart';
 import 'package:textwit/shared/constants.dart';
 import 'package:textwit/shared/loading.dart';
 

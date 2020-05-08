@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:textwit/models/message.dart';
 import 'package:textwit/models/user.dart';
 import 'package:textwit/screens/message/message_tile.dart';
-import 'package:textwit/services/database.dart';
+import 'package:textwit/services/database/database_old.dart';
 import 'package:textwit/shared/constants.dart';
 import 'package:textwit/shared/loading.dart';
 
@@ -85,7 +85,7 @@ class _ChatMessagesState extends State<ChatMessages> {
                         if (textController.text.isNotEmpty) {
                           _databaseChat.sendMessage(
                             textController.text,
-                            UserChat(
+                            ChatPublic(
                               id: _user.id,
                               name: _user.name,
                             ),

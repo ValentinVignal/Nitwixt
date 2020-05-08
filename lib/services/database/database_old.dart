@@ -48,50 +48,50 @@ class DatabaseUserData {
   }
 }
 
-class DatabaseUser {
-  final String uid;
-
-  DatabaseUser({this.uid});
-
-  final CollectionReference userCollection = Firestore.instance.collection('users');
-
-  User userFromSnapshot(DocumentSnapshot snapshot) {
-    Map<String, UserChat> chatsMap = new Map();
-    //    final AuthService _auth = AuthService();
-    snapshot.data['chats'].forEach((key, value) {
-      chatsMap[key] = UserChat(
-        id: key,
-        name: value['name'],
-      );
-    });
-
-    return User(id: snapshot.documentID, username: snapshot.data['username'], name: snapshot.data['name'], chats: chatsMap);
-  }
-
-  Stream<User> get user {
-    return userCollection.document(uid).snapshots().map(userFromSnapshot);
-  }
-
-  List<UserChat> _userChatListFromSnapshot(DocumentSnapshot snapshot) {
-    return snapshot.data['chats']
-        .map<String, UserChat>((key, value) {
-          String key_ = key;
-          return MapEntry(
-            key_,
-            UserChat(
-              id: key_,
-              name: value['name'],
-            ),
-          );
-        })
-        .values
-        .toList();
-  }
-
-  Stream<List<UserChat>> get userChatList {
-    return userCollection.document(uid).snapshots().map(_userChatListFromSnapshot);
-  }
-}
+//class DatabaseUser {
+//  final String uid;
+//
+//  DatabaseUser({this.uid});
+//
+//  final CollectionReference userCollection = Firestore.instance.collection('users');
+//
+//  User userFromSnapshot(DocumentSnapshot snapshot) {
+//    Map<String, ChatPublic> chatsMap = new Map();
+//    //    final AuthService _auth = AuthService();
+//    snapshot.data['chats'].forEach((key, value) {
+//      chatsMap[key] = ChatPublic(
+//        id: key,
+//        name: value['name'],
+//      );
+//    });
+//
+//    return User(id: snapshot.documentID, username: snapshot.data['username'], name: snapshot.data['name'], chats: chatsMap);
+//  }
+//
+//  Stream<User> get user {
+//    return userCollection.document(uid).snapshots().map(userFromSnapshot);
+//  }
+//
+//  List<ChatPublic> _userChatListFromSnapshot(DocumentSnapshot snapshot) {
+//    return snapshot.data['chats']
+//        .map<String, ChatPublic>((key, value) {
+//          String key_ = key;
+//          return MapEntry(
+//            key_,
+//            ChatPublic(
+//              id: key_,
+//              name: value['name'],
+//            ),
+//          );
+//        })
+//        .values
+//        .toList();
+//  }
+//
+//  Stream<List<ChatPublic>> get userChatList {
+//    return userCollection.document(uid).snapshots().map(_userChatListFromSnapshot);
+//  }
+//}
 
 class DatabaseChat {
   final String id;
@@ -113,7 +113,7 @@ class DatabaseChat {
 
   List<Message> _chatMessagesFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
-      UserChat user = UserChat(
+      ChatPublic user = ChatPublic(
         id: doc.data['user']['id'] ?? '',
         name: doc.data['user']['name'] ?? 'Unkown user',
       );
@@ -143,7 +143,7 @@ class DatabaseChat {
 
   }
 
-  Future sendMessage(String text, UserChat user) {
+  Future sendMessage(String text, ChatPublic user) {
     return chatCollection.document(id).collection('messages').add(
       {
         'text': text,
