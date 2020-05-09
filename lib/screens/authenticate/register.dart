@@ -1,7 +1,10 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:textwit/services/auth.dart';
 import 'package:textwit/shared/loading.dart';
 import 'package:slider_button/slider_button.dart';
+import 'package:flutter_password_strength/flutter_password_strength.dart';
 
 import '../../shared/constants.dart';
 
@@ -104,9 +107,11 @@ class _RegisterState extends State<Register> {
                       setState(() => _password1 = val);
                     },
                   ),
-                  SizedBox(
-                    height: 10.0,
+                  SizedBox(height: 10.0,),
+                  FlutterPasswordStrength(
+                    password: _password1,
                   ),
+                  SizedBox(height: 10.0),
                   TextFormField(
                     initialValue: _password2,
                     decoration: textInputDecoration.copyWith(
