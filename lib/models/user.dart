@@ -41,7 +41,7 @@ class User {
   User.fromFirebaseObject(String id, Map firebaseObject):
       id = id,
       username = firebaseObject['username'] {
-    this.name = firebaseObject.containsKey('name') ? firebaseObject['key'] : 'Unknown name';
+    this.name = firebaseObject.containsKey('name') ? firebaseObject['name'] : 'Unknown name';
     this.chats = firebaseObject.containsKey('chats') ?
         firebaseObject['chats'].map<String, ChatPublic>((key, chat) {
           String key_ = key;

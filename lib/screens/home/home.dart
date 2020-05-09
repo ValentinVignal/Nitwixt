@@ -54,109 +54,16 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final AuthService _auth = AuthService();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     final models.User user = Provider.of<models.User>(context);
-    final database.DatabaseUser databaseUser = database.DatabaseUser(id: user.id);
-
-
-    void _createNewChat(username) async {
-      QuerySnapshot documents = await Firestore.instance.collection('users').where('username', isEqualTo: username).getDocuments();
-      if (documents.documents.isNotEmpty) {
-        models.User otherUser = databaseUser.userFromSnapshot(documents.documents[0]);
-        String chatid = await Firestore.instance.collection('chats').add(
-          {
-            'members': [user.id, otherUser.id],
-            'name': '',
-          },
-        ).then((DocumentReference docRef) {
-          return docRef.documentID;
-        });
-        print('chatid $chatid');
-        Map otherUserChats = otherUser.chats.map((key, userChat) {
-          Map m = new Map();
-          m['id'] = key;
-          m['name'] = userChat.name;
-          return new MapEntry(key, m);
-        });
-        otherUserChats[chatid] = {
-          'name': '',
-          'id': chatid,
-        };
-        Map myUserChats = user.chats.map((key, userChat) {
-          Map m = new Map();
-          m['id'] = key;
-          m['name'] = userChat.name;
-          return new MapEntry(key, m);
-        });
-        myUserChats[chatid] = {
-          'name': '',
-          'id': chatid,
-        };
-        Firestore.instance.collection('users').document(otherUser.id).updateData(
-          {
-             'chats': otherUserChats,
-          },
-        );
-        Firestore.instance.collection('users').document(user.id).updateData(
-          {
-            'chats': myUserChats,
-          },
-          );
-      }
-    }
 
     void _showCreateNewChatPanel() {
-    showDialog(
-    context: context,
+      showDialog(
+        context: context,
         builder: (BuildContext context) {
-
-          String _enterredUsername = '@';
-
-          return AlertDialog(
-            content: Form(
-              key: _formKey,
-              child: Column(
-                children: <Widget>[
-                  TextFormField(
-                    decoration: textInputDecoration.copyWith(
-                      hintText: 'Username',
-                      labelText: 'Username',
-                    ),
-                    initialValue: _enterredUsername,
-                    validator: (val) {
-                      if (val.isEmpty) {
-                        return 'Enter username';
-                      } else if (val[0] != '@') {
-                        return 'Username must start with a "@"';
-                      } else if (val.length == 1) {
-                        return 'Enter username';
-                      }
-                      return null;
-                    },
-                    onChanged: (val) {
-                      setState(() {
-                        setState(() {
-                          _enterredUsername = val;
-                        });
-                      });
-                    },
-                  ),
-                  RaisedButton.icon(
-                    onPressed: () {
-                      if (_formKey.currentState.validate()) {
-                        _createNewChat(_enterredUsername.substring(1));
-                      }
-                    },
-                    icon: Icon(Icons.done),
-                    label: Text('Create'),
-                  )
-                ],
-              ),
-            ),
-          );
+          return NewChatDialog();
         },
       );
     }
@@ -197,12 +104,86 @@ class _HomeState extends State<Home> {
             ),
           ],
         ),
-        body: user == null ?  Loading(): ChatList(),
+        body: user == null ? Loading() : ChatList(),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             _showCreateNewChatPanel();
           },
           child: Icon(Icons.add),
         ));
+  }
+}
+
+class NewChatDialog extends StatefulWidget {
+  @override
+  _NewChatDialogState createState() => _NewChatDialogState();
+}
+
+class _NewChatDialogState extends State<NewChatDialog> {
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  String _enterredUsername = '';
+  String error = '';
+
+  @override
+  Widget build(BuildContext context) {
+    final models.User user = Provider.of<models.User>(context);
+    final database.DatabaseUser databaseUser = database.DatabaseUser(id: user.id);
+
+    return AlertDialog(
+      content: Form(
+        key: _formKey,
+        child: Column(
+          children: <Widget>[
+            TextFormField(
+              decoration: textInputDecoration.copyWith(
+                hintText: 'Username',
+                labelText: 'Username',
+              ),
+              initialValue: _enterredUsername,
+              validator: (val) {
+                if (val.isEmpty) {
+                  return 'Enter username';
+                } else if (val == user.username) {
+                  return 'Enter another username than yours';
+                }
+                return null;
+              },
+              onChanged: (val) {
+                setState(() {
+                  _enterredUsername = val;
+                });
+              },
+            ),
+            Text(
+              error,
+              style: TextStyle(color: Colors.red),
+            ),
+            RaisedButton.icon(
+              onPressed: () async {
+                if (_formKey.currentState.validate()) {
+                  String res = await database.DatabaseChat.createNewChat(user, [_enterredUsername]);
+                  print('res $res');
+                  if (res != null) {
+                    // Show the error
+                    setState(() {
+                      error = res;
+                    });
+                  } else {
+                    setState(() {
+                      error = '';
+                    });
+                    Navigator.of(context).pop();
+                  }
+                }
+              },
+              icon: Icon(Icons.done),
+              label: Text('Create'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

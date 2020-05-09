@@ -77,16 +77,13 @@ class _ChatMessagesState extends State<ChatMessages> {
                       icon: Icon(
                         Icons.send
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         if (textController.text.isNotEmpty) {
-                          _databaseChat.sendMessage(
-                            textController.text,
-                            models.ChatPublic(
-                              id: user.id,
-                              name: user.name,
-                            ),
+                          await _databaseChat.sendMessage(
+                            text: textController.text,
+                            userid: user.id
                           );
-                          textController.text = '';
+                          WidgetsBinding.instance.addPostFrameCallback((_) => textController.clear());
                         }
                       },
                     ),
