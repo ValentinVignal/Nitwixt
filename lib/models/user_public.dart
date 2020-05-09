@@ -10,15 +10,14 @@ class UserPublic {
 
     Map<String, Object> firebaseObject = Map<String, Object>();
 
-    firebaseObject['id'] = this.id;
     firebaseObject['name'] = this.name;
     firebaseObject['username'] = this.username;
 
     return firebaseObject;
   }
 
-  UserPublic.fromFirebaseObject(Map firebaseObject):
-      id = firebaseObject['id'],
+  UserPublic.fromFirebaseObject(String id, Map firebaseObject):
+      id = id,
       username = firebaseObject['username'] {
     this.name = firebaseObject.containsKey('name') ? firebaseObject['name'] : 'Unkown Name';
   }

@@ -15,7 +15,6 @@ class Chat {
   Map<String, Object> toFirebaseObject() {
     Map<String, Object> firebaseObject = Map<String, Object>();
 
-    firebaseObject['id'] = this.id;
     firebaseObject['name'] = this.name;
     Map members = this.members.map((String key, UserPublic user) {
       return MapEntry(key, user.toFirebaseObject());
@@ -25,12 +24,13 @@ class Chat {
     return firebaseObject;
   }
 
-  Chat.fromFirebaseObject(Map firebaseObject):
-      id = firebaseObject['id'] {
+  Chat.fromFirebaseObject(String id, Map firebaseObject):
+      id = id {
     this.name = firebaseObject.containsKey('name') ? firebaseObject['name'] : 'Unkown name';
     this.members = firebaseObject.containsKey('members') ?
-        firebaseObject['members'].map((String key, Map userObject) {
-          return MapEntry(key, UserPublic.fromFirebaseObject(userObject));
+        firebaseObject['members'].map<String, UserPublic>((key, userObject) {
+          String key_ = key;
+          return MapEntry(key_, UserPublic.fromFirebaseObject(key, userObject));
         }) :
         Map<String, UserPublic>();
   }

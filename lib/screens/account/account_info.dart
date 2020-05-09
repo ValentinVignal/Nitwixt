@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:textwit/models/user.dart';
+import 'package:textwit/models/user_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:textwit/services/database/database_old.dart';
 import 'package:textwit/shared/constants.dart';
 import 'package:textwit/shared/loading.dart';
 
@@ -14,51 +14,41 @@ class _AccountInfoState extends State<AccountInfo> {
   @override
   Widget build(BuildContext context) {
     final userAuth = Provider.of<UserAuth>(context);
+    final user = Provider.of<User>(context);
 
-    return StreamBuilder<User>(
-      stream: DatabaseUser(uid: userAuth.id).user,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          User user = snapshot.data;
-
-          return Container(
-            child: ListView(
-              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-              children: <Widget>[
-                // Username
-                Row(
-                  children: <Widget>[
-                    Expanded(child: Text('Username:', style: textStyleInfo)),
-                    Expanded(
-                        child: Text(
-                      '@' + user.username,
-                      style: textStyleInfo,
-                    )),
-                  ],
-                ),
-                // Name
-                SizedBox(height: 10.0),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                        child: Text(
-                      'Name',
-                      style: textStyleInfo,
-                    )),
-                    Expanded(
-                        child: Text(
-                      user.name,
-                      style: textStyleInfo,
-                    )),
-                  ],
-                )
-              ],
-            ),
-          );
-        } else {
-          return Loading();
-        }
-      },
+    return Container(
+      child: ListView(
+        padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+        children: <Widget>[
+          // Username
+          Row(
+            children: <Widget>[
+              Expanded(child: Text('Username:', style: textStyleInfo)),
+              Expanded(
+                  child: Text(
+                '@' + user.username,
+                style: textStyleInfo,
+              )),
+            ],
+          ),
+          // Name
+          SizedBox(height: 10.0),
+          Row(
+            children: <Widget>[
+              Expanded(
+                  child: Text(
+                'Name',
+                style: textStyleInfo,
+              )),
+              Expanded(
+                  child: Text(
+                user.name,
+                style: textStyleInfo,
+              )),
+            ],
+          )
+        ],
+      ),
     );
   }
 }

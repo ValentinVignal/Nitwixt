@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:textwit/models/models.dart' as models;
-import 'package:textwit/screens/chat/chat.dart';
+import 'package:textwit/screens/chat/chat_provider.dart';
 
 class ChatTile extends StatelessWidget {
   final models.ChatPublic chat;
@@ -24,7 +24,7 @@ class ChatTile extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ChatWidget(id: chat.id)),
+              MaterialPageRoute(builder: (context) => ChatProvider(id: chat.id)),
             );
           },
         ),

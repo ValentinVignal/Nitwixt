@@ -17,7 +17,6 @@ class Message {
 
     Map<String, Object> firebaseObject = Map<String, Object>();
 
-    firebaseObject['id'] = this.id;
     firebaseObject['date'] = this.date;
     firebaseObject['text'] = this.text;
     firebaseObject['userid'] = this.userid;
@@ -25,8 +24,8 @@ class Message {
     return firebaseObject;
   }
 
-  Message.fromFirebaseObject(Map firebaseObject):
-        id = firebaseObject['id'],
+  Message.fromFirebaseObject(String id, Map firebaseObject):
+        id = id,
         date = firebaseObject['date'] {
     this.text = firebaseObject.containsKey('text') ? firebaseObject['text'] : '';
     this.userid = firebaseObject.containsKey('userid') ? firebaseObject['userid'] : '';

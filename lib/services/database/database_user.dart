@@ -11,7 +11,7 @@ class DatabaseUser {
   final CollectionReference userCollection = collections.userCollection;
 
   models.User userFromSnapshot(DocumentSnapshot snapshot) {
-    return models.User.fromFirebaseObject(snapshot.data);
+    return models.User.fromFirebaseObject(snapshot.documentID, snapshot.data);
   }
 
   Stream<models.User> get user {

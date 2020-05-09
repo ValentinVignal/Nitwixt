@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:textwit/screens/chat/chat_messages.dart';
+import 'package:textwit/models/models.dart' as models;
 
-class ChatWidget extends StatefulWidget {
-
-  final String id;
-
-  ChatWidget({ this.id });
+class ChatHome extends StatefulWidget {
 
   @override
-  _ChatWidgetState createState() => _ChatWidgetState();
+  _ChatHomeState createState() => _ChatHomeState();
 }
 
-class _ChatWidgetState extends State<ChatWidget> {
+class _ChatHomeState extends State<ChatHome> {
   @override
   Widget build(BuildContext context) {
+
+    final models.Chat chat = Provider.of<models.Chat>(context);
+
     return Scaffold(
       backgroundColor: Colors.white70,
       appBar: AppBar(
@@ -23,7 +24,7 @@ class _ChatWidgetState extends State<ChatWidget> {
           Navigator.pop(context);
         }),
       ),
-      body: ChatMessages(chatid: widget.id),
+      body: ChatMessages(),
     );
   }
 }

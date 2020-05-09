@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:textwit/screens/account/account.dart';
-import 'package:textwit/screens/chat/chat_list.dart';
+import 'package:textwit/screens/home/chat_list.dart';
 import 'package:textwit/services/auth.dart';
 import 'package:provider/provider.dart';
 import 'package:textwit/shared/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:textwit/models/models.dart' as models;
+import 'package:textwit/services/database/database.dart' as database;
+import 'package:textwit/shared/loading.dart';
 
 // Different options in the popup menu
 enum PopupMenuOptions { account, settings, logout }
@@ -56,15 +58,14 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final models.UserAuth userAuth = Provider.of<UserAuth>(context);
-    final models.User user = Provider.of<User>(context);
-    final DatabaseUser databaseUser = DatabaseUser(uid: user.id);
+    final models.User user = Provider.of<models.User>(context);
+    final database.DatabaseUser databaseUser = database.DatabaseUser(id: user.id);
 
 
     void _createNewChat(username) async {
       QuerySnapshot documents = await Firestore.instance.collection('users').where('username', isEqualTo: username).getDocuments();
       if (documents.documents.isNotEmpty) {
-        User otherUser = databaseUser.userFromSnapshot(documents.documents[0]);
+        models.User otherUser = databaseUser.userFromSnapshot(documents.documents[0]);
         String chatid = await Firestore.instance.collection('chats').add(
           {
             'members': [user.id, otherUser.id],
@@ -196,7 +197,7 @@ class _HomeState extends State<Home> {
             ),
           ],
         ),
-        body: ChatList(),
+        body: user == null ?  Loading(): ChatList(),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             _showCreateNewChatPanel();

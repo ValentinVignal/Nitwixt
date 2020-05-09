@@ -8,14 +8,13 @@ class ChatPublic {
 
     Map<String, Object> firebaseObject = Map<String, Object>();
 
-    firebaseObject['id'] = this.id;
     firebaseObject['name'] = this.name;
 
     return firebaseObject;
   }
 
-  ChatPublic.fromFirebaseObject(Map firebaseObject):
-      id = firebaseObject['id'] {
+  ChatPublic.fromFirebaseObject(String id, Map firebaseObject):
+      id = id {
     this.name = firebaseObject.containsKey('name') ? firebaseObject['name'] : '';
   }
 }

@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:textwit/models/brew.dart';
-import 'package:textwit/models/user.dart';
-import 'package:textwit/models/chat.dart';
-import 'package:textwit/models/message.dart';
+import 'package:textwit/models/user_data.dart';
 
 class DatabaseUserData {
   final String uid;
@@ -93,66 +91,66 @@ class DatabaseUserData {
 //  }
 //}
 
-class DatabaseChat {
-  final String id;
-
-  DatabaseChat({this.id});
-
-  final CollectionReference chatCollection = Firestore.instance.collection('chats');
-
-  Chat _chatFromSnapshot(DocumentSnapshot snapshot) {
-    return Chat(
-      id: id,
-      name: snapshot.data['name'],
-    );
-  }
-
-  Stream<Chat> get chat {
-    return chatCollection.document(id).snapshots().map(_chatFromSnapshot);
-  }
-
-  List<Message> _chatMessagesFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.documents.map((doc) {
-      ChatPublic user = ChatPublic(
-        id: doc.data['user']['id'] ?? '',
-        name: doc.data['user']['name'] ?? 'Unkown user',
-      );
-      Message message = Message(
-        id: doc.documentID,
-        date: doc.data['date'],
-        text: doc.data['text'],
-        user: user,
-      );
-      return message;
-    }).toList();
-  }
-
-  Stream<List<Message>> get messageList {
-
-    return chatCollection.document(id).collection('messages').orderBy('date', descending: true).snapshots().map(_chatMessagesFromSnapshot);
-  }
-
-  Stream<List<Message>> getMessageList({DocumentSnapshot startAfter, int limit = 10}) {
-    Query q = chatCollection.document(id).collection('messages').orderBy('date', descending: true);
-    if (startAfter != null) {
-      q = q.startAt([startAfter.data]);
-    }
-    q = q.limit(limit);
-//    QuerySnapshot querySnapshot = await q.getDocuments();
-    return q.snapshots().map(_chatMessagesFromSnapshot);
-
-  }
-
-  Future sendMessage(String text, ChatPublic user) {
-    return chatCollection.document(id).collection('messages').add(
-      {
-        'text': text,
-        'date': Timestamp.now(),
-        'user': {
-          'id': user.id,
-          'name': user.name,
-        },
-      },
-    );
-  }
-}
+//class DatabaseChat {
+//  final String id;
+//
+//  DatabaseChat({this.id});
+//
+//  final CollectionReference chatCollection = Firestore.instance.collection('chats');
+//
+//  Chat _chatFromSnapshot(DocumentSnapshot snapshot) {
+//    return Chat(
+//      id: id,
+//      name: snapshot.data['name'],
+//    );
+//  }
+//
+//  Stream<Chat> get chat {
+//    return chatCollection.document(id).snapshots().map(_chatFromSnapshot);
+//  }
+//
+//  List<Message> _chatMessagesFromSnapshot(QuerySnapshot snapshot) {
+//    return snapshot.documents.map((doc) {
+//      ChatPublic user = ChatPublic(
+//        id: doc.data['user']['id'] ?? '',
+//        name: doc.data['user']['name'] ?? 'Unkown user',
+//      );
+//      Message message = Message(
+//        id: doc.documentID,
+//        date: doc.data['date'],
+//        text: doc.data['text'],
+//        user: user,
+//      );
+//      return message;
+//    }).toList();
+//  }
+//
+//  Stream<List<Message>> get messageList {
+//
+//    return chatCollection.document(id).collection('messages').orderBy('date', descending: true).snapshots().map(_chatMessagesFromSnapshot);
+//  }
+//
+//  Stream<List<Message>> getMessageList({DocumentSnapshot startAfter, int limit = 10}) {
+//    Query q = chatCollection.document(id).collection('messages').orderBy('date', descending: true);
+//    if (startAfter != null) {
+//      q = q.startAt([startAfter.data]);
+//    }
+//    q = q.limit(limit);
+////    QuerySnapshot querySnapshot = await q.getDocuments();
+//    return q.snapshots().map(_chatMessagesFromSnapshot);
+//
+//  }
+//
+//  Future sendMessage(String text, ChatPublic user) {
+//    return chatCollection.document(id).collection('messages').add(
+//      {
+//        'text': text,
+//        'date': Timestamp.now(),
+//        'user': {
+//          'id': user.id,
+//          'name': user.name,
+//        },
+//      },
+//    );
+//  }
+//}
