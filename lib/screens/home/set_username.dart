@@ -73,19 +73,27 @@ class _SetUsernameState extends State<SetUsername> {
                         QuerySnapshot documents = await userCollection.where('username', isEqualTo: username).getDocuments();
                         if (documents.documents.isNotEmpty) {
                           // There is already a user with this username
-                          setState(() => errorMessage = 'Username $username is already used');
+                          setState(() {
+                            errorMessage = 'Username $username is already used';
+                            loading = false;
+                          });
                         } else {
                           // Username doesn't exist -> update the user record
-                          userCollection.document(user.id).updateData({'username': username}).then((res) {
-                            setState(() => errorMessage = '');
-                          }).catchError((errorMessage) {
-                            setState(() => errorMessage = 'Could not set the username $username');
+                          await userCollection.document(user.id).updateData({'username': username}).catchError((errorMessage) {
+                            setState(() {
+                              errorMessage = 'Could not set the username $username';
+                              loading = false;
+                            });
                           });
                         }
                       }
                     },
                     icon: Icon(Icons.check, color: Colors.white),
-                    label: Text('Confirm', style: TextStyle(color: Colors.white)),
+                    label: Text('Confirm',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15.0,
+                        )),
                     color: Colors.blue,
                   ),
                   Text(

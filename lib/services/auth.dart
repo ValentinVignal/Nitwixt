@@ -1,12 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:textwit/models/user_auth.dart';
-import 'package:textwit/services/database/database_old.dart';
+
+import 'database/database_user.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Create user obj based on FirebaseUser
   UserAuth _userFromFirebaseUser(FirebaseUser user) {
+    print('user $user');
     return user != null
       ? UserAuth(
           id: user.uid,
@@ -58,7 +60,7 @@ class AuthEmailPassword extends AuthService {
       FirebaseUser user = result.user;
 
       // create a new document for the with the uid
-      await DatabaseUserData(uid: user.uid).updateUserData('0', 'new crew member', 100);
+      await DatabaseUser.createEmptyUser(id: user.uid);
       return _userFromFirebaseUser(user);
     } catch (e) {
       print(e.toString());

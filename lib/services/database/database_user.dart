@@ -17,4 +17,14 @@ class DatabaseUser {
   Stream<models.User> get user {
     return userCollection.document(id).snapshots().map(userFromSnapshot);
   }
+
+  static Future createEmptyUser({String id}) async {
+    models.User user = models.User(
+      id: id,
+      name: 'New User',
+      username: '',
+      chats: Map()
+    );
+    return await collections.userCollection.document(id).setData(user.toFirebaseObject());
+  }
 }
