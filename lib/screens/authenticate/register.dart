@@ -8,6 +8,7 @@ import 'package:flutter_password_strength/flutter_password_strength.dart';
 
 import '../../shared/constants.dart';
 
+
 class Register extends StatefulWidget {
   final Function toggleView;
 

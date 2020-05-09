@@ -7,7 +7,7 @@ class User {
   // * -------------------- Attributes --------------------
 
   final String id;    // The id of the user
-  final String username;    // The username of the user
+  String username;    // The username of the user
   String name;      // The name to display
   Map<String, ChatPublic> chats = new Map();    // The list of chats of the user
 

@@ -7,7 +7,12 @@ class AuthService {
 
   // Create user obj based on FirebaseUser
   UserAuth _userFromFirebaseUser(FirebaseUser user) {
-    return user != null ? UserAuth(id: user.uid) : null;
+    return user != null
+      ? UserAuth(
+          id: user.uid,
+          email: user.email,
+          isEmailVerified: user.isEmailVerified,
+        ) : null;
   }
 
   // Auth change user stream
@@ -34,7 +39,6 @@ class AuthService {
 // * -------------------- Email and password --------------------
 // * ------------------------------------------------------------
 class AuthEmailPassword extends AuthService {
-
   // ? -------------------- Sign in --------------------
   Future signInEmailPassword(String email, String password) async {
     try {
@@ -62,4 +66,13 @@ class AuthEmailPassword extends AuthService {
     }
   }
 
+  Future sendConfirmationEmail() async {
+    return _auth.currentUser().then((FirebaseUser currentUser) {
+      return currentUser.sendEmailVerification();
+    }).catchError((error) {
+      return error;
+    });
+
+
+  }
 }
