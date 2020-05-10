@@ -7,10 +7,9 @@ import 'package:textwit/shared/constants.dart';
 import 'package:textwit/shared/loading.dart';
 import 'package:textwit/models/models.dart' as models;
 import 'package:textwit/services/database/database.dart' as database;
-
+import 'package:dash_chat/dash_chat.dart' as dc;
 
 class ChatMessages extends StatefulWidget {
-
   @override
   _ChatMessagesState createState() => _ChatMessagesState();
 }
@@ -20,7 +19,7 @@ class _ChatMessagesState extends State<ChatMessages> {
   int _nbMessages = 8;
   ScrollController _scrollController;
 
-  _scrollListener () {
+  _scrollListener() {
     if (_scrollController.position.maxScrollExtent == _scrollController.position.pixels) {
       setState(() {
         _nbMessages += 8;
@@ -38,11 +37,9 @@ class _ChatMessagesState extends State<ChatMessages> {
 
   @override
   Widget build(BuildContext context) {
-
     final models.User user = Provider.of<models.User>(context);
     final models.Chat chat = Provider.of<models.Chat>(context);
     final database.DatabaseChat _databaseChat = database.DatabaseChat(id: chat.id);
-
 
     return StreamBuilder<List<models.Message>>(
       stream: _databaseChat.getMessageList(limit: _nbMessages),
@@ -50,7 +47,6 @@ class _ChatMessagesState extends State<ChatMessages> {
         if (!snapshot.hasData) {
           return Loading();
         } else {
-
           List<models.Message> messageList = snapshot.data;
           double height = MediaQuery.of(context).size.height;
 
@@ -64,6 +60,7 @@ class _ChatMessagesState extends State<ChatMessages> {
                     itemCount: messageList.length,
                     reverse: true,
                     itemBuilder: (context, index) {
+                      models.Message message = messageList[index];
                       return MessageTile(message: messageList[index],);
                     },
                     shrinkWrap: true,
@@ -74,15 +71,10 @@ class _ChatMessagesState extends State<ChatMessages> {
                   decoration: textInputDecoration.copyWith(
                     hintText: 'Type your message',
                     suffixIcon: IconButton(
-                      icon: Icon(
-                        Icons.send
-                      ),
+                      icon: Icon(Icons.send),
                       onPressed: () async {
                         if (textController.text.isNotEmpty) {
-                          await _databaseChat.sendMessage(
-                            text: textController.text,
-                            userid: user.id
-                          );
+                          await _databaseChat.sendMessage(text: textController.text, userid: user.id);
                           WidgetsBinding.instance.addPostFrameCallback((_) => textController.clear());
                         }
                       },
