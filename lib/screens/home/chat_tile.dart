@@ -9,26 +9,29 @@ class ChatTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(top: 8.0),
-      child: Card(
-        margin: EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
-        child: ListTile(
-          leading: CircleAvatar(
-            radius: 25.0,
-            backgroundColor: Colors.blue,
-            backgroundImage: AssetImage('assets/images/message.png'),
-          ),
-          title: Text(chat.name),
-          subtitle: Text(chat.id),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ChatProvider(id: chat.id)),
-            );
-          },
+    return GestureDetector(
+      child: Container(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Icon(Icons.chat_bubble, color: Colors.blue[800], size: 60.0,),
+            SizedBox(width: 20.0,),
+            Text(chat.name, style: TextStyle(color: Colors.white, fontSize: 30.0)),
+          ],
+        ),
+        margin: EdgeInsets.symmetric(vertical: 6.0, horizontal:20.0),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: Colors.blueGrey[800]),
+          )
         ),
       ),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ChatProvider(id: chat.id)),
+          );
+      },
     );
   }
 }

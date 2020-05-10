@@ -4,10 +4,7 @@ import 'package:textwit/screens/account/account.dart';
 import 'package:textwit/screens/home/chat_list.dart';
 import 'package:textwit/services/auth.dart';
 import 'package:provider/provider.dart';
-import 'package:textwit/shared/constants.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:textwit/models/models.dart' as models;
-import 'package:textwit/services/database/database.dart' as database;
 import 'package:textwit/shared/loading.dart';
 import 'new_chat_dialog.dart';
 
@@ -70,10 +67,10 @@ class _HomeState extends State<Home> {
     }
 
     return Scaffold(
-        backgroundColor: Colors.white70,
+        backgroundColor: Colors.grey[900],
         appBar: AppBar(
           title: Text('Textwit'),
-          backgroundColor: Colors.blueGrey,
+          backgroundColor: Colors.blueGrey[800],
           elevation: 0.0,
           actions: <Widget>[
             PopupMenuButton<PopupMenuOptions>(

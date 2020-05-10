@@ -14,12 +14,13 @@ class _ChatHomeState extends State<ChatHome> {
   Widget build(BuildContext context) {
 
     final models.Chat chat = Provider.of<models.Chat>(context);
+    final models.User user = Provider.of<models.User>(context);
 
     return Scaffold(
-      backgroundColor: Colors.white70,
+      backgroundColor: Colors.grey[900],
       appBar: AppBar(
-        title: Text('My Chat'),
-        backgroundColor: Colors.blueGrey,
+        title: Text(chat.nameToDisplay(user)),
+        backgroundColor: Colors.blueGrey[800],
         leading: new IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: () {
           Navigator.pop(context);
         }),
