@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:textwit/screens/settings/settings_from.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -21,7 +20,7 @@ class _SettingsState extends State<Settings> {
           },
         ),
       ),
-      body: SettingsForm(),
+      body: Text('Settings'),
     );
   }
 }
