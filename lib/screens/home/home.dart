@@ -73,31 +73,39 @@ class _HomeState extends State<Home> {
           backgroundColor: Colors.blueGrey[800],
           elevation: 0.0,
           actions: <Widget>[
-            PopupMenuButton<PopupMenuOptions>(
-              color: Colors.black,
-              onSelected: (selected) async {
-                switch (selected) {
-                  case PopupMenuOptions.account:
-                    {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => Account()));
-                      break;
-                    }
-                  case PopupMenuOptions.settings:
-                    {
+            Builder(
+              builder: (context) {
+                return PopupMenuButton<PopupMenuOptions>(
+                  color: Colors.black,
+                  onSelected: (selected) async {
+                    switch (selected) {
+                      case PopupMenuOptions.account:
+                        {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => Account()));
+                          break;
+                        }
+                      case PopupMenuOptions.settings:
+                        {
 //                        Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
-                      break;
+                          final SnackBar snackbar = SnackBar(
+                            content: Text('No setting available for now'),
+                          );
+                          Scaffold.of(context).showSnackBar(snackbar);
+                          break;
+                        }
+                      case PopupMenuOptions.logout:
+                        {
+                          await _auth.signOut();
+                          break;
+                        }
                     }
-                  case PopupMenuOptions.logout:
-                    {
-                      await _auth.signOut();
-                      break;
-                    }
-                }
-              },
-              itemBuilder: (BuildContext context) {
-                return PopupMenuOptions.values.map((option) {
-                  return menuItemFromOption(option);
-                }).toList();
+                  },
+                  itemBuilder: (BuildContext context) {
+                    return PopupMenuOptions.values.map((option) {
+                      return menuItemFromOption(option);
+                    }).toList();
+                  },
+                );
               },
             ),
           ],
@@ -111,4 +119,3 @@ class _HomeState extends State<Home> {
         ));
   }
 }
-

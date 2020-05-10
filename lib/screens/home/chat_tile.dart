@@ -14,9 +14,9 @@ class ChatTile extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Icon(Icons.chat_bubble, color: Colors.blue[800], size: 60.0,),
+            Icon(Icons.chat_bubble, color: Colors.blue[800], size: 50.0,),
             SizedBox(width: 20.0,),
-            Text(chat.name, style: TextStyle(color: Colors.white, fontSize: 30.0)),
+            Text(chat.name, style: TextStyle(color: Colors.white, fontSize: 20.0)),
           ],
         ),
         margin: EdgeInsets.symmetric(vertical: 6.0, horizontal:20.0),
