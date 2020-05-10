@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:textwit/models/models.dart' as models;
-import 'package:textwit/services/auth.dart';
+import 'package:textwit/services/auth.dart' as auth;
 import 'package:textwit/shared/loading.dart';
 
 class VerifyEmail extends StatefulWidget {
@@ -10,15 +10,16 @@ class VerifyEmail extends StatefulWidget {
 }
 
 class _VerifyEmailState extends State<VerifyEmail> {
-
   TextStyle textStyle = TextStyle(
     fontSize: 20.0,
-
   );
 
   String buttonMessage = 'Send email';
   bool result;
   bool isProcessing = false;
+  bool isEmailSent = false;
+
+  auth.AuthService _auth = auth.AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +27,17 @@ class _VerifyEmailState extends State<VerifyEmail> {
 
     return Scaffold(
       backgroundColor: Colors.white70,
+      appBar: AppBar(
+        backgroundColor: Colors.blueGrey,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Colors.white,
+          ),
+          onPressed: () => _auth.signOut(),
+        ),
+        title: Text('Verify your email'),
+      ),
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50),
         child: Column(
@@ -36,14 +48,16 @@ class _VerifyEmailState extends State<VerifyEmail> {
               style: textStyle.copyWith(color: Colors.blue[900]),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 50.0,),
+            SizedBox(
+              height: 50.0,
+            ),
             RaisedButton.icon(
               onPressed: () async {
                 setState(() {
                   isProcessing = true;
                   result = null;
                 });
-                String res = await AuthEmailPassword().sendConfirmationEmail();
+                Object res = await auth.AuthEmailPassword().sendConfirmationEmail();
                 setState(() {
                   isProcessing = false;
                 });
@@ -52,6 +66,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
                   setState(() {
                     buttonMessage = 'Send email again';
                     result = true;
+                    isEmailSent = true;
                   });
                 } else {
                   setState(() {
@@ -59,19 +74,68 @@ class _VerifyEmailState extends State<VerifyEmail> {
                     result = false;
                   });
                 }
-
               },
               icon: Icon(Icons.email, color: Colors.white),
               label: Text(buttonMessage, style: TextStyle(color: Colors.white)),
-              color: Colors.green,
+              color: Colors.blue,
             ),
-            SizedBox(height: 20.0,),
-            result == true ? Text('An email has been sent', style: textStyle.copyWith(color: Colors.green), textAlign: TextAlign.center,) : Container(height: 0.0,),
-            result == true ? Icon(Icons.check, color: Colors.green,) : Container(height: 0.0,),
-            result == false ? Text('We couldn\'t send an email...', style: textStyle.copyWith(color: Colors.red)) : Container(height: 0.0,),
-            result == false ? Icon(Icons.clear, color: Colors.red,) : Container(height: 0.0,),
-            SizedBox(height: 20.0,),
-            isProcessing ? Loading() : Container(height: 0.0,),
+            SizedBox(
+              height: 20.0,
+            ),
+            result == true
+                ? Text(
+                    'An email has been sent',
+                    style: textStyle.copyWith(color: Colors.green),
+                    textAlign: TextAlign.center,
+                  )
+                : Container(
+                    height: 0.0,
+                  ),
+            result == true
+                ? Icon(
+                    Icons.check,
+                    color: Colors.green,
+                  )
+                : Container(
+                    height: 0.0,
+                  ),
+            result == false
+                ? Text('We couldn\'t send an email...', style: textStyle.copyWith(color: Colors.red))
+                : Container(
+                    height: 0.0,
+                  ),
+            result == false
+                ? Icon(
+                    Icons.clear,
+                    color: Colors.red,
+                  )
+                : Container(
+                    height: 0.0,
+                  ),
+            SizedBox(
+              height: 20.0,
+            ),
+            isEmailSent
+                ? RaisedButton.icon(
+                    onPressed: () => _auth.signOut(),
+                    icon: Icon(Icons.done, color: Colors.white),
+                    label: Text(
+                      'I have verified my email',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    color: Colors.green,
+                  )
+                : Container(
+                    height: 0.0,
+                  ),
+            SizedBox(
+              height: isEmailSent ? 20.0 : 0.0,
+            ),
+            isProcessing
+                ? Loading()
+                : Container(
+                    height: 0.0,
+                  ),
           ],
         ),
       ),

@@ -8,7 +8,6 @@ class AuthService {
 
   // Create user obj based on FirebaseUser
   UserAuth _userFromFirebaseUser(FirebaseUser user) {
-    print('user $user');
     return user != null
       ? UserAuth(
           id: user.uid,
@@ -60,7 +59,7 @@ class AuthEmailPassword extends AuthService {
       FirebaseUser user = result.user;
 
       // create a new document for the with the uid
-      await DatabaseUser.createEmptyUser(id: user.uid);
+//      await DatabaseUser.createEmptyUser(id: user.uid);
       return _userFromFirebaseUser(user);
     } catch (e) {
       print(e.toString());

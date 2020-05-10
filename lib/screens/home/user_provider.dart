@@ -13,9 +13,11 @@ class UserProvider extends StatelessWidget {
 
     final models.UserAuth userAuth = Provider.of<models.UserAuth>(context);
 
+    database.DatabaseUser databaseUser = database.DatabaseUser(id: userAuth.id);
+
     return StreamProvider<models.User>.value(
       // * Provides the User to all the app
-      value: database.DatabaseUser(id: userAuth.id).user,
+      value: databaseUser.user,
         child: MaterialApp(
           home: UserReceiver(),
           ),
@@ -34,8 +36,8 @@ class UserReceiver extends StatelessWidget {
       return Scaffold(
         body: Loading(),
         );
-    } else if (user.username == '') {
-      // No username is set for now
+    } else if (user.isEmpty()) {
+      // No record for now on database, we have to create it
       return SetUsername();
     } else {
       return Home();

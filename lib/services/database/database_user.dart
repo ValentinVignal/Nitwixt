@@ -19,12 +19,30 @@ class DatabaseUser {
   }
 
   static Future createEmptyUser({String id}) async {
-    models.User user = models.User(
-      id: id,
-      name: 'New User',
-      username: '',
-      chats: Map()
-    );
-    return await collections.userCollection.document(id).setData(user.toFirebaseObject());
+    return await collections.userCollection.document(id).setData(models.User.empty().toFirebaseObject());
+  }
+
+  static Future createUser({String id, models.User user}) async {
+    if (user == null) {
+      return createEmptyUser(id: id);
+    } else {
+      String id_;
+      if (id == null || id.isEmpty) {
+        id_ = user.id;
+      } else {
+        id_ = id;
+      }
+      return await collections.userCollection.document(id_).setData(user.toFirebaseObject());
+    }
+  }
+
+  static Future<bool> userIdExists({String id}) async {
+    DocumentSnapshot documents = await collections.userCollection.document(id).get();
+    return documents.exists;
+  }
+
+  Future<bool> exists() {
+    return userIdExists(id: this.id);
   }
 }
+

@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:textwit/models/models.dart';
+import 'package:textwit/services/auth.dart';
+import 'package:textwit/services/database/database.dart';
 import 'package:textwit/shared/constants.dart';
 import 'package:textwit/shared/loading.dart';
 import 'package:textwit/services/database/collections.dart';
@@ -25,6 +27,14 @@ class _SetUsernameState extends State<SetUsername> {
 
     return Scaffold(
       backgroundColor: Colors.white70,
+      appBar: AppBar(
+        backgroundColor: Colors.blueGrey,
+        title: Text('Textwit'),
+        leading: IconButton(
+          onPressed: () => AuthService().signOut(),
+          icon: Icon(Icons.arrow_back_ios),
+        ),
+      ),
       body: SingleChildScrollView(
         child: SizedBox(
           height: height,
@@ -79,7 +89,8 @@ class _SetUsernameState extends State<SetUsername> {
                           });
                         } else {
                           // Username doesn't exist -> update the user record
-                          await userCollection.document(user.id).updateData({'username': username}).catchError((errorMessage) {
+                          user.username = username;
+                          await DatabaseUser.createUser(user: user).catchError((errorMessage) {
                             setState(() {
                               errorMessage = 'Could not set the username $username';
                               loading = false;
