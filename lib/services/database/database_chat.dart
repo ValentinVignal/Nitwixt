@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'collections.dart' as collections;
-import 'package:textwit/models/models.dart' as models;
+import 'package:nitwixt/models/models.dart' as models;
 import 'database_user.dart';
 
 class DatabaseChat {

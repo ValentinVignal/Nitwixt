@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:textwit/models/models.dart';
-import 'package:textwit/services/auth.dart';
-import 'package:textwit/services/database/database.dart';
-import 'package:textwit/shared/constants.dart';
-import 'package:textwit/shared/loading.dart';
-import 'package:textwit/services/database/collections.dart';
+import 'package:nitwixt/models/models.dart';
+import 'package:nitwixt/services/auth.dart';
+import 'package:nitwixt/services/database/database.dart';
+import 'package:nitwixt/shared/constants.dart';
+import 'package:nitwixt/shared/loading.dart';
+import 'package:nitwixt/services/database/collections.dart';
 
 class SetUsername extends StatefulWidget {
   @override
@@ -29,7 +29,7 @@ class _SetUsernameState extends State<SetUsername> {
       backgroundColor: Colors.white70,
       appBar: AppBar(
         backgroundColor: Colors.blueGrey,
-        title: Text('Textwit'),
+        title: Text('Nitwixt'),
         leading: IconButton(
           onPressed: () => AuthService().signOut(),
           icon: Icon(Icons.arrow_back_ios),

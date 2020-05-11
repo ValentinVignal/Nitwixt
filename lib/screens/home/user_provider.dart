@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:textwit/models/models.dart' as models;
-import 'package:textwit/screens/home/home.dart';
-import 'package:textwit/screens/home/set_username.dart';
-import 'package:textwit/services/database/database.dart' as database;
-import 'package:textwit/shared/loading.dart';
+import 'package:nitwixt/models/models.dart' as models;
+import 'package:nitwixt/screens/home/home.dart';
+import 'package:nitwixt/screens/home/set_username.dart';
+import 'package:nitwixt/services/database/database.dart' as database;
+import 'package:nitwixt/shared/loading.dart';
 
 class UserProvider extends StatelessWidget {
   @override

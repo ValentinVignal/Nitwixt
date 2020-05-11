@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:textwit/screens/start.dart';
-import 'package:textwit/services/auth.dart';
+import 'package:nitwixt/screens/start.dart';
+import 'package:nitwixt/services/auth.dart';
 
 import 'models/user_auth.dart';
 

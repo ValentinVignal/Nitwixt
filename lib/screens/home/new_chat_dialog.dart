@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:textwit/models/models.dart' as models;
+import 'package:nitwixt/models/models.dart' as models;
 import 'package:provider/provider.dart';
-import 'package:textwit/services/database/database.dart' as database;
-import 'package:textwit/shared/constants.dart';
+import 'package:nitwixt/services/database/database.dart' as database;
+import 'package:nitwixt/shared/constants.dart';
 
 class NewChatDialog extends StatefulWidget {
   @override

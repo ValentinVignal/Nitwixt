@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:textwit/models/message_public.dart';
+import 'package:nitwixt/models/message_public.dart';
 
 class Message {
   final String id;    // Id of the message

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:textwit/models/models.dart' as models;
-import 'package:textwit/screens/home/chat_tile.dart';
+import 'package:nitwixt/models/models.dart' as models;
+import 'package:nitwixt/screens/home/chat_tile.dart';
 
 class ChatList extends StatefulWidget {
   @override

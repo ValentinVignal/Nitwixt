@@ -1,7 +1,7 @@
 import 'package:dash_chat/dash_chat.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:textwit/models/models.dart' as models;
+import 'package:nitwixt/models/models.dart' as models;
 
 class MessageTile extends StatefulWidget {
   models.Message message;

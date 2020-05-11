@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:textwit/screens/account/account.dart';
-import 'package:textwit/screens/home/chat_list.dart';
-import 'package:textwit/services/auth.dart';
+import 'package:nitwixt/screens/account/account.dart';
+import 'package:nitwixt/screens/home/chat_list.dart';
+import 'package:nitwixt/services/auth.dart';
 import 'package:provider/provider.dart';
-import 'package:textwit/models/models.dart' as models;
-import 'package:textwit/shared/loading.dart';
+import 'package:nitwixt/models/models.dart' as models;
+import 'package:nitwixt/shared/loading.dart';
 import 'new_chat_dialog.dart';
 
 // Different options in the popup menu
@@ -69,7 +69,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
         backgroundColor: Colors.grey[900],
         appBar: AppBar(
-          title: Text('Textwit'),
+          title: Text('Nitwixt'),
           backgroundColor: Colors.blueGrey[800],
           elevation: 0.0,
           actions: <Widget>[

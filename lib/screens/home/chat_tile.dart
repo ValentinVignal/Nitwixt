@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:textwit/models/models.dart' as models;
-import 'package:textwit/screens/chat/chat_provider.dart';
+import 'package:nitwixt/models/models.dart' as models;
+import 'package:nitwixt/screens/chat/chat_provider.dart';
 
 class ChatTile extends StatelessWidget {
   final models.ChatPublic chat;

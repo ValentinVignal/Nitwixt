@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:textwit/models/user.dart';
-import 'package:textwit/models/user_auth.dart';
+import 'package:nitwixt/models/user.dart';
+import 'package:nitwixt/models/user_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:textwit/shared/constants.dart';
-import 'package:textwit/shared/loading.dart';
+import 'package:nitwixt/shared/constants.dart';
+import 'package:nitwixt/shared/loading.dart';
 
 class AccountInfo extends StatefulWidget {
   @override

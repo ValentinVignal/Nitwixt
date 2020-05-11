@@ -1,4 +1,4 @@
-# textwit
+# nitwixt
 
 A new Flutter application.
 

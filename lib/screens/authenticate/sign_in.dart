@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:textwit/services/auth.dart';
+import 'package:nitwixt/services/auth.dart';
 import 'package:slider_button/slider_button.dart';
 
-import 'package:textwit/shared/constants.dart';
-import 'package:textwit/shared/loading.dart';
+import 'package:nitwixt/shared/constants.dart';
+import 'package:nitwixt/shared/loading.dart';
 
 class SignIn extends StatefulWidget {
   final Function toggleView;
@@ -48,7 +48,7 @@ class _SignInState extends State<SignIn> {
                   ),
                   SizedBox(height: 10.0),
                   Text(
-                    'Textwit',
+                    'Nitwixt',
                     style: TextStyle(color: Colors.blue[900], fontSize: 25.0),
                   ),
                   SizedBox(height: 20.0),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:textwit/screens/account/account_edit.dart';
-import 'package:textwit/screens/account/account_info.dart';
+import 'package:nitwixt/screens/account/account_edit.dart';
+import 'package:nitwixt/screens/account/account_info.dart';
 
 class Account extends StatefulWidget {
   @override

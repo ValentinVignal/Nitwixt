@@ -1,5 +1,5 @@
-import 'package:textwit/models/chat_public.dart';
-import 'package:textwit/models/user_public.dart';
+import 'package:nitwixt/models/chat_public.dart';
+import 'package:nitwixt/models/user_public.dart';
 
 // Public user
 class User {

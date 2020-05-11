@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:textwit/models/models.dart' as models;
-import 'package:textwit/services/auth.dart' as auth;
-import 'package:textwit/shared/loading.dart';
+import 'package:nitwixt/models/models.dart' as models;
+import 'package:nitwixt/services/auth.dart' as auth;
+import 'package:nitwixt/shared/loading.dart';
 
 class VerifyEmail extends StatefulWidget {
   @override
@@ -44,7 +44,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
           children: <Widget>[
             SizedBox(height: 100.0),
             Text(
-              'To use Textwit, you must verify you email address.\n\nPress the button to send a confirmation email to:\n\n${userAuth.email}',
+              'To use Nitwixt, you must verify you email address.\n\nPress the button to send a confirmation email to:\n\n${userAuth.email}',
               style: textStyle.copyWith(color: Colors.blue[900]),
               textAlign: TextAlign.center,
             ),

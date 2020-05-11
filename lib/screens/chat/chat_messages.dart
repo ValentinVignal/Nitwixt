@@ -2,12 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:textwit/screens/message/message_tile.dart';
-import 'package:textwit/shared/constants.dart';
-import 'package:textwit/shared/loading.dart';
-import 'package:textwit/models/models.dart' as models;
-import 'package:textwit/services/database/database.dart' as database;
-import 'package:dash_chat/dash_chat.dart' as dc;
+import 'package:nitwixt/screens/message/message_tile.dart';
+import 'package:nitwixt/shared/constants.dart';
+import 'package:nitwixt/shared/loading.dart';
+import 'package:nitwixt/models/models.dart' as models;
+import 'package:nitwixt/services/database/database.dart' as database;
 
 class ChatMessages extends StatefulWidget {
   @override

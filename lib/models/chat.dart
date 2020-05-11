@@ -1,6 +1,6 @@
-import 'package:textwit/models/models.dart';
-import 'package:textwit/models/user_public.dart';
-import 'package:textwit/models/chat_public.dart';
+import 'package:nitwixt/models/models.dart';
+import 'package:nitwixt/models/user_public.dart';
+import 'package:nitwixt/models/chat_public.dart';
 
 class Chat {
   String id;    // The id of the chat
