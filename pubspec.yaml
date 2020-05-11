@@ -40,6 +40,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.7.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -56,6 +57,7 @@ flutter:
   assets:
     - assets/images/image.png
     - assets/images/T.png
+    - assets/images/logo.png
     - assets/images/message.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

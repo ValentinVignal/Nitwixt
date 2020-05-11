@@ -49,8 +49,8 @@ class _RegisterState extends State<Register> {
                 children: <Widget>[
                   SizedBox(height: 10.0),
                   Image.asset(
-                    'assets/images/T.png',
-                    scale: 10,
+                    'assets/images/logo.png',
+                    scale: 8.0,
                   ),
                   SizedBox(height: 10.0),
                   Text(
