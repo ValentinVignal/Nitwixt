@@ -90,6 +90,7 @@ class _SetUsernameState extends State<SetUsername> {
                         } else {
                           // Username doesn't exist -> update the user record
                           user.username = username;
+                          user.name = username;
                           await DatabaseUser.createUser(user: user).catchError((errorMessage) {
                             setState(() {
                               errorMessage = 'Could not set the username $username';

@@ -1,4 +1,4 @@
-package com.example.nitwixt
+package com.valentinvignal.nitwixt;
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity
