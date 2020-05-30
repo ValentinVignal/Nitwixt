@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nitwixt/screens/home/notifications_wrapper.dart';
 import 'package:provider/provider.dart';
 
 import 'package:nitwixt/models/models.dart' as models;
@@ -40,7 +41,7 @@ class UserReceiver extends StatelessWidget {
       // No record for now on database, we have to create it
       return SetUsername();
     } else {
-      return Home();
+      return NotificationsWrapper();
     }
   }
 }
