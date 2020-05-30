@@ -15,7 +15,7 @@ class SetUsername extends StatefulWidget {
 
 class _SetUsernameState extends State<SetUsername> {
   final _formKey = GlobalKey<FormState>();
-  final RegExp usernameRegExp = RegExp(r'[!@#<>?":`~;[\]\\|=+)(*&^%\s]');
+  final RegExp usernameRegExp = RegExp(r'^[a-zA-Z0-9_-]$');
   bool loading = false;
   String username = '';
   String errorMessage = '';
@@ -62,7 +62,7 @@ class _SetUsernameState extends State<SetUsername> {
                     validator: (val) {
                       if (val.isEmpty) {
                         return 'Enter a username';
-                      } else if (usernameRegExp.hasMatch(val)) {
+                      } else if (!usernameRegExp.hasMatch(val)) {
                         return 'A username can only contain letters, numbers, _ and -';
                       }
                       return null;
