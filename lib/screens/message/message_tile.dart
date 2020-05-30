@@ -1,4 +1,4 @@
-import 'package:dash_chat/dash_chat.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/models/models.dart' as models;
@@ -9,7 +9,7 @@ class MessageTile extends StatefulWidget {
   DateTime date;
 
   MessageTile({this.message}) {
-    date = DateTime.fromMillisecondsSinceEpoch(message.date.millisecondsSinceEpoch * 1000);
+    date = message.date.toDate();
   }
 
   @override
@@ -50,7 +50,7 @@ class _MessageTileState extends State<MessageTile> {
         Flexible(
           child: Container(
             margin: EdgeInsets.all(2.0),
-            padding: EdgeInsets.only(top: 7.0, bottom: 10.0, right: 8.0, left: 8.0),
+            padding: EdgeInsets.only(top: 7.0, bottom: 8.0, right: 8.0, left: 8.0),
             decoration: BoxDecoration(
               color: isMyMessage ? Colors.blue[400] : Colors.black,
               borderRadius: BorderRadius.all(
@@ -63,9 +63,9 @@ class _MessageTileState extends State<MessageTile> {
               widget.message.text,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 20.0,
+                fontSize: 18.0,
               ),
-              textAlign: TextAlign.justify,
+              textAlign: TextAlign.left,
             ),
           ),
         ),
