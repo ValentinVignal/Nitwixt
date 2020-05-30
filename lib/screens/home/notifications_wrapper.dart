@@ -30,9 +30,11 @@ class _NotificationsWrapperState extends State<NotificationsWrapper> {
       Platform.isAndroid ? showNotification(message['notification']) : showNotification(message['aps']['alert']);
       return;
     }, onResume: (Map<String, dynamic> message) {
+      Platform.isAndroid ? showNotification(message['notification']) : showNotification(message['aps']['alert']);
       print('onResume $message');
       return;
     }, onLaunch: (Map<String, dynamic> message) {
+      Platform.isAndroid ? showNotification(message['notification']) : showNotification(message['aps']['alert']);
       print('onLaunch $message');
       return;
     });
@@ -42,7 +44,7 @@ class _NotificationsWrapperState extends State<NotificationsWrapper> {
 //      Firestore.instance.collection('users').document(currentUserId).updateData({'pushToken': token});
 //    }).catchError((err) {
 //      Fluttertoast.showToast(msg: err.message.toString());
-    });
+    });     // TODO: Put it
   }
 
   configLocalNotification() {
