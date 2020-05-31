@@ -1,17 +1,27 @@
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:nitwixt/screens/home/home.dart';
+import 'package:nitwixt/models/models.dart' as models;
+import 'package:fluttertoast/fluttertoast.dart';
 
 class NotificationsWrapper extends StatefulWidget {
+  final models.User user;
+
+  NotificationsWrapper({@required this.user}) : super();
+
   @override
-  _NotificationsWrapperState createState() => _NotificationsWrapperState();
+  _NotificationsWrapperState createState() => _NotificationsWrapperState(user: user);
 }
 
 class _NotificationsWrapperState extends State<NotificationsWrapper> {
+  final models.User user;
+  _NotificationsWrapperState({@required this.user});
+
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
@@ -41,10 +51,11 @@ class _NotificationsWrapperState extends State<NotificationsWrapper> {
 
     firebaseMessaging.getToken().then((token) {
       print('token $token');
-//      Firestore.instance.collection('users').document(currentUserId).updateData({'pushToken': token});
-//    }).catchError((err) {
-//      Fluttertoast.showToast(msg: err.message.toString());
-    });     // TODO: Put it
+      Firestore.instance.collection('users').document(user.id).updateData({'pushToken': token});
+    }).catchError((err) {
+      print('err $err');
+      Fluttertoast.showToast(msg: err.message.toString());
+    });
   }
 
   configLocalNotification() {

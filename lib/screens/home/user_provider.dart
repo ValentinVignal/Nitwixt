@@ -41,7 +41,7 @@ class UserReceiver extends StatelessWidget {
       // No record for now on database, we have to create it
       return SetUsername();
     } else {
-      return NotificationsWrapper();
+      return NotificationsWrapper(user: user,);
     }
   }
 }

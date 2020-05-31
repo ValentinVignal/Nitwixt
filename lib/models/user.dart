@@ -9,10 +9,11 @@ class User {
   String username = ''; // The username of the user
   String name = 'New User'; // The name to display
   Map<String, ChatPublic> chats = new Map(); // The list of chats of the user
+  String pushToken;
 
   // * -------------------- Constructor --------------------
 
-  User({this.id, this.username, this.name, this.chats});
+  User({this.id, this.username, this.name, this.chats, this.pushToken});
 
   // * -------------------- To Public --------------------
 
@@ -32,6 +33,7 @@ class User {
       chatMap[chatid] = chat.toFirebaseObject();
     });
     firebaseObject['chats'] = chatMap;
+    firebaseObject['pushToken'] = this.pushToken;
 
     return firebaseObject;
   }
@@ -47,6 +49,7 @@ class User {
             })
           : Map<String, ChatPublic>();
     }
+    this.pushToken = firebaseObject.containsKey('pushToken') ? firebaseObject['pushToken'] : '';
   }
 
   User.empty() : id = '';
