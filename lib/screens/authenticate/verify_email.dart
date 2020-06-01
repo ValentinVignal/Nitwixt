@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/models/models.dart' as models;
-import 'package:nitwixt/services/auth.dart' as auth;
+import 'package:nitwixt/services/auth/auth.dart' as auth;
 import 'package:nitwixt/shared/loading.dart';
 
 class VerifyEmail extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/screens/start.dart';
-import 'package:nitwixt/services/auth.dart';
+import 'file:///D:/Valentin/Code/Nitwixt/Nitwixt/lib/services/auth/auth_service.dart';
 
 import 'models/user_auth.dart';
 

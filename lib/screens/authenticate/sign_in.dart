@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nitwixt/services/auth.dart';
+import 'package:nitwixt/services/auth/auth.dart';
 import 'package:slider_button/slider_button.dart';
 
 import 'package:nitwixt/shared/constants.dart';
@@ -15,7 +15,8 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  final AuthEmailPassword _auth = AuthEmailPassword();
+  final AuthEmailPassword _authEmailPassword = AuthEmailPassword();
+  final AuthGoogle _authGoogle = AuthGoogle();
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
   bool _passwordVisible = false;
@@ -27,7 +28,6 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-
     double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
@@ -105,6 +105,27 @@ class _SignInState extends State<SignIn> {
                   ),
                   loading ? Loading() : Container(),
                   Expanded(child: Container()),
+                  GestureDetector(
+                    onTap: () async {
+                      dynamic result = await _authGoogle.signInWithGoogle();
+                    },
+                    child: Row(
+                      children: <Widget>[
+                        Image(
+                          image: AssetImage('assets/images/google_logo.png'),
+                          height: 35.0,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Text(
+                            'Sign in with Google',
+                            style: TextStyle(fontSize: 20, color: Colors.grey),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 12.0),
                   SliderButton(
                     label: Text(
                       'Sign in',
@@ -118,7 +139,7 @@ class _SignInState extends State<SignIn> {
                     action: () async {
                       if (_formKey.currentState.validate()) {
                         setState(() => loading = true);
-                        dynamic result = await _auth.signInEmailPassword(email, password);
+                        dynamic result = await _authEmailPassword.signInEmailPassword(email, password);
                         if (result == null) {
                           setState(() {
                             error = 'Email or wrong password';

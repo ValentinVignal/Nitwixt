@@ -48,8 +48,8 @@ class User {
               return MapEntry(key_, ChatPublic.fromFirebaseObject(key, chat));
             })
           : Map<String, ChatPublic>();
+      this.pushToken = firebaseObject.containsKey('pushToken') ? firebaseObject['pushToken'] : '';
     }
-    this.pushToken = firebaseObject.containsKey('pushToken') ? firebaseObject['pushToken'] : '';
   }
 
   User.empty() : id = '';

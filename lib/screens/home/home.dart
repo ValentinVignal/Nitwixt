@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nitwixt/screens/account/account.dart';
 import 'package:nitwixt/screens/home/chat_list.dart';
-import 'package:nitwixt/services/auth.dart';
+import 'package:nitwixt/services/auth/auth.dart' as auth;
 import 'package:provider/provider.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/shared/loading.dart';
@@ -51,11 +51,13 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final AuthService _auth = AuthService();
+  final auth.AuthService _auth = auth.AuthService();
 
   @override
   Widget build(BuildContext context) {
     final models.User user = Provider.of<models.User>(context);
+    final models.UserAuth userAuth = Provider.of<models.UserAuth>(context);
+
 
     void _showCreateNewChatPanel() {
       showDialog(

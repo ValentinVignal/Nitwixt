@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/models/models.dart';
-import 'package:nitwixt/services/auth.dart';
+import 'file:///D:/Valentin/Code/Nitwixt/Nitwixt/lib/services/auth/auth_service.dart';
 import 'package:nitwixt/services/database/database.dart';
 import 'package:nitwixt/shared/constants.dart';
 import 'package:nitwixt/shared/loading.dart';
@@ -15,7 +15,7 @@ class SetUsername extends StatefulWidget {
 
 class _SetUsernameState extends State<SetUsername> {
   final _formKey = GlobalKey<FormState>();
-  final RegExp usernameRegExp = RegExp(r'^[a-zA-Z0-9_-]$');
+  final RegExp usernameRegExp = RegExp(r'^[a-zA-Z0-9_-]*$');
   bool loading = false;
   String username = '';
   String errorMessage = '';
