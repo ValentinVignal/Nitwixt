@@ -8,4 +8,5 @@ GeneratedPluginRegistrant.java
 
 key.properties
 app/google-services.json
+app/src/debug/google-services.json
 
