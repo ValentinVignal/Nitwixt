@@ -26,9 +26,9 @@ class _VerifyEmailState extends State<VerifyEmail> {
     final models.UserAuth userAuth = Provider.of<models.UserAuth>(context);
 
     return Scaffold(
-      backgroundColor: Colors.white70,
+      backgroundColor: Colors.grey[900],
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey,
+        backgroundColor: Colors.blueGrey[800],
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios,
@@ -42,17 +42,17 @@ class _VerifyEmailState extends State<VerifyEmail> {
         padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50),
         child: Column(
           children: <Widget>[
-            SizedBox(height: 100.0),
+            SizedBox(height: 50.0),
             Text(
               'To use Nitwixt, you must verify you email address.\n\nPress the button to send a confirmation email to:\n\n${userAuth.email}',
-              style: textStyle.copyWith(color: Colors.blue[900]),
+              style: textStyle.copyWith(color: Colors.grey[300]),
               textAlign: TextAlign.center,
             ),
             SizedBox(
-              height: 50.0,
+              height: 30.0,
             ),
-            RaisedButton.icon(
-              onPressed: () async {
+            GestureDetector(
+              onTap: () async {
                 setState(() {
                   isProcessing = true;
                   result = null;
@@ -75,9 +75,34 @@ class _VerifyEmailState extends State<VerifyEmail> {
                   });
                 }
               },
-              icon: Icon(Icons.email, color: Colors.white),
-              label: Text(buttonMessage, style: TextStyle(color: Colors.white)),
-              color: Colors.blue,
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  vertical: 5.0,
+                  horizontal: 10.0,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Colors.cyan[200],
+                    width: 2.0,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.email,
+                      color: Colors.cyan[200],
+                    ),
+                    SizedBox(width: 5.0,),
+                    Text(
+                      buttonMessage,
+                      style: TextStyle(color: Colors.cyan[200], fontSize: 18),
+                    ),
+                  ],
+                ),
+              ),
             ),
             SizedBox(
               height: 20.0,
@@ -116,18 +141,39 @@ class _VerifyEmailState extends State<VerifyEmail> {
               height: 20.0,
             ),
             isEmailSent
-                ? RaisedButton.icon(
-                    onPressed: () => _auth.signOut(),
-                    icon: Icon(Icons.done, color: Colors.white),
-                    label: Text(
-                      'I have verified my email',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    color: Colors.green,
-                  )
-                : Container(
-                    height: 0.0,
+              ?
+            GestureDetector(
+              onTap: () => _auth.signOut(),
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  vertical: 5.0,
+                  horizontal: 10.0,
                   ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Colors.green,
+                    width: 2.0,
+                    ),
+                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.done,
+                      color: Colors.green,
+                      ),
+                    SizedBox(width: 5.0,),
+                    Text(
+                      'I have verified my email',
+                      style: TextStyle(color: Colors.green, fontSize: 18),
+                      ),
+                  ],
+                  ),
+                ),
+              )
+            : Container(height: 0.0,),
             SizedBox(
               height: isEmailSent ? 20.0 : 0.0,
             ),

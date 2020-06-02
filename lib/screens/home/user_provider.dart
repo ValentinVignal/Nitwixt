@@ -38,6 +38,7 @@ class UserReceiver extends StatelessWidget {
         body: Loading(),
         );
     } else if (user.isEmpty()) {
+//    } else if (true) {
       // No record for now on database, we have to create it
       return SetUsername();
     } else {

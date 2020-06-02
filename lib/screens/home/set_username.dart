@@ -26,9 +26,9 @@ class _SetUsernameState extends State<SetUsername> {
     double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Colors.white70,
+      backgroundColor: Colors.grey[900],
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey,
+        backgroundColor: Colors.blueGrey[800],
         title: Text('Nitwixt'),
         leading: IconButton(
           onPressed: () => AuthService().signOut(),
@@ -47,7 +47,7 @@ class _SetUsernameState extends State<SetUsername> {
                   SizedBox(height: 50.0),
                   Text('Choose a username',
                       style: TextStyle(
-                        color: Colors.blue[900],
+                        color: Colors.grey[300],
                         fontSize: 20.0,
                       )),
                   SizedBox(
@@ -74,8 +74,8 @@ class _SetUsernameState extends State<SetUsername> {
                   SizedBox(
                     height: 10.0,
                   ),
-                  RaisedButton.icon(
-                    onPressed: () async {
+                  GestureDetector(
+                    onTap: () async {
                       if (_formKey.currentState.validate()) {
                         setState(() {
                           loading = true;
@@ -100,14 +100,71 @@ class _SetUsernameState extends State<SetUsername> {
                         }
                       }
                     },
-                    icon: Icon(Icons.check, color: Colors.white),
-                    label: Text('Confirm',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15.0,
-                        )),
-                    color: Colors.blue,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 5.0,
+                        horizontal: 10.0,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Colors.cyan[200],
+                          width: 2.0,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            Icons.check,
+                            color: Colors.cyan[200],
+                          ),
+                          SizedBox(
+                            width: 5.0,
+                          ),
+                          Text(
+                            'Confirm',
+                            style: TextStyle(color: Colors.cyan[200], fontSize: 18),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
+//                  RaisedButton.icon(
+//                    onPressed: () async {
+//                      if (_formKey.currentState.validate()) {
+//                        setState(() {
+//                          loading = true;
+//                        });
+//                        QuerySnapshot documents = await userCollection.where('username', isEqualTo: username).getDocuments();
+//                        if (documents.documents.isNotEmpty) {
+//                          // There is already a user with this username
+//                          setState(() {
+//                            errorMessage = 'Username $username is already used';
+//                            loading = false;
+//                          });
+//                        } else {
+//                          // Username doesn't exist -> update the user record
+//                          user.username = username;
+//                          user.name = username;
+//                          await DatabaseUser.createUser(user: user).catchError((errorMessage) {
+//                            setState(() {
+//                              errorMessage = 'Could not set the username $username';
+//                              loading = false;
+//                            });
+//                          });
+//                        }
+//                      }
+//                    },
+//                    icon: Icon(Icons.check, color: Colors.white),
+//                    label: Text('Confirm',
+//                        style: TextStyle(
+//                          color: Colors.white,
+//                          fontSize: 15.0,
+//                        )),
+//                    color: Colors.blue,
+//                  ),
                   Text(
                     errorMessage,
                     style: TextStyle(

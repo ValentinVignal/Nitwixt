@@ -26,8 +26,6 @@ class AuthGoogle extends AuthService {
 
       final FirebaseUser currentUser = await super.auth.currentUser();
       assert(firebaseUser.uid == currentUser.uid);
-      print('firebase user');
-      print(firebaseUser);
       final user = userFromFirebaseUser(firebaseUser);
       return user;
     } catch (e) {
