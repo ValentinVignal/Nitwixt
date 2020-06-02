@@ -1,5 +1,7 @@
 # nitwixt
 
+[![Codemagic build status](https://api.codemagic.io/apps/5eba896bd2777f000d0b7043/5eba896bd2777f000d0b7042/status_badge.svg)](https://codemagic.io/apps/5eba896bd2777f000d0b7043/5eba896bd2777f000d0b7042/latest_build)
+
 A new Flutter application.
 
 ## Getting Started
