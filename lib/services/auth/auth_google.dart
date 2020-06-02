@@ -7,7 +7,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 // * ------------------------------------------------------------
 
 class AuthGoogle extends AuthService {
-
   // ? -------------------- Sign in --------------------
   Future signInWithGoogle() async {
     try {
@@ -36,17 +35,4 @@ class AuthGoogle extends AuthService {
     }
     print('end');
   }
-
-//  // ? -------------------- Sign in --------------------
-//  @override
-//  Future signOut() async {
-//    try {
-//      print('in signout google');
-//      await googleSignIn.signOut();
-//      googleSignIn.
-//      return await super.signOut();
-//    } catch (e) {
-//      print(e.toString());
-//    }
-//  }
 }

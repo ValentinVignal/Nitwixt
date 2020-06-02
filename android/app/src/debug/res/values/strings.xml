@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Nitwixt Debug</string>
+    <string name="facebook_app_id">620356345229192</string>
+    <string name="fb_login_protocol_scheme">fb620356345229192</string>
 </resources>

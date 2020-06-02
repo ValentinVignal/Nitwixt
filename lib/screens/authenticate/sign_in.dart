@@ -17,6 +17,7 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   final AuthEmailPassword _authEmailPassword = AuthEmailPassword();
   final AuthGoogle _authGoogle = AuthGoogle();
+  final AuthFacebook _authFacebook = AuthFacebook();
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
   bool _passwordVisible = false;
@@ -125,6 +126,13 @@ class _SignInState extends State<SignIn> {
                       ],
                     ),
                   ),
+                  SizedBox(height: 12.0),
+                  RaisedButton.icon(
+                      onPressed: () {
+                        _authFacebook.signInWithFacebook();
+                      },
+                      icon: Icon(Icons.accessibility_new),
+                      label: Text('Facebook')),
                   SizedBox(height: 12.0),
                   SliderButton(
                     label: Text(

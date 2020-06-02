@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:nitwixt/models/user_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   final FirebaseAuth auth = FirebaseAuth.instance;
-  final googleSignIn = GoogleSignIn();
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+  final FacebookLogin facebookLogin = FacebookLogin();
 
   // Create user obj based on FirebaseUser
   UserAuth userFromFirebaseUser(FirebaseUser firebaseUser) {
@@ -32,6 +34,8 @@ class AuthService {
       return await auth.signOut().then((res) async {
         if (await googleSignIn.isSignedIn()) {
           return googleSignIn.signOut();
+        } else if (await facebookLogin.isLoggedIn) {
+          return facebookLogin.logOut();
         } else {
           return res;
         }
