@@ -52,12 +52,35 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final auth.AuthService _auth = auth.AuthService();
+  ScaffoldState scaffoldState;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  void showDisclaimerSnackBar() {
+    scaffoldState.showSnackBar(
+      SnackBar(
+        duration: const Duration(minutes: 5),
+        content: Text('/!\\ Warning /!\\\nNitwixt is still a young project and I didn\'t spend much time on security and privacy of data.\nPlease don\'t put any sensitive information in this app. :)'),
+        action: SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            _scaffoldKey.currentState.removeCurrentSnackBar();
+          },
+        ),
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => showDisclaimerSnackBar());
+  }
 
   @override
   Widget build(BuildContext context) {
     final models.User user = Provider.of<models.User>(context);
     final models.UserAuth userAuth = Provider.of<models.UserAuth>(context);
-
 
     void _showCreateNewChatPanel() {
       showDialog(
@@ -69,6 +92,7 @@ class _HomeState extends State<Home> {
     }
 
     return Scaffold(
+        key: _scaffoldKey,
         backgroundColor: Colors.grey[900],
         appBar: AppBar(
           title: Text('Nitwixt'),
@@ -112,7 +136,14 @@ class _HomeState extends State<Home> {
             ),
           ],
         ),
-        body: user == null ? Loading() : ChatList(),
+        body: Builder(
+          builder: (BuildContext buildContext) {
+            scaffoldState = Scaffold.of(buildContext);
+            return user == null ? Loading() : ChatList();
+          },
+        ),
+
+//        body: user == null ? Loading() : ChatList(),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             _showCreateNewChatPanel();
