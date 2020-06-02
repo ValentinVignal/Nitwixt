@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/models/models.dart';
-import 'file:///D:/Valentin/Code/Nitwixt/Nitwixt/lib/services/auth/auth_service.dart';
+import 'package:nitwixt/services/auth/auth_service.dart';
 import 'package:nitwixt/services/database/database.dart';
 import 'package:nitwixt/shared/constants.dart';
 import 'package:nitwixt/shared/loading.dart';
@@ -131,40 +131,6 @@ class _SetUsernameState extends State<SetUsername> {
                       ),
                     ),
                   ),
-//                  RaisedButton.icon(
-//                    onPressed: () async {
-//                      if (_formKey.currentState.validate()) {
-//                        setState(() {
-//                          loading = true;
-//                        });
-//                        QuerySnapshot documents = await userCollection.where('username', isEqualTo: username).getDocuments();
-//                        if (documents.documents.isNotEmpty) {
-//                          // There is already a user with this username
-//                          setState(() {
-//                            errorMessage = 'Username $username is already used';
-//                            loading = false;
-//                          });
-//                        } else {
-//                          // Username doesn't exist -> update the user record
-//                          user.username = username;
-//                          user.name = username;
-//                          await DatabaseUser.createUser(user: user).catchError((errorMessage) {
-//                            setState(() {
-//                              errorMessage = 'Could not set the username $username';
-//                              loading = false;
-//                            });
-//                          });
-//                        }
-//                      }
-//                    },
-//                    icon: Icon(Icons.check, color: Colors.white),
-//                    label: Text('Confirm',
-//                        style: TextStyle(
-//                          color: Colors.white,
-//                          fontSize: 15.0,
-//                        )),
-//                    color: Colors.blue,
-//                  ),
                   Text(
                     errorMessage,
                     style: TextStyle(
