@@ -59,7 +59,7 @@ class _HomeState extends State<Home> {
     scaffoldState.showSnackBar(
       SnackBar(
         duration: const Duration(minutes: 5),
-        content: Text('/!\\ Warning /!\\\nNitwixt is still a young project and I didn\'t spend much time on security and privacy of data.\nPlease don\'t put any sensitive information in this app. :)'),
+        content: Text('/!\\ Warning /!\\\nNitwixt is still a young project and I didn\'t spend much time on security and privacy of data.\nPlease don\'t put any sensitive information in this app. :)\nAlso, because of incoming data structure changes, all the data might be deleted soon O:)'),
         action: SnackBarAction(
           label: 'Ok',
           onPressed: () {
