@@ -31,6 +31,5 @@ class AuthGoogle extends AuthService {
     } catch (e) {
       print('GoogleSignIn error ${e.toString()}');
     }
-    print('end');
   }
 }
