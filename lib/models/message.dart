@@ -17,6 +17,7 @@ class Message {
 
     Map<String, Object> firebaseObject = Map<String, Object>();
 
+    firebaseObject['id'] = this.id;
     firebaseObject['date'] = this.date;
     firebaseObject['text'] = this.text;
     firebaseObject['userid'] = this.userid;

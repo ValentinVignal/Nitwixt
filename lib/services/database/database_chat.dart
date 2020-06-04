@@ -11,31 +11,44 @@ class DatabaseChat {
 
   final CollectionReference chatCollection = collections.chatCollection;
 
-  static models.Chat _chatFromSnapshot(DocumentSnapshot snapshot) {
+  static models.Chat _chatFromDocumentSnapshot(DocumentSnapshot snapshot) {
     return models.Chat.fromFirebaseObject(snapshot.documentID, snapshot.data);
+  }
+  
+  static List<models.Chat> _chatFromQuerySnapshot(QuerySnapshot querySnapshot) {
+    print('querysnapshot ${querySnapshot.documents.length}');
+    return querySnapshot.documents.map(_chatFromDocumentSnapshot).toList();
   }
 
   Stream<models.Chat> get chat {
-    return chatCollection.document(id).snapshots().map(_chatFromSnapshot);
+    return chatCollection.document(id).snapshots().map(_chatFromDocumentSnapshot);
   }
 
-  static List<models.Message> _chatMessagesFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.documents.map((doc) {
+  static List<models.Message> _chatMessagesFromQuerySnapshot(QuerySnapshot snapshot) {
+    return snapshot.documents.map((DocumentSnapshot doc) {
       return models.Message.fromFirebaseObject(doc.documentID, doc.data);
     }).toList();
   }
 
   Stream<List<models.Message>> get messageList {
-    return chatCollection.document(id).collection('messages').orderBy('date', descending: true).snapshots().map(_chatMessagesFromSnapshot);
+    return chatCollection.document(id).collection('messages').orderBy('date', descending: true).snapshots().map(_chatMessagesFromQuerySnapshot);
   }
-
+  
   Stream<List<models.Message>> getMessageList({DocumentSnapshot startAfter, int limit = 10}) {
     Query q = chatCollection.document(id).collection('messages').orderBy('date', descending: true);
     if (startAfter != null) {
       q = q.startAt([startAfter.data]);
     }
     q = q.limit(limit);
-    return q.snapshots().map(_chatMessagesFromSnapshot);
+    return q.snapshots().map(_chatMessagesFromQuerySnapshot);
+  }
+  
+  static Stream<List<models.Chat>> getChatList({List<String> chatIdList, int limit=10}) {
+    print('chatList $chatIdList');
+    Query query = collections.chatCollection; //.where('id', isEqualTo: chatIdList[0]);
+//    query = query.limit(limit);
+    var a =  query.snapshots().map(_chatFromQuerySnapshot);
+    return a;
   }
 
   Future sendMessage({String text, String userid}) {
@@ -76,9 +89,9 @@ class DatabaseChat {
     models.Chat newChat = models.Chat(
       id: '',
       name: '',
-      members: allUserList.asMap().map<String, models.UserPublic>((int index, models.User user) {
-        return MapEntry(user.id, user.toUserPublic());
-      }),
+      members: allUserList.map<String>((models.User user) {
+        return user.id;
+      }).toList(),
     );
     String chatid = await collections.chatCollection.add(
       newChat.toFirebaseObject()
@@ -92,7 +105,7 @@ class DatabaseChat {
     }
     // * ----- Update the users -----
     allUserList.forEach((models.User user) {
-      user.chats[chatid] = newChat.toChatPublic(user: user);
+      user.chats.add(chatid);
       collections.userCollection.document(user.id).updateData({
           'chats': user.toFirebaseObject()['chats'],    // Only update the chats to prevent bugs
       });

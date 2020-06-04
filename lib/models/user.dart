@@ -8,7 +8,7 @@ class User {
   final String id; // The id of the user
   String username = ''; // The username of the user
   String name = 'New User'; // The name to display
-  Map<String, ChatPublic> chats = new Map(); // The list of chats of the user
+  List<String> chats = [];
   String pushToken;
 
   // * -------------------- Constructor --------------------
@@ -26,13 +26,10 @@ class User {
   Map<String, Object> toFirebaseObject() {
     Map<String, Object> firebaseObject = Map<String, Object>();
 
+    firebaseObject['id'] = this.id;
     firebaseObject['username'] = this.username;
     firebaseObject['name'] = this.name;
-    Map<String, Object> chatMap = Map<String, Object>();
-    this.chats.forEach((String chatid, ChatPublic chat) {
-      chatMap[chatid] = chat.toFirebaseObject();
-    });
-    firebaseObject['chats'] = chatMap;
+    firebaseObject['chats'] = this.chats;
     firebaseObject['pushToken'] = this.pushToken;
 
     return firebaseObject;
@@ -42,12 +39,7 @@ class User {
     if (firebaseObject != null) {
       this.username = firebaseObject.containsKey('username') ? firebaseObject['username'] : '';
       this.name = firebaseObject.containsKey('name') ? firebaseObject['name'] : '';
-      this.chats = firebaseObject.containsKey('chats')
-          ? firebaseObject['chats'].map<String, ChatPublic>((key, chat) {
-              String key_ = key;
-              return MapEntry(key_, ChatPublic.fromFirebaseObject(key, chat));
-            })
-          : Map<String, ChatPublic>();
+      this.chats = firebaseObject.containsKey('chats') ? List.from(firebaseObject['chats']) : [];
       this.pushToken = firebaseObject.containsKey('pushToken') ? firebaseObject['pushToken'] : '';
     }
   }

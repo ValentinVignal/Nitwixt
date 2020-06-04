@@ -5,7 +5,7 @@ import 'package:nitwixt/models/chat_public.dart';
 class Chat {
   String id;    // The id of the chat
   String name;      // The name of the chat
-  Map<String, UserPublic> members;   // The Map of the members
+  List<String> members;
 
   Chat({ this.id, this.name, this.members});
 
@@ -24,10 +24,8 @@ class Chat {
     Map<String, Object> firebaseObject = Map<String, Object>();
 
     firebaseObject['name'] = this.name;
-    Map members = this.members.map((String key, UserPublic user) {
-      return MapEntry(key, user.toFirebaseObject());
-    });
-    firebaseObject['members'] = members;
+    firebaseObject['members'] = this.members;
+    firebaseObject['id'] = this.id;
 
     return firebaseObject;
   }
@@ -35,16 +33,11 @@ class Chat {
   Chat.fromFirebaseObject(String id, Map firebaseObject):
       id = id {
     this.name = firebaseObject.containsKey('name') ? firebaseObject['name'] : 'Unkown name';
-    this.members = firebaseObject.containsKey('members') ?
-        firebaseObject['members'].map<String, UserPublic>((key, userObject) {
-          String key_ = key;
-          return MapEntry(key_, UserPublic.fromFirebaseObject(key, userObject));
-        }) :
-        Map<String, UserPublic>();
+    this.members = firebaseObject.containsKey('members') ? firebaseObject['members'] : [];
   }
 
   String nameToDisplay(User user) {
-    if(!this.members.containsKey(user.id)) {
+    if(!this.members.contains(user.id)) {
       // The user is not in this chat
       return null;
     } else {
@@ -59,9 +52,10 @@ class Chat {
           return '(@You) ${user.name}';
         } else if (this.members.length == 2) {
           // Private chat
-          return this.members.values.where((UserPublic member) {
-            return member.id != user.id;
-          }).toList()[0].name;
+          return 'Private Chat';
+//          return this.members.values.where((UserPublic member) {
+//            return member.id != user.id;
+//          }).toList()[0].name;
         } else {
           // It is a chat with more than 2 people
           return 'Group Chat';
