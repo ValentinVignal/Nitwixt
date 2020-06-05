@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:nitwixt/services/database/database.dart';
 import 'package:nitwixt/shared/loading.dart';
@@ -29,12 +30,11 @@ class _ChatListState extends State<ChatList> {
 
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
-
     final models.User user = Provider.of<models.User>(context) ?? [];
-//    final List<models.ChatPublic> chats = user.chats.values.toList();
-
+    print('user $user');
     return StreamBuilder<List<models.Chat>>(
       stream: DatabaseChat.getChatList(chatIdList: user.chats, limit: _nbChats),
       builder: (context, snapshot) {
@@ -44,32 +44,14 @@ class _ChatListState extends State<ChatList> {
         } else {
           List<models.Chat> chatList = snapshot.data;
           double height = MediaQuery.of(context).size.height;
-
-          return SizedBox(
-            height: height,
-            child: Column(
-              children: <Widget>[
-                Expanded(
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    itemCount: chatList.length,
-                    itemBuilder: (context, index) {
-                      models.Chat chat = chatList[index];
-                      return Text('Chat ${chat.name}, $index');
-                    },
-                  ),
-                )
-              ],
-            )
+          return ListView.builder(
+            itemCount: chatList.length,
+            itemBuilder: (context, index) {
+              return ChatTile(chat: chatList[index]);
+            },
           );
         }
       },
     );
-//    return ListView.builder(
-//      itemCount: chats.length,
-//      itemBuilder: (context, index) {
-//        return ChatTile(chat: chats[index]);
-//      },
-//    );
   }
 }

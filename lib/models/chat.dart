@@ -32,8 +32,10 @@ class Chat {
 
   Chat.fromFirebaseObject(String id, Map firebaseObject):
       id = id {
-    this.name = firebaseObject.containsKey('name') ? firebaseObject['name'] : 'Unkown name';
-    this.members = firebaseObject.containsKey('members') ? firebaseObject['members'] : [];
+    if (firebaseObject != null) {
+      this.name = firebaseObject.containsKey('name') ? firebaseObject['name'] : 'Unkown name';
+      this.members = firebaseObject.containsKey('members') ? List.from(firebaseObject['members']) : [];
+    }
   }
 
   String nameToDisplay(User user) {

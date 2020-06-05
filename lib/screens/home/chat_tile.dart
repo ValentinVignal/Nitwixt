@@ -3,7 +3,7 @@ import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/screens/chat/chat_provider.dart';
 
 class ChatTile extends StatelessWidget {
-  final models.ChatPublic chat;
+  final models.Chat chat;
 
   ChatTile({this.chat});
 
