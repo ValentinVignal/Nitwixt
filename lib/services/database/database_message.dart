@@ -4,8 +4,7 @@ import 'collections.dart';
 import 'package:nitwixt/models/models.dart' as models;
 
 class DatabaseMessage extends DatabaseChat {
-
-  DatabaseMessage({chatId}): super(chatId: chatId);
+  DatabaseMessage({chatId}) : super(chatId: chatId);
 
   static List<models.Message> messagesFromQuerySnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((DocumentSnapshot doc) {
@@ -28,10 +27,9 @@ class DatabaseMessage extends DatabaseChat {
 
   Future sendMessage({String text, String userid}) async {
     models.Message message = models.Message(id: '', date: Timestamp.now(), text: text, userid: userid);
-    DocumentReference documentReference =  await chatCollection.document(chatId).collection('messages').add(message.toFirebaseObject());
+    DocumentReference documentReference = await chatCollection.document(chatId).collection('messages').add(message.toFirebaseObject());
     return await chatCollection.document(chatId).collection('messages').document(documentReference.documentID).updateData({
       'id': documentReference.documentID,
     });
   }
-
 }

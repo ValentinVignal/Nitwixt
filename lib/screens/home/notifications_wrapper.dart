@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +7,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:nitwixt/screens/home/home.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:nitwixt/shared/loading.dart';
+import 'package:provider/provider.dart';
+import 'package:nitwixt/services/database/database.dart' as database;
+import 'package:path_provider/path_provider.dart';
 
 class NotificationsWrapper extends StatefulWidget {
   final models.User user;
@@ -20,6 +23,8 @@ class NotificationsWrapper extends StatefulWidget {
 
 class _NotificationsWrapperState extends State<NotificationsWrapper> {
   final models.User user;
+  models.PushToken pushToken;
+
   _NotificationsWrapperState({@required this.user});
 
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
@@ -48,14 +53,13 @@ class _NotificationsWrapperState extends State<NotificationsWrapper> {
       print('onLaunch $message');
       return;
     });
-
-    firebaseMessaging.getToken().then((token) {
-      print('token $token');
-      Firestore.instance.collection('users').document(user.id).updateData({'pushToken': token});
-    }).catchError((err) {
-      print('err $err');
-      Fluttertoast.showToast(msg: err.message.toString());
-    });
+//    firebaseMessaging.getToken().then((String token){
+//      pushToken = models.PushToken(current: token);
+//      database.DatabasePushToken(id: user.id).newToken(token);
+//    }).catchError((err) {
+//        print('err $err');
+//        Fluttertoast.showToast(msg: err.toString());
+//    });
   }
 
   configLocalNotification() {
@@ -91,6 +95,30 @@ class _NotificationsWrapperState extends State<NotificationsWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    return Home();
+    return FutureProvider<models.PushToken>.value(
+      value: firebaseMessaging.getToken().then<models.PushToken>((String token) async {
+        print('token $token');
+        pushToken = models.PushToken(current: token);
+        await database.DatabasePushToken(id: user.id).newToken(token);
+        return pushToken;
+      }).catchError((err) {
+        print('err $err');
+        Fluttertoast.showToast(msg: err.toString());
+      }),
+      child: PushTokenReceiver(),
+    );
+  }
+}
+
+class PushTokenReceiver extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    models.PushToken pushToken = Provider.of<models.PushToken>(context);
+
+    if (pushToken == null) {
+      return Loading();
+    } else {
+      return Home();
+    }
   }
 }

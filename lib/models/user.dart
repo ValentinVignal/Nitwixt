@@ -7,7 +7,7 @@ class User {
   String username = ''; // The username of the user
   String name = 'New User'; // The name to display
   List<String> chats = [];
-  String pushToken;
+  List<String> pushToken;
 
   // * -------------------- Constructor --------------------
 
@@ -34,7 +34,7 @@ class User {
       this.username = firebaseObject.containsKey('username') ? firebaseObject['username'] : '';
       this.name = firebaseObject.containsKey('name') ? firebaseObject['name'] : '';
       this.chats = firebaseObject.containsKey('chats') ? List.from(firebaseObject['chats']) : [];
-      this.pushToken = firebaseObject.containsKey('pushToken') ? firebaseObject['pushToken'] : '';
+      this.pushToken = firebaseObject.containsKey('pushToken') ? List.from(firebaseObject['pushToken']) : [];
     }
   }
 

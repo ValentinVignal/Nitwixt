@@ -81,6 +81,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     final models.User user = Provider.of<models.User>(context);
     final models.UserAuth userAuth = Provider.of<models.UserAuth>(context);
+    final models.PushToken pushToken = Provider.of<models.PushToken>(context);
 
     void _showCreateNewChatPanel() {
       showDialog(
@@ -121,7 +122,7 @@ class _HomeState extends State<Home> {
                         }
                       case PopupMenuOptions.logout:
                         {
-                          await _auth.signOut();
+                          await _auth.signOut(pushToken: pushToken.current);
                           break;
                         }
                     }
