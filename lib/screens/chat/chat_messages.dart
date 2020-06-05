@@ -37,10 +37,10 @@ class _ChatMessagesState extends State<ChatMessages> {
   Widget build(BuildContext context) {
     final models.User user = Provider.of<models.User>(context);
     final models.Chat chat = Provider.of<models.Chat>(context);
-    final database.DatabaseChat _databaseChat = database.DatabaseChat(id: chat.id);
+    final database.DatabaseMessage _databaseMessage = database.DatabaseMessage(chatId: chat.id);
 
     return StreamBuilder<List<models.Message>>(
-      stream: _databaseChat.getMessageList(limit: _nbMessages),
+      stream: _databaseMessage.getMessageList(limit: _nbMessages),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Loading();
@@ -59,7 +59,7 @@ class _ChatMessagesState extends State<ChatMessages> {
                     reverse: true,
                     itemBuilder: (context, index) {
                       models.Message message = messageList[index];
-                      return MessageTile(message: messageList[index],);
+                      return MessageTile(message: message);
                     },
                     shrinkWrap: true,
                   ),
@@ -72,7 +72,7 @@ class _ChatMessagesState extends State<ChatMessages> {
                       icon: Icon(Icons.send),
                       onPressed: () async {
                         if (textController.text.isNotEmpty) {
-                          await _databaseChat.sendMessage(text: textController.text, userid: user.id);
+                          await _databaseMessage.sendMessage(text: textController.text, userid: user.id);
                           WidgetsBinding.instance.addPostFrameCallback((_) => textController.clear());
                         }
                       },
