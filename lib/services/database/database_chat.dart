@@ -77,7 +77,7 @@ class DatabaseChat {
     }
     // All the users have been found
     List<models.User> otherUserList = documentsList.map((QuerySnapshot documents) {
-      return DatabaseUser.userFromSnapshot(documents.documents[0]);
+      return DatabaseUser.userFromDocumentSnapshot(documents.documents[0]);
     }).toList();
     List<models.User> allUserList = [user] + otherUserList;
 

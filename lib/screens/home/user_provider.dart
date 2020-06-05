@@ -17,7 +17,7 @@ class UserProvider extends StatelessWidget {
 
     return StreamProvider<models.User>.value(
       // * Provides the User to all the app
-      value: databaseUser.user,
+      value: databaseUser.userStream,
         child: MaterialApp(
           home: UserReceiver(),
           ),

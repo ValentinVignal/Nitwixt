@@ -1,24 +1,16 @@
 import 'package:nitwixt/models/models.dart';
-import 'package:nitwixt/models/user_public.dart';
-import 'package:nitwixt/models/chat_public.dart';
+import 'package:nitwixt/services/database/database_user.dart';
 
 class Chat {
+  // * -------------------- Stored in Firebase --------------------
   String id;    // The id of the chat
   String name;      // The name of the chat
   List<String> members;
 
-  Chat({ this.id, this.name, this.members});
+  // * -------------------- Constructed later Firebase --------------------
+  Map<String, String> _nameToDisplay;     // user id -> other user name (user for private chat with 2 persons)
 
-  ChatPublic toChatPublic({User user}) {
-    if (user == null) {
-      return ChatPublic(id: this.id, name: this.name);
-    } else {
-      return ChatPublic(
-        id: this.id,
-        name: nameToDisplay(user),
-      );
-    }
-  }
+  Chat({ this.id, this.name, this.members});
 
   Map<String, Object> toFirebaseObject() {
     Map<String, Object> firebaseObject = Map<String, Object>();
@@ -38,7 +30,7 @@ class Chat {
     }
   }
 
-  String nameToDisplay(User user) {
+  Future<String> nameToDisplay(User user) async {
     if(!this.members.contains(user.id)) {
       // The user is not in this chat
       return null;
@@ -54,10 +46,23 @@ class Chat {
           return '(@You) ${user.name}';
         } else if (this.members.length == 2) {
           // Private chat
-          return 'Private Chat';
-//          return this.members.values.where((UserPublic member) {
-//            return member.id != user.id;
-//          }).toList()[0].name;
+          if (this._nameToDisplay != null) {
+            // Then no need to make a query
+            print('here');
+            return this._nameToDisplay[user.id];
+          } else {
+            // Let's construct the object _nameToDisplay
+            // First get the other user from database
+            String otherId = this.members.where((String memberId) {
+              return memberId != user.id;
+            }).toList()[0];
+            User otherUser = await DatabaseUser(id: otherId).userFuture;
+            // construct map
+            this._nameToDisplay = new Map();
+            this._nameToDisplay[user.id] = otherUser.name;
+            this._nameToDisplay[otherUser.id] = user.id;
+            return otherUser.name;
+          }
         } else {
           // It is a chat with more than 2 people
           return 'Group Chat';

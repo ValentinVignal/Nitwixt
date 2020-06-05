@@ -1,5 +1,3 @@
-import 'package:nitwixt/models/chat_public.dart';
-import 'package:nitwixt/models/user_public.dart';
 
 // Public user
 class User {
@@ -16,10 +14,6 @@ class User {
   User({this.id, this.username, this.name, this.chats, this.pushToken});
 
   // * -------------------- To Public --------------------
-
-  UserPublic toUserPublic() {
-    return UserPublic(id: this.id, name: this.name, username: this.username);
-  }
 
   // * -------------------- Link with firebase database  --------------------
 

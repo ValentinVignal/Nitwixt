@@ -11,12 +11,17 @@ class DatabaseUser {
 
   final CollectionReference userCollection = collections.userCollection;
 
-  static models.User userFromSnapshot(DocumentSnapshot snapshot) {
+  static models.User userFromDocumentSnapshot(DocumentSnapshot snapshot) {
     return models.User.fromFirebaseObject(snapshot.documentID, snapshot.data);
   }
 
-  Stream<models.User> get user {
-    return userCollection.document(id).snapshots().map(userFromSnapshot);
+  Stream<models.User> get userStream {
+    return userCollection.document(id).snapshots().map(userFromDocumentSnapshot);
+  }
+
+  Future<models.User> get userFuture async {
+    DocumentSnapshot documentSnapshot = await userCollection.document(id).get();
+    return userFromDocumentSnapshot(documentSnapshot);
   }
 
   static Future createEmptyUser() async {

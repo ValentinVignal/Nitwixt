@@ -38,7 +38,6 @@ class _ChatListState extends State<ChatList> {
     return StreamBuilder<List<models.Chat>>(
       stream: DatabaseChat.getChatList(chatIdList: user.chats, limit: _nbChats),
       builder: (context, snapshot) {
-        print('snapshot data ${snapshot.hasData}');
         if (!snapshot.hasData) {
           return Loading();
         } else {

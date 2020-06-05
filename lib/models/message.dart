@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:nitwixt/models/message_public.dart';
 
 class Message {
   final String id;    // Id of the message
@@ -8,10 +7,6 @@ class Message {
   String userid;    // The user who sent the message
 
   Message({this.id, this.date, this.text, this.userid});
-
-  MessagePublic toMessagePublic() {
-    return MessagePublic(id: this.id, date: this.date, text: this.text, userid: this.userid);
-  }
 
   Map<String, Object> toFirebaseObject() {
 
