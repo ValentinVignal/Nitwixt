@@ -34,7 +34,6 @@ class _ChatListState extends State<ChatList> {
   @override
   Widget build(BuildContext context) {
     final models.User user = Provider.of<models.User>(context) ?? [];
-    print('user $user');
     return StreamBuilder<List<models.Chat>>(
       stream: DatabaseChat.getChatList(chatIdList: user.chats, limit: _nbChats),
       builder: (context, snapshot) {

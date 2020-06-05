@@ -48,7 +48,6 @@ class Chat {
           // Private chat
           if (this._nameToDisplay != null) {
             // Then no need to make a query
-            print('here');
             return this._nameToDisplay[user.id];
           } else {
             // Let's construct the object _nameToDisplay

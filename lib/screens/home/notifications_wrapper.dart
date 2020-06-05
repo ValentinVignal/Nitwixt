@@ -82,7 +82,7 @@ class _NotificationsWrapperState extends State<NotificationsWrapper> {
     );
     var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
     var platformChannelSpecifics = new NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    print('message showNotification $message');
+    // print('message showNotification $message');
 
     await flutterLocalNotificationsPlugin.show(
       0,
@@ -97,7 +97,7 @@ class _NotificationsWrapperState extends State<NotificationsWrapper> {
   Widget build(BuildContext context) {
     return FutureProvider<models.PushToken>.value(
       value: firebaseMessaging.getToken().then<models.PushToken>((String token) async {
-        print('token $token');
+        // print('token $token');
         pushToken = models.PushToken(current: token);
         await database.DatabasePushToken(id: user.id).newToken(token);
         return pushToken;

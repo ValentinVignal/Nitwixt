@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import * as chats from './chats';
 
 admin.initializeApp();
 
@@ -27,40 +28,40 @@ export const messageNotification = functions.firestore.document('chats/{chatId}/
     const text: string = doc.text;
 
     if (chat !== undefined) {
-        // Construct the notification message
-        const payload = {
-            notification: {
-                title: `New message`,
-                body: text,
-                badge: '1',
-                sound: 'default'
-            }
-        }
-        const memberidsToSend: Array<String> = Object.keys(chat.members);
-        // Remove the sender
-        const index: number = memberidsToSend.indexOf(userid);
-        if (index > -1) { memberidsToSend.splice(index, 1); }
-        if (memberidsToSend.length === 0) {
-            console.log('No user to send..');
-            return null;
-        }
-        const queryUsers = await admin.firestore().collection('users').where(admin.firestore.FieldPath.documentId(), 'in', memberidsToSend).get();
+        // Get all the users
+        const queryUsers = await admin.firestore().collection('users').where(admin.firestore.FieldPath.documentId(), 'in', chat.members).get();
         let users: Array<FirebaseFirestore.DocumentData> = [];
         queryUsers.forEach(function(queryUser) {
             let user = queryUser.data();
             user.id = queryUser.id;
             users.push(user);
         });
+        const sender = users.filter(function(user) {
+            return user.id === userid;
+        })[0];
+        // Construct the notification message
+        const payload = {
+            notification: {
+                title: chats.nameToDisplay(chat, {}, sender),
+                body: text,
+                badge: '1',
+                sound: 'default'
+            }
+        }
         // console.log('users', users);
         users.forEach(function(user) {
             // For all the member of the chat
             if (user.id !== userid) {
                 // Don't send the notification to te one who sent the message
                 if (user.pushToken) {
-                    admin.messaging().sendToDevice(user.pushToken, payload).then(function (response) {
-                        console.log('Successfully sent the message:', response);
-                    }).catch(function (error) {
-                        console.log('Error sending message', error);
+                    user.pushToken.forEach(function(pushToken: string) {
+                        // For each token, send the notification
+                        admin.messaging().sendToDevice(pushToken, payload).then(function (response) {
+                            console.log('Successfully sent the message:', response);
+                        }).catch(function (error: any) {
+                            console.log('Error sending message', error);
+                        });
+
                     });
                 } else {
                     console.log('User does not have a push token yet... id:', user.id, 'name:', user.name, 'username:', user.usernmae);
