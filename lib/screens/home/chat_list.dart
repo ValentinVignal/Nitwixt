@@ -44,11 +44,15 @@ class _ChatListState extends State<ChatList> {
         } else {
           List<models.Chat> chatList = snapshot.data;
           double height = MediaQuery.of(context).size.height;
-          return ListView.builder(
-            itemCount: chatList.length,
-            itemBuilder: (context, index) {
-              return ChatTile(chat: chatList[index]);
-            },
+          return SizedBox(
+            height: height,
+            child: ListView.builder(
+              controller: _scrollController,
+              itemCount: chatList.length,
+              itemBuilder: (context, index) {
+                return ChatTile(chat: chatList[index]);
+              },
+            ),
           );
         }
       },

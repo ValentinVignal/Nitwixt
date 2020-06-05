@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'collections.dart' as collections;
 import 'package:nitwixt/models/models.dart' as models;
@@ -18,21 +19,21 @@ class DatabaseUser {
     return userCollection.document(id).snapshots().map(userFromSnapshot);
   }
 
-  static Future createEmptyUser({String id}) async {
-    return await collections.userCollection.document(id).setData(models.User.empty().toFirebaseObject());
+  static Future createEmptyUser() async {
+    DocumentReference documentReference = await collections.userCollection.add(models.User.empty().toFirebaseObject());
+    return await collections.userCollection.document(documentReference.documentID).updateData({
+      'id': documentReference.documentID,
+    });
   }
 
-  static Future createUser({String id, models.User user}) async {
+  static Future createUser({models.User user}) async {
     if (user == null) {
-      return createEmptyUser(id: id);
+      return createEmptyUser();
     } else {
-      String id_;
-      if (id == null || id.isEmpty) {
-        id_ = user.id;
-      } else {
-        id_ = id;
-      }
-      return await collections.userCollection.document(id_).setData(user.toFirebaseObject());
+      DocumentReference documentReference = await collections.userCollection.add(user.toFirebaseObject());
+      return await collections.userCollection.document(documentReference.documentID).updateData({
+        'id': documentReference.documentID,
+      });
     }
   }
 

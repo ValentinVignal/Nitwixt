@@ -16,13 +16,7 @@ class DatabaseChat {
   }
   
   static List<models.Chat> chatFromQuerySnapshot(QuerySnapshot querySnapshot) {
-    print('querysnapshot ${querySnapshot.documents.length}');
-    return querySnapshot.documents.map((DocumentSnapshot documentSnapshot) {
-//      models.Chat user = _chatFromDocumentSnapshot(documentSnapshot);
-      models.Chat user = models.Chat.fromFirebaseObject(documentSnapshot.documentID, documentSnapshot.data);
-      print(user);
-      return user;
-    }).toList();
+    return querySnapshot.documents.map(chatFromDocumentSnapshot).toList();
   }
 
   Stream<models.Chat> get chat {
@@ -40,19 +34,16 @@ class DatabaseChat {
   }
   
   Stream<List<models.Message>> getMessageList({DocumentSnapshot startAfter, int limit = 10}) {
-    Query q = chatCollection.document(id).collection('messages').orderBy('date', descending: true);
+    Query query = chatCollection.document(id).collection('messages').orderBy('date', descending: true);
     if (startAfter != null) {
-      q = q.startAt([startAfter.data]);
+      query = query.startAt([startAfter.data]);
     }
-    q = q.limit(limit);
-    return q.snapshots().map(chatMessagesFromQuerySnapshot);
+    query = query.limit(limit);
+    return query.snapshots().map(chatMessagesFromQuerySnapshot);
   }
   
   static Stream<List<models.Chat>> getChatList({List<String> chatIdList, int limit=10}) {
-    print('chatList $chatIdList');
-
-    Query query = collections.chatCollection; //.where('id', isEqualTo: chatIdList[0]);
-//    query = query.limit(limit);
+    Query query = collections.chatCollection.where('id', whereIn: chatIdList).limit(limit);
     return query.snapshots().map(chatFromQuerySnapshot);
   }
 
@@ -98,16 +89,18 @@ class DatabaseChat {
         return user.id;
       }).toList(),
     );
-    String chatid = await collections.chatCollection.add(
+    DocumentReference documentReference = await collections.chatCollection.add(
       newChat.toFirebaseObject()
-    ).then((DocumentReference docRef) {
-      return docRef.documentID;
-    });
+    );
+    String chatid = documentReference.documentID;
     newChat.id = chatid;
 
     if (chatid == null) {
       return 'Could not create the new chat';
     }
+    await collections.chatCollection.document(chatid).updateData({
+      'id': chatid,
+    });
     // * ----- Update the users -----
     allUserList.forEach((models.User user) {
       user.chats.add(chatid);
