@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nitwixt/services/database/database.dart';
 import 'package:nitwixt/shared/loading.dart';
@@ -41,17 +42,57 @@ class _ChatListState extends State<ChatList> {
           return Loading();
         } else {
           List<models.Chat> chatList = snapshot.data;
-          double height = MediaQuery.of(context).size.height;
-          return SizedBox(
-            height: height,
-            child: ListView.builder(
-              controller: _scrollController,
-              itemCount: chatList.length,
-              itemBuilder: (context, index) {
-                return ChatTile(chat: chatList[index]);
-              },
-            ),
-          );
+          if (chatList.isEmpty) {
+            // User doesn't have chats yet
+            TextStyle textStyle = TextStyle(color: Colors.white, fontSize: 15.0);
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(text: 'You don\'t have any chat yet...', style: textStyle),
+                        ],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 15.0),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(text: 'Press the ', style: textStyle),
+                          WidgetSpan(
+                            child: Icon(
+                              Icons.add,
+                              color: Colors.blue,
+                              size: 20.0,
+                            ),
+                          ),
+                          TextSpan(text: ' to create a chat', style: textStyle),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            );
+          } else {
+            // User have chats
+            double height = MediaQuery.of(context).size.height;
+            return SizedBox(
+              height: height,
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: chatList.length,
+                itemBuilder: (context, index) {
+                  return ChatTile(chat: chatList[index]);
+                },
+              ),
+            );
+          }
         }
       },
     );
