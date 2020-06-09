@@ -1,10 +1,9 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:nitwixt/services/auth/auth.dart';
 import 'package:nitwixt/shared/loading.dart';
 import 'package:slider_button/slider_button.dart';
 import 'package:flutter_password_strength/flutter_password_strength.dart';
+import 'package:nitwixt/widgets/widgets.dart' as widgets;
 
 import '../../shared/constants.dart';
 
@@ -203,28 +202,35 @@ class _RegisterState extends State<Register> {
                         error,
                         style: TextStyle(color: Colors.red, fontSize: 14.0),
                         ),
-                      GestureDetector(
+                      widgets.ButtonSimple(
                         onTap: () {
                           widget.toggleView();
                         },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            vertical: 5.0,
-                            horizontal: 20.0,
-                            ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: Colors.white,
-                              width: 2.0,
-                              ),
-                            ),
-                          child: Text(
-                            'Sign In',
-                            style: TextStyle(color: Colors.white, fontSize: 20),
-                            ),
-                          ),
-                        ),
+                        text: 'Sign In',
+                        fontSize: 20.0,
+                      ),
+//                      GestureDetector(
+//                        onTap: () {
+//                          widget.toggleView();
+//                        },
+//                        child: Container(
+//                          padding: EdgeInsets.symmetric(
+//                            vertical: 5.0,
+//                            horizontal: 20.0,
+//                            ),
+//                          decoration: BoxDecoration(
+//                            borderRadius: BorderRadius.circular(20),
+//                            border: Border.all(
+//                              color: Colors.white,
+//                              width: 2.0,
+//                              ),
+//                            ),
+//                          child: Text(
+//                            'Sign In',
+//                            style: TextStyle(color: Colors.white, fontSize: 20),
+//                            ),
+//                          ),
+//                        ),
                     SizedBox(
                         height: 10.0,
                         ),

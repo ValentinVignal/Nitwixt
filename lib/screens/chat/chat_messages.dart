@@ -71,8 +71,8 @@ class _ChatMessagesState extends State<ChatMessages> {
                     suffixIcon: IconButton(
                       icon: Icon(Icons.send),
                       onPressed: () async {
-                        if (textController.text.isNotEmpty) {
-                          await _databaseMessage.sendMessage(text: textController.text, userid: user.id);
+                        if (textController.text.trim().isNotEmpty) {
+                          await _databaseMessage.sendMessage(text: textController.text.trim(), userid: user.id);
                           WidgetsBinding.instance.addPostFrameCallback((_) => textController.clear());
                         }
                       },
