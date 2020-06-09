@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/services/auth/auth.dart' as auth;
 import 'package:nitwixt/shared/loading.dart';
+import 'package:nitwixt/widgets/widgets.dart' as widgets;
 
 class VerifyEmail extends StatefulWidget {
   @override
@@ -51,7 +52,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
             SizedBox(
               height: 30.0,
             ),
-            GestureDetector(
+            widgets.ButtonSimple(
               onTap: () async {
                 setState(() {
                   isProcessing = true;
@@ -75,37 +76,65 @@ class _VerifyEmailState extends State<VerifyEmail> {
                   });
                 }
               },
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  vertical: 5.0,
-                  horizontal: 10.0,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: Colors.cyan[200],
-                    width: 2.0,
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Icon(
-                      Icons.email,
-                      color: Colors.cyan[200],
-                    ),
-                    SizedBox(
-                      width: 5.0,
-                    ),
-                    Text(
-                      buttonMessage,
-                      style: TextStyle(color: Colors.cyan[200], fontSize: 18),
-                    ),
-                  ],
-                ),
-              ),
+              text: buttonMessage,
+              color: Colors.cyan[200],
+              icon: Icons.email,
             ),
+//            GestureDetector(
+//              onTap: () async {
+//                setState(() {
+//                  isProcessing = true;
+//                  result = null;
+//                });
+//                Object res = await auth.AuthEmailPassword().sendConfirmationEmail();
+//                setState(() {
+//                  isProcessing = false;
+//                });
+//                if (res == null) {
+//                  // Everything is fine
+//                  setState(() {
+//                    buttonMessage = 'Send email again';
+//                    result = true;
+//                    isEmailSent = true;
+//                  });
+//                } else {
+//                  setState(() {
+//                    buttonMessage = 'Try again';
+//                    result = false;
+//                  });
+//                }
+//              },
+//              child: Container(
+//                padding: EdgeInsets.symmetric(
+//                  vertical: 5.0,
+//                  horizontal: 10.0,
+//                ),
+//                decoration: BoxDecoration(
+//                  borderRadius: BorderRadius.circular(20),
+//                  border: Border.all(
+//                    color: Colors.cyan[200],
+//                    width: 2.0,
+//                  ),
+//                ),
+//                child: Row(
+//                  mainAxisSize: MainAxisSize.min,
+//                  mainAxisAlignment: MainAxisAlignment.center,
+//                  children: <Widget>[
+//                    Icon(
+//                      Icons.email,
+//                      color: Colors.cyan[200],
+//                    ),
+//                    SizedBox(
+//                      width: 5.0,
+//                    ),
+//                    Text(
+//                      buttonMessage,
+//                      style: TextStyle(color: Colors.cyan[200], fontSize: 18),
+//                    ),
+//                  ],
+//                ),
+//              ),
+//            ),
             SizedBox(
               height: 20.0,
             ),
@@ -142,6 +171,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
             SizedBox(
               height: 20.0,
             ),
+
             isEmailSent
                 ? GestureDetector(
                     onTap: () => _auth.signOut(),

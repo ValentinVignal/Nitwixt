@@ -17,8 +17,8 @@ class Start extends StatelessWidget {
       return MaterialApp(
         home: Authenticate(),
       );
-    } else if (foundation.kReleaseMode && !userAuth.isEmailVerified) {
-//    } else if (!userAuth.isEmailVerified) {
+//    } else if (foundation.kReleaseMode && !userAuth.isEmailVerified) {
+    } else if (true) {
       // Because I don't want to validate a huge number of dummy email to debug
       // foundation.kReleaseMode: true on release app and false on debug app
       return MaterialApp(

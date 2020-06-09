@@ -208,6 +208,7 @@ class _RegisterState extends State<Register> {
                         },
                         text: 'Sign In',
                         fontSize: 20.0,
+                        horizontalPadding: 20.0,
                       ),
 //                      GestureDetector(
 //                        onTap: () {
