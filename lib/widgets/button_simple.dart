@@ -7,6 +7,7 @@ class ButtonSimple extends StatelessWidget {
   final double fontSize;
   final IconData icon;
   final double horizontalPadding;
+  final bool withBorder;
 
   ButtonSimple({
     this.onTap,
@@ -15,6 +16,7 @@ class ButtonSimple extends StatelessWidget {
     this.color = Colors.white,
     this.fontSize = 18.0,
     this.horizontalPadding = 10.0,
+    this.withBorder = true,
   });
 
   @override
@@ -26,13 +28,13 @@ class ButtonSimple extends StatelessWidget {
           vertical: 5.0,
           horizontal: this.horizontalPadding,
         ),
-        decoration: BoxDecoration(
+        decoration: this.withBorder ? BoxDecoration(
           borderRadius: BorderRadius.circular(20.0),
           border: Border.all(
             color: this.color,
             width: 2.0,
           ),
-        ),
+        ) : null,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,

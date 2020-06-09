@@ -210,28 +210,6 @@ class _SignInState extends State<SignIn> {
                       fontSize: 20.0,
                       horizontalPadding: 20.0,
                     ),
-//                    GestureDetector(
-//                      onTap: () {
-//                        widget.toggleView();
-//                      },
-//                      child: Container(
-//                        padding: EdgeInsets.symmetric(
-//                          vertical: 5.0,
-//                          horizontal: 20.0,
-//                        ),
-//                        decoration: BoxDecoration(
-//                          borderRadius: BorderRadius.circular(20),
-//                          border: Border.all(
-//                            color: Colors.white,
-//                            width: 2.0,
-//                          ),
-//                        ),
-//                        child: Text(
-//                          'Register',
-//                          style: TextStyle(color: Colors.white, fontSize: 20),
-//                        ),
-//                      ),
-//                    ),
                     SizedBox(
                       height: 10.0,
                     ),

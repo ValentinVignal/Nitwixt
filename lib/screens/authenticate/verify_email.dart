@@ -80,61 +80,6 @@ class _VerifyEmailState extends State<VerifyEmail> {
               color: Colors.cyan[200],
               icon: Icons.email,
             ),
-//            GestureDetector(
-//              onTap: () async {
-//                setState(() {
-//                  isProcessing = true;
-//                  result = null;
-//                });
-//                Object res = await auth.AuthEmailPassword().sendConfirmationEmail();
-//                setState(() {
-//                  isProcessing = false;
-//                });
-//                if (res == null) {
-//                  // Everything is fine
-//                  setState(() {
-//                    buttonMessage = 'Send email again';
-//                    result = true;
-//                    isEmailSent = true;
-//                  });
-//                } else {
-//                  setState(() {
-//                    buttonMessage = 'Try again';
-//                    result = false;
-//                  });
-//                }
-//              },
-//              child: Container(
-//                padding: EdgeInsets.symmetric(
-//                  vertical: 5.0,
-//                  horizontal: 10.0,
-//                ),
-//                decoration: BoxDecoration(
-//                  borderRadius: BorderRadius.circular(20),
-//                  border: Border.all(
-//                    color: Colors.cyan[200],
-//                    width: 2.0,
-//                  ),
-//                ),
-//                child: Row(
-//                  mainAxisSize: MainAxisSize.min,
-//                  mainAxisAlignment: MainAxisAlignment.center,
-//                  children: <Widget>[
-//                    Icon(
-//                      Icons.email,
-//                      color: Colors.cyan[200],
-//                    ),
-//                    SizedBox(
-//                      width: 5.0,
-//                    ),
-//                    Text(
-//                      buttonMessage,
-//                      style: TextStyle(color: Colors.cyan[200], fontSize: 18),
-//                    ),
-//                  ],
-//                ),
-//              ),
-//            ),
             SizedBox(
               height: 20.0,
             ),
@@ -171,40 +116,12 @@ class _VerifyEmailState extends State<VerifyEmail> {
             SizedBox(
               height: 20.0,
             ),
-
             isEmailSent
-                ? GestureDetector(
+                ? widgets.ButtonSimple(
                     onTap: () => _auth.signOut(),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 5.0,
-                        horizontal: 10.0,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: Colors.green,
-                          width: 2.0,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(
-                            Icons.done,
-                            color: Colors.green,
-                          ),
-                          SizedBox(
-                            width: 5.0,
-                          ),
-                          Text(
-                            'I have verified my email',
-                            style: TextStyle(color: Colors.green, fontSize: 18),
-                          ),
-                        ],
-                      ),
-                    ),
+                    color: Colors.green,
+                    text: 'I have verified my email',
+                    icon: Icons.done,
                   )
                 : Container(
                     height: 0.0,

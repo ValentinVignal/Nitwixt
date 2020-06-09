@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/shared/loading.dart';
+import 'package:nitwixt/widgets/button_simple.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
 import 'package:nitwixt/shared/constants.dart';
@@ -40,6 +40,7 @@ class _NewChatDialogState extends State<NewChatDialog> {
       ),
       backgroundColor: Color(0xFF202020),
       content: Container(
+        width: double.maxFinite,
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -100,21 +101,17 @@ class _NewChatDialogState extends State<NewChatDialog> {
                   ),
                 ),
                 SizedBox(height: 10.0),
-                GestureDetector(
+                ButtonSimple(
                   onTap: () {
                     setState(() {
                       _enterredUsernames.add('');
                     });
                   },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Icon(Icons.add, color: Colors.blue,),
-                      SizedBox(width: 5.0),
-                      Text('Add', style: TextStyle(color: Colors.blue),)
-                    ],
-                  )
+                  icon: Icons.add,
+                  color: Colors.blue,
+                  text: 'Add',
+                  withBorder: false,
+                  fontSize: 16.0,
                 ),
                 SizedBox(height: 10.0),
                 isLoading ? Loading() : Text(
@@ -126,43 +123,16 @@ class _NewChatDialogState extends State<NewChatDialog> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    GestureDetector(
+                    ButtonSimple(
                       onTap: () {
                         Navigator.of(context).pop();
                       },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 5.0,
-                          horizontal: 10.0,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Colors.white,
-                            width: 2.0,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(
-                              Icons.close,
-                              color: Colors.white,
-                            ),
-                            SizedBox(
-                              width: 5.0,
-                            ),
-                            Text(
-                              'Cancel',
-                              style: TextStyle(color: Colors.white, fontSize: 15),
-                            ),
-                          ],
-                        ),
-                      ),
+                      icon: Icons.close,
+                      text: 'Cancel',
+                      fontSize: 15.0,
                     ),
                     SizedBox(width: 5.0),
-                    GestureDetector(
+                    ButtonSimple(
                       onTap: () async {
                         if (_formKey.currentState.validate()) {
                           setState(() {
@@ -195,36 +165,10 @@ class _NewChatDialogState extends State<NewChatDialog> {
                           }
                         }
                       },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 5.0,
-                          horizontal: 10.0,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Colors.green,
-                            width: 2.0,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(
-                              Icons.done,
-                              color: Colors.green,
-                            ),
-                            SizedBox(
-                              width: 5.0,
-                            ),
-                            Text(
-                              'Create',
-                              style: TextStyle(color: Colors.green, fontSize: 15),
-                            ),
-                          ],
-                        ),
-                      ),
+                      text: 'Create',
+                      icon: Icons.done,
+                      color: Colors.green,
+                      fontSize: 15.0,
                     ),
                   ],
                 ),

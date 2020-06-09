@@ -7,6 +7,7 @@ import 'package:nitwixt/services/database/database.dart';
 import 'package:nitwixt/shared/constants.dart';
 import 'package:nitwixt/shared/loading.dart';
 import 'package:nitwixt/services/database/collections.dart';
+import 'package:nitwixt/widgets/widgets.dart';
 
 class SetUsername extends StatefulWidget {
   @override
@@ -74,7 +75,7 @@ class _SetUsernameState extends State<SetUsername> {
                   SizedBox(
                     height: 10.0,
                   ),
-                  GestureDetector(
+                  ButtonSimple(
                     onTap: () async {
                       if (_formKey.currentState.validate()) {
                         setState(() {
@@ -100,36 +101,9 @@ class _SetUsernameState extends State<SetUsername> {
                         }
                       }
                     },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 5.0,
-                        horizontal: 10.0,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: Colors.cyan[200],
-                          width: 2.0,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(
-                            Icons.check,
-                            color: Colors.cyan[200],
-                          ),
-                          SizedBox(
-                            width: 5.0,
-                          ),
-                          Text(
-                            'Confirm',
-                            style: TextStyle(color: Colors.cyan[200], fontSize: 18),
-                          ),
-                        ],
-                      ),
-                    ),
+                    color: Colors.cyan[200],
+                    icon: Icons.check,
+                    text: 'Confirm',
                   ),
                   Text(
                     errorMessage,
