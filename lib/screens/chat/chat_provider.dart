@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nitwixt/screens/chat/members_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/screens/chat/chat_home.dart';
 import 'package:nitwixt/services/database/database_chat.dart';
@@ -30,7 +31,7 @@ class ChatReceiver extends StatelessWidget {
         body: Loading(),
       );
     } else {
-      return ChatHome();
+      return MembersProvider(chat: chat,);
     }
 
   }

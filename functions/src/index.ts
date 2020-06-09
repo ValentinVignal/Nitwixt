@@ -25,7 +25,7 @@ export const messageNotification = functions.firestore.document('chats/{chatId}/
     // console.log('doc', doc, 'chat', chat);
 
     const userid: string = doc.userid;
-    const text: string = doc.text;
+    let text: string = doc.text;
 
     if (chat !== undefined) {
         // Get all the users
@@ -40,6 +40,9 @@ export const messageNotification = functions.firestore.document('chats/{chatId}/
             return user.id === userid;
         })[0];
         // Construct the notification message
+        if (chat.members.length > 2) {
+            text = `${sender.name}: ${text}`;
+        }
         const payload = {
             notification: {
                 title: chats.nameToDisplay(chat, {}, sender),

@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 
 import 'collections.dart' as collections;
 import 'package:nitwixt/models/models.dart' as models;
@@ -22,6 +21,19 @@ class DatabaseUser {
   Future<models.User> get userFuture async {
     DocumentSnapshot documentSnapshot = await userCollection.document(id).get();
     return userFromDocumentSnapshot(documentSnapshot);
+  }
+
+  static List<models.User> userFromQuerySnapshot(QuerySnapshot querySnapshot) {
+    return querySnapshot.documents.map(userFromDocumentSnapshot).toList();
+  }
+
+  static Stream<List<models.User>> getUserList({List<String> userIdList}) {
+    if (userIdList == null || userIdList.isEmpty) {
+      return new Stream.value([]);
+    } else {
+      Query query = collections.userCollection.where('id', whereIn: userIdList);
+      return query.snapshots().map(userFromQuerySnapshot);
+    }
   }
 
   static Future createEmptyUser({String id}) async {
