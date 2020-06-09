@@ -3,11 +3,11 @@
 class User {
   // * -------------------- Attributes --------------------
 
-  final String id; // The id of the user
+  String id = ''; // The id of the user
   String username = ''; // The username of the user
   String name = 'New User'; // The name to display
   List<String> chats = [];
-  List<String> pushToken;
+  List<String> pushToken = [];
 
   // * -------------------- Constructor --------------------
 
@@ -38,9 +38,7 @@ class User {
     }
   }
 
-  User.empty() : id = '';
-
-  bool isEmpty() {
+  bool get hasUsername {
     return this.username == null || this.username.isEmpty;
   }
 }
