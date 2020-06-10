@@ -22,6 +22,8 @@ class _SignInState extends State<SignIn> {
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
   bool _passwordVisible = false;
+  final focus = FocusNode();
+
 
   // text filed state
   String email = '';
@@ -74,8 +76,12 @@ class _SignInState extends State<SignIn> {
                     SizedBox(height: 20.0),
                     TextFormField(
                       initialValue: email,
+                      style: TextStyle(color: Colors.white),
                       keyboardType: TextInputType.emailAddress,
-                      decoration: textInputDecoration.copyWith(hintText: 'Email'),
+                      decoration: textInputDecoration.copyWith(
+                        hintText: 'Email',
+                        labelText: 'Email',
+                      ),
                       validator: (val) {
                         if (val.isEmpty) {
                           return 'Enter an email';
@@ -87,12 +93,17 @@ class _SignInState extends State<SignIn> {
                       onChanged: (val) {
                         setState(() => email = val);
                       },
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (v){
+                        FocusScope.of(context).requestFocus(focus);
+                      },
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(
                       initialValue: password,
                       decoration: textInputDecoration.copyWith(
                         hintText: 'Password',
+                        labelText: 'Password',
                         suffixIcon: Listener(
                           child: Icon(
                             _passwordVisible ? Icons.visibility_off : Icons.visibility,
@@ -114,6 +125,8 @@ class _SignInState extends State<SignIn> {
                       onChanged: (val) {
                         setState(() => password = val);
                       },
+                      focusNode: focus,
+                      textInputAction: TextInputAction.done,
                     ),
                     SizedBox(
                       height: 20.0,

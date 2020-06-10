@@ -16,6 +16,13 @@ class _ChatMessagesState extends State<ChatMessages> {
   TextEditingController textController = TextEditingController();
   int _nbMessages = 16;
   ScrollController _scrollController;
+  bool showSendButton = false;
+
+  @override
+  void dispose() {
+    textController.dispose();
+    super.dispose();
+  }
 
   _scrollListener() {
     if (_scrollController.position.maxScrollExtent == _scrollController.position.pixels) {
@@ -25,10 +32,17 @@ class _ChatMessagesState extends State<ChatMessages> {
     }
   }
 
+  _textListener() {
+    setState(() {
+      showSendButton = textController.text.trim().isNotEmpty;
+    });
+  }
+
   @override
   void initState() {
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
+    textController.addListener(_textListener);
 
     super.initState();
   }
@@ -52,6 +66,7 @@ class _ChatMessagesState extends State<ChatMessages> {
             height: height,
             child: Column(
               children: <Widget>[
+                SizedBox(width: 5.0),
                 Expanded(
                   child: ListView.builder(
                     controller: _scrollController,
@@ -64,19 +79,52 @@ class _ChatMessagesState extends State<ChatMessages> {
                     shrinkWrap: true,
                   ),
                 ),
-                TextFormField(
-                  controller: textController,
-                  decoration: textInputDecoration.copyWith(
-                    hintText: 'Type your message',
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.send),
-                      onPressed: () async {
-                        if (textController.text.trim().isNotEmpty) {
-                          await _databaseMessage.sendMessage(text: textController.text.trim(), userid: user.id);
-                          WidgetsBinding.instance.addPostFrameCallback((_) => textController.clear());
-                        }
-                      },
-                    ),
+                Container(
+                  color: Colors.black,
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: TextFormField(
+                          keyboardType: TextInputType.multiline,
+                          minLines: 1,
+                          onChanged: (val) {
+                            print('val $val');
+                            print('textController ${textController.text.isEmpty}');
+                          },
+                          maxLines: 5,
+                          style: TextStyle(color: Colors.white),
+                          controller: textController,
+                          decoration: textInputDecorationMessage.copyWith(
+                            hintText: 'Type your message',
+//                            suffixIcon: IconButton(
+//                              icon: Icon(Icons.send),
+//                              onPressed: () async {
+//                                if (textController.text.trim().isNotEmpty) {
+//                                  await _databaseMessage.sendMessage(text: textController.text.trim(), userid: user.id);
+//                                  WidgetsBinding.instance.addPostFrameCallback((_) => textController.clear());
+//                                }
+//                              },
+//                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 5.0),
+                      showSendButton
+                          ? IconButton(
+                              icon: Icon(
+                                Icons.send,
+                                color: Colors.blue,
+                              ),
+//                              onPressed: () async {
+//                                if (textController.text.trim().isNotEmpty) {
+//                                  await _databaseMessage.sendMessage(text: textController.text.trim(), userid: user.id);
+//                                  WidgetsBinding.instance.addPostFrameCallback((_) => textController.clear());
+//                                }
+//                              },
+                            )
+                          : SizedBox(width: 0.0),
+                      SizedBox(width: textController.text.isEmpty ? 0.0 : 5.0),
+                    ],
                   ),
                 ),
               ],

@@ -25,7 +25,7 @@ class _MessageTileState extends State<MessageTile> {
 
     bool isMyMessage = user.id == widget.message.userid;
 
-    Widget nameContainer = isMyMessage
+    Widget nameContainer = isMyMessage || membersMap.keys.length <= 2
         ? Container(
             height: 0.0,
           )

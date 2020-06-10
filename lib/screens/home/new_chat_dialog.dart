@@ -63,9 +63,10 @@ class _NewChatDialogState extends State<NewChatDialog> {
                         children: <Widget>[
                           Expanded(
                             child: TextFormField(
+                              style: TextStyle(color: Colors.white),
                               decoration: textInputDecoration.copyWith(
                                 hintText: 'Username',
-                                labelText: 'Username',
+//                                labelText: 'Username',
                               ),
                               initialValue: _enterredUsernames[index],
                               validator: (val) {

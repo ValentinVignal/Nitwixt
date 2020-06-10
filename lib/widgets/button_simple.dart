@@ -44,7 +44,7 @@ class ButtonSimple extends StatelessWidget {
             Text(
               this.text,
               style: TextStyle(color: this.color, fontSize: this.fontSize),
-            )
+            ),
           ],
         ),
       ),

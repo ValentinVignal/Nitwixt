@@ -1,26 +1,36 @@
 import 'package:flutter/material.dart';
 
-
 const textInputDecoration = InputDecoration(
-  fillColor: Colors.white,
-  filled: true,
-  enabledBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(25.0)),
-    borderSide: BorderSide(color: Colors.blueGrey, width: 2.0),
+//  fillColor: Color(0x05FFFFFF),
+//  filled: true,
+  enabledBorder: UnderlineInputBorder(
+    borderSide: BorderSide(color: Colors.blue),
   ),
-  focusedBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(25.0)),
+  focusedBorder: UnderlineInputBorder(
     borderSide: BorderSide(color: Colors.greenAccent, width: 2.0),
   ),
-  errorBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(25.0)),
+  errorBorder: UnderlineInputBorder(
     borderSide: BorderSide(color: Colors.red, width: 2.0),
-    ),
-  focusedErrorBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(25.0)),
+  ),
+  focusedErrorBorder: UnderlineInputBorder(
     borderSide: BorderSide(color: Colors.red, width: 2.0),
-    ),
+  ),
+  hintStyle: TextStyle(color: Colors.grey),
+  labelStyle: TextStyle(color: Colors.blue),
+
 );
+
+const textInputDecorationMessage = InputDecoration(
+  fillColor: Colors.black,
+  filled: true,
+  hintStyle: TextStyle(color: Colors.grey),
+  border: InputBorder.none,
+  focusedBorder: InputBorder.none,
+  enabledBorder: InputBorder.none,
+  errorBorder: InputBorder.none,
+  disabledBorder: InputBorder.none,
+);
+
 
 bool validateEmail(String value) {
   Pattern pattern =
@@ -28,7 +38,6 @@ bool validateEmail(String value) {
   RegExp regex = new RegExp(pattern);
   return (!regex.hasMatch(value)) ? false : true;
 }
-
 
 const textStyleInfo = TextStyle(
   fontSize: 20.0,

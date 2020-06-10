@@ -60,6 +60,7 @@ class _SetUsernameState extends State<SetUsername> {
                       hintText: 'Username',
                       labelText: 'Username',
                     ),
+                    style: TextStyle(color: Colors.white),
                     validator: (val) {
                       if (val.isEmpty) {
                         return 'Enter a username';
