@@ -17,6 +17,7 @@ const textInputDecoration = InputDecoration(
   ),
   hintStyle: TextStyle(color: Colors.grey),
   labelStyle: TextStyle(color: Colors.blue),
+  errorMaxLines: 2,
 );
 
 const textInputDecorationMessage = InputDecoration(
