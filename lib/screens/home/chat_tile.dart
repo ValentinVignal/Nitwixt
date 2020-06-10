@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nitwixt/models/models.dart' as models;
+import 'package:nitwixt/screens/chat/chat_home.dart';
 import 'package:nitwixt/screens/chat/chat_provider.dart';
 import 'package:nitwixt/screens/home/home.dart';
 import 'package:nitwixt/shared/loading.dart';
@@ -113,7 +114,11 @@ class ChatTileState extends State<ChatTile> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ChatProvider(id: widget.chat.id)),
+          MaterialPageRoute(
+              builder: (context) => ChatProvider(
+                    id: widget.chat.id,
+                    child: ChatHome(),
+                  )),
         );
       },
     );

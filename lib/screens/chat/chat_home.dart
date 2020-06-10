@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:nitwixt/screens/chat/chat_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/screens/chat/chat_messages.dart';
 import 'package:nitwixt/models/models.dart' as models;
+import 'package:nitwixt/screens/chat/chat_info.dart';
 
 class ChatHome extends StatefulWidget {
   @override
@@ -45,6 +47,22 @@ class _ChatHomeState extends State<ChatHome> {
             onPressed: () {
               Navigator.pop(context);
             }),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.info_outline),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatProvider(
+                    id: chat.id,
+                    child: ChatInfo(),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: ChatMessages(),
     );

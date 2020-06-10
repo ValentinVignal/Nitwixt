@@ -14,7 +14,7 @@ class ChatMessages extends StatefulWidget {
 
 class _ChatMessagesState extends State<ChatMessages> {
   TextEditingController textController = TextEditingController();
-  int _nbMessages = 16;
+  int _nbMessages = 10;
   ScrollController _scrollController;
   bool showSendButton = false;
 
@@ -86,12 +86,13 @@ class _ChatMessagesState extends State<ChatMessages> {
                       Expanded(
                         child: TextFormField(
                           keyboardType: TextInputType.multiline,
+                          textCapitalization: TextCapitalization.sentences,
                           minLines: 1,
                           onChanged: (val) {
                             print('val $val');
                             print('textController ${textController.text.isEmpty}');
                           },
-                          maxLines: 5,
+                          maxLines: 7,
                           style: TextStyle(color: Colors.white),
                           controller: textController,
                           decoration: textInputDecorationMessage.copyWith(
@@ -115,12 +116,13 @@ class _ChatMessagesState extends State<ChatMessages> {
                                 Icons.send,
                                 color: Colors.blue,
                               ),
-//                              onPressed: () async {
-//                                if (textController.text.trim().isNotEmpty) {
+                              onPressed: () async {
+                                if (textController.text.trim().isNotEmpty) {
 //                                  await _databaseMessage.sendMessage(text: textController.text.trim(), userid: user.id);
-//                                  WidgetsBinding.instance.addPostFrameCallback((_) => textController.clear());
-//                                }
-//                              },
+                                  _databaseMessage.sendMessage(text: textController.text.trim(), userid: user.id);
+                                  WidgetsBinding.instance.addPostFrameCallback((_) => textController.clear());
+                                }
+                              },
                             )
                           : SizedBox(width: 0.0),
                       SizedBox(width: textController.text.isEmpty ? 0.0 : 5.0),

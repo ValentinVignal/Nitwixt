@@ -7,19 +7,31 @@ import 'package:nitwixt/services/database/database.dart';
 
 class MembersProvider extends StatelessWidget {
   final models.Chat chat;
+  final Widget child;
 
-  MembersProvider({this.chat});
+  MembersProvider({
+    @required this.chat,
+    @required this.child,
+  }): super();
 
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<models.User>>.value(
       value: DatabaseUser.getUserList(userIdList: chat.members),
-      child: MembersReceiver(),
+      child: MembersReceiver(
+        child: this.child,
+      ),
     );
   }
 }
 
 class MembersReceiver extends StatelessWidget {
+  final Widget child;
+
+  MembersReceiver({
+    @required this.child,
+}) : super();
+
   @override
   Widget build(BuildContext context) {
     final List<models.User> membersList = Provider.of<List<models.User>>(context);
@@ -35,13 +47,21 @@ class MembersReceiver extends StatelessWidget {
       });
       return Provider<Map<String, models.User>>.value(
         value: membersMap,
-        child: MembersMapReceiver(),
+        child: MembersMapReceiver(
+          child: this.child
+        ),
       );
     }
   }
 }
 
 class MembersMapReceiver extends StatelessWidget {
+  final Widget child;
+
+  MembersMapReceiver({
+    @required this.child,
+  }) : super();
+
   @override
   Widget build(BuildContext context) {
     final Map<String, models.User> membersMap = Provider.of<Map<String, models.User>>(context);
@@ -51,7 +71,7 @@ class MembersMapReceiver extends StatelessWidget {
         body: Loading(),
       );
     } else {
-      return ChatHome();
+      return this.child;
     }
   }
 }

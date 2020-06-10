@@ -102,4 +102,8 @@ class DatabaseChat {
     });
     return null;
   }
+
+  Future update(obj) async {
+    return await chatCollection.document(chatId).updateData(obj);
+  }
 }
