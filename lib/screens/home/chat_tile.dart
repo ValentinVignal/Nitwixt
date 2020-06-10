@@ -9,19 +9,23 @@ import 'package:nitwixt/services/database/database.dart' as database;
 class ChatTile extends StatefulWidget {
   final models.Chat chat;
 
-  ChatTile({this.chat});
+  ChatTile({this.chat, Key key}) : super(key: key);
 
   @override
-  _ChatTileState createState() => _ChatTileState();
+  ChatTileState createState() => ChatTileState();
 }
 
-class _ChatTileState extends State<ChatTile> {
+class ChatTileState extends State<ChatTile> {
   database.DatabaseMessage _databaseMessage;
 
   @override
   void initState() {
     super.initState();
     _databaseMessage = database.DatabaseMessage(chatId: widget.chat.id);
+  }
+
+  void refresh() {
+    setState(() {});
   }
 
   @override

@@ -101,6 +101,7 @@ class _SignInState extends State<SignIn> {
                     SizedBox(height: 20.0),
                     TextFormField(
                       initialValue: password,
+                      style: TextStyle(color: Colors.white),
                       decoration: textInputDecoration.copyWith(
                         hintText: 'Password',
                         labelText: 'Password',

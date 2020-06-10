@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -10,7 +9,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nitwixt/shared/loading.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
-import 'package:path_provider/path_provider.dart';
 
 class NotificationsWrapper extends StatefulWidget {
   final models.User user;

@@ -91,5 +91,9 @@ class DatabaseUser {
   Future<bool> exists() {
     return userIdExists(id: this.id);
   }
+
+  Future update(obj) async {
+    return await userCollection.document(id).updateData(obj);
+  }
 }
 

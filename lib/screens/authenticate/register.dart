@@ -97,6 +97,7 @@ class _RegisterState extends State<Register> {
                       onFieldSubmitted: (v){
                         FocusScope.of(context).requestFocus(focus1);
                       },
+                      style: TextStyle(color: Colors.white),
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(
@@ -137,6 +138,7 @@ class _RegisterState extends State<Register> {
                         FocusScope.of(context).requestFocus(focus2);
                       },
                       focusNode: focus1,
+                      style: TextStyle(color: Colors.white),
                     ),
                     SizedBox(
                       height: 10.0,
@@ -180,6 +182,7 @@ class _RegisterState extends State<Register> {
                       },
                       focusNode: focus2,
                       textInputAction: TextInputAction.done,
+                      style: TextStyle(color: Colors.white),
                     ),
                     SizedBox(
                       height: 20.0,

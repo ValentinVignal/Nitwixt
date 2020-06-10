@@ -17,7 +17,6 @@ const textInputDecoration = InputDecoration(
   ),
   hintStyle: TextStyle(color: Colors.grey),
   labelStyle: TextStyle(color: Colors.blue),
-
 );
 
 const textInputDecorationMessage = InputDecoration(
@@ -39,6 +38,3 @@ bool validateEmail(String value) {
   return (!regex.hasMatch(value)) ? false : true;
 }
 
-const textStyleInfo = TextStyle(
-  fontSize: 20.0,
-);
