@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:nitwixt/models/models.dart' as models;
+import 'package:nitwixt/screens/chat/chat_home.dart';
+import 'package:nitwixt/screens/chat/chat_provider.dart';
 import 'package:nitwixt/shared/loading.dart';
 import 'package:nitwixt/widgets/button_simple.dart';
+import 'package:nitwixt/widgets/froms/forms.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
-import 'package:nitwixt/shared/constants.dart';
 
 class NewChatDialog extends StatefulWidget {
   @override
@@ -14,20 +16,21 @@ class NewChatDialog extends StatefulWidget {
 class _NewChatDialogState extends State<NewChatDialog> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  List<String> _enterredUsernames = [''];
   String error = '';
   bool isLoading = false;
 
+  ListInputController listInputController = ListInputController(values: List<String>.from(['']));
+
   List<String> duplicatedUsernames() {
     List<String> _duplicatedUsernames = new List<String>();
-    _enterredUsernames.forEach((String username) {
-      if (_enterredUsernames.indexOf(username) != _enterredUsernames.lastIndexOf(username) && !_duplicatedUsernames.contains(username)) {
+    listInputController.values.forEach((String username) {
+      if (listInputController.values.indexOf(username) != listInputController.values.lastIndexOf(username) &&
+          !_duplicatedUsernames.contains(username)) {
         _duplicatedUsernames.add(username);
       }
     });
     return _duplicatedUsernames;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -53,73 +56,27 @@ class _NewChatDialogState extends State<NewChatDialog> {
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 10.0),
-                Container(
-                  child: ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: _enterredUsernames.length,
-                    itemBuilder: (BuildContext buildContextList, int index) {
-                      return Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: TextFormField(
-                              style: TextStyle(color: Colors.white),
-                              decoration: textInputDecoration.copyWith(
-                                hintText: 'Username',
-//                                labelText: 'Username',
-                              ),
-                              initialValue: _enterredUsernames[index],
-                              validator: (val) {
-                                if (val.isEmpty) {
-                                  return 'Enter username';
-                                } else if (val == user.username) {
-                                  return 'Enter another username than yours';
-                                }
-                                return null;
-                              },
-                              onChanged: (val) {
-                                setState(() {
-                                  _enterredUsernames[index] = val;
-                                });
-                              },
-                            ),
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              Icons.delete,
-                              size: 30.0,
-                              color: Colors.red,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _enterredUsernames.removeAt(index);
-                              });
-                            },
-                          )
-                        ],
-                      );
-                    },
-                  ),
-                ),
-                SizedBox(height: 10.0),
-                ButtonSimple(
-                  onTap: () {
-                    setState(() {
-                      _enterredUsernames.add('');
-                    });
+                ListInput(
+                  controller: listInputController,
+                  physics: NeverScrollableScrollPhysics(),
+                  hintText: 'Username',
+                  validator: (val) {
+                    if (val.trim().isEmpty) {
+                      return 'Enter username';
+                    } else if (val == user.username) {
+                      return 'Enter another username than yours';
+                    }
+                    return null;
                   },
-                  icon: Icons.add,
-                  color: Colors.blue,
-                  text: 'Add',
-                  withBorder: false,
-                  fontSize: 16.0,
                 ),
                 SizedBox(height: 10.0),
-                isLoading ? Loading() : Text(
-                  error,
-                  style: TextStyle(color: Colors.red),
-                  textAlign: TextAlign.center,
-                ),
+                isLoading
+                    ? Loading()
+                    : Text(
+                        error,
+                        style: TextStyle(color: Colors.red),
+                        textAlign: TextAlign.center,
+                      ),
                 SizedBox(height: 10.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -136,10 +93,6 @@ class _NewChatDialogState extends State<NewChatDialog> {
                     ButtonSimple(
                       onTap: () async {
                         if (_formKey.currentState.validate()) {
-                          setState(() {
-                            error = '';
-                            isLoading = true;
-                          });
                           // Test if a username is entered twice
                           List<String> duplicatedEnterredUsernames = duplicatedUsernames();
                           if (duplicatedEnterredUsernames.isNotEmpty) {
@@ -149,19 +102,28 @@ class _NewChatDialogState extends State<NewChatDialog> {
                             });
                           } else {
                             // No duplicates
-                            String res = await database.DatabaseChat.createNewChat(user, _enterredUsernames);
-                            if (res != null) {
-                              // Show the error
-                              setState(() {
-                                isLoading = false;
-                                error = res;
-                              });
-                            } else {
+                            setState(() {
+                              error = '';
+                              isLoading = true;
+                            });
+                            try {
+                              String chatId = await database.DatabaseChat.createNewChat(user, listInputController.values);
                               setState(() {
                                 isLoading = false;
                                 error = '';
                               });
-                              Navigator.of(context).pop();
+//                              Navigator.of(context).pop();
+                              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (contextMaterialRoute) {
+                                return ChatProvider(
+                                  id: chatId,
+                                  child: ChatHome(),
+                                );
+                              }));
+                            } catch (err) {
+                              setState(() {
+                                isLoading = false;
+                                error = err;
+                              });
                             }
                           }
                         }

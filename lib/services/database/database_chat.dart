@@ -37,7 +37,7 @@ class DatabaseChat {
   static Future<String> createNewChat(models.User user, List<String> usernames) async {
     /// Creates a new chat from the usernames and a user
     if (usernames.isEmpty) {
-      return 'No username provided different from the user';
+      return Future.error('No username provided different from the user');
     }
     // Get the
     List<QuerySnapshot> documentsList = await Future.wait(usernames.where((String username) {
@@ -54,9 +54,9 @@ class DatabaseChat {
     if (unkownUsers.isNotEmpty) {
       // Some users have not been found
       if (unkownUsers.length == 1) {
-        return 'User "${unkownUsers[0]}" doesn\'t exist';
+        return Future.error('User "${unkownUsers[0]}" doesn\'t exist');
       } else {
-        return 'Users "${unkownUsers.join('", "')}" don\'t exist';
+        return Future.error('Users "${unkownUsers.join('", "')}" don\'t exist');
       }
     }
     // All the users have been found
@@ -74,7 +74,7 @@ class DatabaseChat {
     QuerySnapshot querySnapshot = await collections.chatCollection.where('members', isEqualTo: members).getDocuments();
     if (querySnapshot.documents.isNotEmpty) {
       // The chat already exists
-      return 'A chat already exists with these users';
+      return Future.error('A chat already exists with these users');
     }
 
     // * ----- Create the chat -----
@@ -88,7 +88,7 @@ class DatabaseChat {
     newChat.id = chatid;
 
     if (chatid == null) {
-      return 'Could not create the new chat';
+      return Future.error('Could not create the new chat');
     }
     await collections.chatCollection.document(chatid).updateData({
       'id': chatid,
@@ -100,7 +100,7 @@ class DatabaseChat {
         'chats': user.toFirebaseObject()['chats'], // Only update the chats to prevent bugs
       });
     });
-    return null;
+    return Future.value(chatid);
   }
 
   Future update(obj) async {

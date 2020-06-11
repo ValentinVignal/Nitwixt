@@ -97,15 +97,6 @@ class _ChatMessagesState extends State<ChatMessages> {
                           controller: textController,
                           decoration: textInputDecorationMessage.copyWith(
                             hintText: 'Type your message',
-//                            suffixIcon: IconButton(
-//                              icon: Icon(Icons.send),
-//                              onPressed: () async {
-//                                if (textController.text.trim().isNotEmpty) {
-//                                  await _databaseMessage.sendMessage(text: textController.text.trim(), userid: user.id);
-//                                  WidgetsBinding.instance.addPostFrameCallback((_) => textController.clear());
-//                                }
-//                              },
-//                            ),
                           ),
                         ),
                       ),
