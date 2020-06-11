@@ -18,6 +18,15 @@ class User {
   // * -------------------- Link with firebase database  --------------------
 
   Map<String, Object> toFirebaseObject() {
+    this.chats.sort();
+    return {
+      'id': this.id,
+      'username': this.username,
+      'name': this.name,
+      'chats': this.chats,
+      'pushToken': this.pushToken,
+    };
+
     Map<String, Object> firebaseObject = Map<String, Object>();
 
     firebaseObject['id'] = this.id;

@@ -13,6 +13,13 @@ class Chat {
   Chat({ this.id, this.name, this.members});
 
   Map<String, Object> toFirebaseObject() {
+    this.members.sort();
+    return {
+      'id': this.id,
+      'name': this.name,
+      'members': this.members,
+  };
+
     Map<String, Object> firebaseObject = Map<String, Object>();
 
     firebaseObject['name'] = this.name;
@@ -27,6 +34,7 @@ class Chat {
     if (firebaseObject != null) {
       this.name = firebaseObject.containsKey('name') ? firebaseObject['name'] : 'Unkown name';
       this.members = firebaseObject.containsKey('members') ? List.from(firebaseObject['members']) : [];
+      this.members.sort();
     }
   }
 

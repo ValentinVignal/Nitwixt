@@ -14,6 +14,7 @@ class _ChatInfo extends State<ChatInfo> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _textControllerName = TextEditingController();
+  final ListInputController _listInputController = ListInputController();
 
   bool _isEditing = false;
   bool loading = false;
@@ -70,24 +71,39 @@ class _ChatInfo extends State<ChatInfo> {
           IconButton(
             icon: Icon(_isEditing ? Icons.done : Icons.edit),
             onPressed: () async {
-              if (_isEditing && user.name != _textControllerName.text.trim()) {
+              if (_isEditing && (user.name != _textControllerName.text.trim() || _listInputController.isNotEmpty)) {
                 if (_formKey.currentState.validate()) {
                   setState(() {
                     loading = true;
                   });
-                  await _databaseChat.update({
-                    'name': _textControllerName.text.trim(),
-                  }).then((res) {
+                  try {
+                    // * ----- Name -----
+                    if(user.name != _textControllerName.text.trim()) {
+                      await _databaseChat.update({
+                        'name': _textControllerName.text.trim(),
+                      });
+                      setState(() {
+                        _textControllerName.text = user.name;
+                      });
+                    }
+                    // * ----- Members -----
+                    if (_listInputController.isNotEmpty) {
+                      List<String> allUsernames = _listInputController.values + members.map<String>((models.User user) {
+                        return user.username;
+                      }).toList();
+                      await database.DatabaseChat(chatId: chat.id).updateMembers(allUsernames);
+                    }
                     setState(() {
-                      _textControllerName.text = user.name;
                       _isEditing = false;
                       error = '';
                     });
-                  }).catchError((err) {
+
+                  } catch (err) {
+                    print('err $err');
                     setState(() {
                       error = 'Could not update the profile';
                     });
-                  });
+                  }
                   setState(() {
                     loading = false;
                   });
@@ -151,13 +167,25 @@ class _ChatInfo extends State<ChatInfo> {
                         value: members[index].name,
                       );
                     },
-                  )
-//                  SizedBox(height: 10.0),
-//                  TextInfo(
-//                    title: 'Email',
-//                    value: userAuth.email,
-//                    mode: _isEditing ? TextInfoMode.blocked : TextInfoMode.show,
-//                  ),
+                  ),
+                  _isEditing ? ListInput(
+                    controller: _listInputController,
+                    physics: NeverScrollableScrollPhysics(),
+                    hintText: 'Username',
+                    validator: (val) {
+                      if (val.trim().isEmpty) {
+                        return 'Enter username';
+                      } else if (val == user.username) {
+                        return 'Enter another username than yours';
+                      } else if (members.map((models.User member) {
+                        return member.username;
+                      }).toList().contains(val)) {
+                        return '"$val" is already in the chat';
+                      }
+                      return null;
+                    },
+                  ) : SizedBox(height: 0.0),
+                  SizedBox(height: 10.0),
                 ],
               ),
             ),

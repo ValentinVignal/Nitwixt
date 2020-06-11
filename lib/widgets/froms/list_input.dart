@@ -4,12 +4,57 @@ import 'package:nitwixt/shared/constants.dart';
 import '../button_simple.dart';
 
 class ListInputController {
-  List<String> values;
+  List<TextEditingController> textEditingControllerList;
 
   ListInputController({
-    this.values,
+    List<String> values,
   }) {
-    this.values = this.values ?? [];
+    values = values ?? List<String>.from([]);
+    this.textEditingControllerList = List<TextEditingController>();
+    values.forEach((String value) {
+      this.textEditingControllerList.add(_createTextEditingController(value));
+    });
+  }
+
+  TextEditingController _createTextEditingController(String value) {
+    TextEditingController textEditingController = TextEditingController();
+    if (value != null) {
+      textEditingController.text = value;
+    }
+    return textEditingController;
+  }
+
+  void add(value) {
+    this.textEditingControllerList.add(_createTextEditingController(value));
+  }
+
+  void removeAt(index) {
+    TextEditingController textEditingController = this.textEditingControllerList.removeAt(index);
+//    textEditingController.dispose();
+  }
+
+  int get length {
+    return this.textEditingControllerList.length;
+  }
+
+  List<String> get values {
+    return this.textEditingControllerList.map((TextEditingController textEditingController) {
+      return textEditingController.text;
+    }).toList();
+  }
+
+  void dispose() {
+    for (var value in textEditingControllerList) {
+      value.dispose();
+    }
+  }
+
+  bool get isEmpty {
+    return this.textEditingControllerList.isEmpty;
+  }
+
+  bool get isNotEmpty {
+    return this.textEditingControllerList.isNotEmpty;
   }
 }
 
@@ -33,6 +78,13 @@ class ListInput extends StatefulWidget {
 }
 
 class _ListInputState extends State<ListInput> {
+
+//  @override
+//  void dispose() {
+//    widget.controller.dispose();
+//    super.dispose();
+//  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -40,7 +92,7 @@ class _ListInputState extends State<ListInput> {
         ListView.builder(
           physics: widget.physics,
           shrinkWrap: widget.shrinkWrap,
-          itemCount: widget.controller.values.length,
+          itemCount: widget.controller.length,
           itemBuilder: (BuildContext buildContextList, int index) {
             return Row(
               children: <Widget>[
@@ -50,13 +102,8 @@ class _ListInputState extends State<ListInput> {
                     decoration: textInputDecoration.copyWith(
                       hintText: widget.hintText,
                     ),
-                    initialValue: widget.controller.values[index],
                     validator: widget.validator,
-                    onChanged: (val) {
-                      setState(() {
-                        widget.controller.values[index] = val;
-                      });
-                    },
+                    controller: widget.controller.textEditingControllerList[index],
                   ),
                 ),
                 IconButton(
@@ -67,7 +114,7 @@ class _ListInputState extends State<ListInput> {
                   ),
                   onPressed: () {
                     setState(() {
-                      widget.controller.values.removeAt(index);
+                      widget.controller.removeAt(index);
                     });
                   },
                 ),
@@ -78,7 +125,7 @@ class _ListInputState extends State<ListInput> {
         ButtonSimple(
           onTap: () {
             setState(() {
-              widget.controller.values.add('');
+              widget.controller.add('');
             });
           },
           icon: Icons.add,

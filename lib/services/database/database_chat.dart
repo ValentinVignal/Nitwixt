@@ -34,36 +34,10 @@ class DatabaseChat {
   }
 
 
-  static Future<String> createNewChat(models.User user, List<String> usernames) async {
+  static Future<String> createNewChat(List<String> usernames) async {
     /// Creates a new chat from the usernames and a user
-    if (usernames.isEmpty) {
-      return Future.error('No username provided different from the user');
-    }
-    // Get the
-    List<QuerySnapshot> documentsList = await Future.wait(usernames.where((String username) {
-      return username != user.username;
-    }).map((String username) async {
-      return await collections.userCollection.where('username', isEqualTo: username).getDocuments();
-    }));
-    List<String> unkownUsers = [];
-    documentsList.asMap().forEach((int index, QuerySnapshot documents) {
-      if (documents.documents.isEmpty) {
-        unkownUsers.add(usernames[index]);
-      }
-    });
-    if (unkownUsers.isNotEmpty) {
-      // Some users have not been found
-      if (unkownUsers.length == 1) {
-        return Future.error('User "${unkownUsers[0]}" doesn\'t exist');
-      } else {
-        return Future.error('Users "${unkownUsers.join('", "')}" don\'t exist');
-      }
-    }
-    // All the users have been found
-    List<models.User> otherUserList = documentsList.map((QuerySnapshot documents) {
-      return DatabaseUser.userFromDocumentSnapshot(documents.documents[0]);
-    }).toList();
-    List<models.User> allUserList = [user] + otherUserList;
+
+    List<models.User> allUserList = await DatabaseUser.usersFromUsernames(usernames);
 
     // members field of the new chat
     List<String> members = allUserList.map<String>((models.User user) {
@@ -90,20 +64,58 @@ class DatabaseChat {
     if (chatid == null) {
       return Future.error('Could not create the new chat');
     }
-    await collections.chatCollection.document(chatid).updateData({
+//    await collections.chatCollection.document(chatid).updateData({
+//      'id': chatid,
+//    });
+    await DatabaseChat(chatId: chatid).update({
       'id': chatid,
     });
     // * ----- Update the users -----
     allUserList.forEach((models.User user) {
       user.chats.add(chatid);
-      collections.userCollection.document(user.id).updateData({
+      DatabaseUser(id: user.id).update({
         'chats': user.toFirebaseObject()['chats'], // Only update the chats to prevent bugs
       });
+//      collections.userCollection.document(user.id).updateData({
+//        'chats': user.toFirebaseObject()['chats'], // Only update the chats to prevent bugs
+//      });
     });
     return Future.value(chatid);
   }
 
   Future update(obj) async {
     return await chatCollection.document(chatId).updateData(obj);
+  }
+
+
+  Future updateMembers(List<String> usernames) async {
+
+    List<models.User> allUserList = await DatabaseUser.usersFromUsernames(usernames);
+    DocumentSnapshot documentSnapshot = await chatCollection.document(chatId).get();
+    models.Chat chat = chatFromDocumentSnapshot(documentSnapshot);
+
+    // members field of the new chat
+    List<String> members = allUserList.map<String>((models.User user) {
+      return user.id;
+    }).toList();
+    members.sort();
+
+    List<models.User> membersToUpdate = allUserList.where((models.User user) {
+      return !user.chats.contains(chatId);
+    }).toList();
+
+    if (chat.members == members || membersToUpdate.isEmpty) {
+      return Future.value('No changes of members');
+    }
+    await update({
+      'members': members
+    });
+    membersToUpdate.forEach((models.User user) {
+      user.chats.add(chatId);
+      DatabaseUser(id: user.id).update({
+        'chats': user.toFirebaseObject()['chats'], // Only update the chats to prevent bugs
+      });
+    });
+    return Future.value(null);
   }
 }

@@ -95,5 +95,35 @@ class DatabaseUser {
   Future update(obj) async {
     return await userCollection.document(id).updateData(obj);
   }
+
+  static Future<List<models.User>> usersFromUsernames(List<String> usernames) async {
+    if (usernames.isEmpty) {
+      return Future.error('No username provided');
+    }
+    // Get the
+    List<QuerySnapshot> documentsList = await Future.wait(usernames.map((String username) async {
+      return await collections.userCollection.where('username', isEqualTo: username).getDocuments();
+    }));
+    List<String> unkownUsers = [];
+    documentsList.asMap().forEach((int index, QuerySnapshot documents) {
+      if (documents.documents.isEmpty) {
+        unkownUsers.add(usernames[index]);
+      }
+    });
+    if (unkownUsers.isNotEmpty) {
+      // Some users have not been found
+      if (unkownUsers.length == 1) {
+        return Future.error('User "${unkownUsers[0]}" doesn\'t exist');
+      } else {
+        return Future.error('Users "${unkownUsers.join('", "')}" don\'t exist');
+      }
+    }
+    // All the users have been found
+    List<models.User> allUserList = documentsList.map((QuerySnapshot documents) {
+      return DatabaseUser.userFromDocumentSnapshot(documents.documents[0]);
+    }).toList();
+
+    return allUserList;
+  }
 }
 

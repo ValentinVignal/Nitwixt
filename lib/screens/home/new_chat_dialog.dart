@@ -35,7 +35,6 @@ class _NewChatDialogState extends State<NewChatDialog> {
   @override
   Widget build(BuildContext context) {
     final models.User user = Provider.of<models.User>(context);
-    final database.DatabaseUser databaseUser = database.DatabaseUser(id: user.id);
 
     return AlertDialog(
       shape: RoundedRectangleBorder(
@@ -107,12 +106,12 @@ class _NewChatDialogState extends State<NewChatDialog> {
                               isLoading = true;
                             });
                             try {
-                              String chatId = await database.DatabaseChat.createNewChat(user, listInputController.values);
+
+                              String chatId = await database.DatabaseChat.createNewChat(listInputController.values + [user.username]);
                               setState(() {
                                 isLoading = false;
                                 error = '';
                               });
-//                              Navigator.of(context).pop();
                               Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (contextMaterialRoute) {
                                 return ChatProvider(
                                   id: chatId,
