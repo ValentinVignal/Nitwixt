@@ -86,7 +86,7 @@ class ChatTileState extends State<ChatTile> {
                         if (messageList.isEmpty) {
                           text = 'No message yet';
                         } else {
-                          text = messageList[0].text;
+                          text = messageList[0].text.replaceAll('\n', ' ');
                         }
                       }
                       return Text(
@@ -95,6 +95,7 @@ class ChatTileState extends State<ChatTile> {
                         textAlign: TextAlign.left,
                         overflow: TextOverflow.ellipsis,
                         softWrap: true,
+                        maxLines: 2,
                       );
                     },
                   )
