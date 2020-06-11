@@ -127,7 +127,7 @@ class _ChatInfo extends State<ChatInfo> {
               child: ListView(
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
-                padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+                padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
                 children: <Widget>[
                   error.isEmpty
                       ? SizedBox(

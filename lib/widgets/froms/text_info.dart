@@ -19,7 +19,7 @@ class TextInfo extends StatelessWidget {
     this.title,
     this.value,
     this.mode = TextInfoMode.show,
-    this.fontSize = 20.0,
+    this.fontSize = 17.0,
     this.onChanged,
     this.validator,
     this.controller,
