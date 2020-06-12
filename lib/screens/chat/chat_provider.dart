@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:nitwixt/screens/chat/chat_home.dart';
 import 'package:nitwixt/services/database/database_chat.dart';
 import 'package:nitwixt/models/models.dart' as models;
-import 'package:nitwixt/shared/loading.dart';
+import 'package:nitwixt/widgets/widgets.dart';
 
 class ChatProvider extends StatelessWidget {
   final String id;
@@ -37,7 +37,7 @@ class ChatReceiver extends StatelessWidget {
 
     if (chat == null) {
       return Scaffold(
-        body: Loading(),
+        body: LoadingCircle(),
       );
     } else {
       return MembersProvider(

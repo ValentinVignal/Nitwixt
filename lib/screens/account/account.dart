@@ -3,7 +3,6 @@ import 'package:nitwixt/models/user.dart';
 import 'package:nitwixt/models/user_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
-import 'package:nitwixt/shared/loading.dart';
 import 'package:nitwixt/widgets/widgets.dart';
 
 class Account extends StatefulWidget {
@@ -84,7 +83,7 @@ class _AccountState extends State<Account> {
 //      body: isEditing ? AccountEdit() : AccountInfo(),
       body: Stack(
         children: <Widget>[
-          loading ? Loading() : SizedBox(width: 0.0, height: 0.0),
+          loading ? LoadingCircle() : SizedBox(width: 0.0, height: 0.0),
           Container(
             child: Form(
               key: _formKey,

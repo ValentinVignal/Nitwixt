@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nitwixt/services/database/database.dart';
-import 'package:nitwixt/shared/loading.dart';
+import 'package:nitwixt/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/screens/home/chat_tile.dart';
@@ -48,7 +48,7 @@ class _ChatListState extends State<ChatList> {
       stream: DatabaseChat.getChatList(chatIdList: user.chats, limit: _nbChats),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return Loading();
+          return LoadingCircle();
         } else {
           List<models.Chat> chatList = snapshot.data;
           chatTileStateList = chatList.map((element) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nitwixt/services/auth/auth.dart';
-import 'package:nitwixt/shared/loading.dart';
+import 'package:nitwixt/widgets/widgets.dart';
 import 'package:slider_button/slider_button.dart';
 import 'package:flutter_password_strength/flutter_password_strength.dart';
 import 'package:nitwixt/widgets/widgets.dart' as widgets;
@@ -187,7 +187,7 @@ class _RegisterState extends State<Register> {
                     SizedBox(
                       height: 20.0,
                     ),
-                    loading ? Loading() : Container(),
+                    loading ? LoadingCircle() : Container(),
                     Spacer(),
                     SliderButton(
                       label: Text(

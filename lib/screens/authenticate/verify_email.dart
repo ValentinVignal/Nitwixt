@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/services/auth/auth.dart' as auth;
-import 'package:nitwixt/shared/loading.dart';
+import 'package:nitwixt/widgets/widgets.dart';
 import 'package:nitwixt/widgets/widgets.dart' as widgets;
 
 class VerifyEmail extends StatefulWidget {
@@ -130,7 +130,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
               height: isEmailSent ? 20.0 : 0.0,
             ),
             isProcessing
-                ? Loading()
+                ? LoadingCircle()
                 : Container(
                     height: 0.0,
                   ),

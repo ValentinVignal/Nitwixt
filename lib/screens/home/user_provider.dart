@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/screens/home/set_username.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
-import 'package:nitwixt/shared/loading.dart';
+import 'package:nitwixt/widgets/widgets.dart';
 
 class UserProvider extends StatelessWidget {
   @override
@@ -34,7 +34,7 @@ class UserReceiver extends StatelessWidget {
     if (user == null) {
       // No user yet
       return Scaffold(
-        body: Loading(),
+        body: LoadingCircle(),
         );
     } else if (user.hasUsername) {
 //    } else if (true) {

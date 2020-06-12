@@ -5,7 +5,7 @@ import 'package:nitwixt/screens/home/chat_list.dart';
 import 'package:nitwixt/services/auth/auth.dart' as auth;
 import 'package:provider/provider.dart';
 import 'package:nitwixt/models/models.dart' as models;
-import 'package:nitwixt/shared/loading.dart';
+import 'package:nitwixt/widgets/widgets.dart';
 import 'new_chat_dialog.dart';
 
 // Different options in the popup menu
@@ -140,7 +140,7 @@ class _HomeState extends State<Home> {
         body: Builder(
           builder: (BuildContext buildContext) {
             scaffoldState = Scaffold.of(buildContext);
-            return user == null ? Loading() : ChatList();
+            return user == null ? LoadingCircle() : ChatList();
           },
         ),
 

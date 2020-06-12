@@ -5,7 +5,6 @@ import 'package:nitwixt/models/models.dart';
 import 'package:nitwixt/services/auth/auth_service.dart';
 import 'package:nitwixt/services/database/database.dart';
 import 'package:nitwixt/shared/constants.dart';
-import 'package:nitwixt/shared/loading.dart';
 import 'package:nitwixt/services/database/collections.dart';
 import 'package:nitwixt/widgets/widgets.dart';
 
@@ -114,7 +113,7 @@ class _SetUsernameState extends State<SetUsername> {
                     ),
                   ),
                   loading
-                      ? Loading()
+                      ? LoadingCircle()
                       : Container(
                           height: 0.0,
                         ),

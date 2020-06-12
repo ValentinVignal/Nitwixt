@@ -3,7 +3,7 @@ import 'package:nitwixt/services/auth/auth.dart';
 import 'package:slider_button/slider_button.dart';
 
 import 'package:nitwixt/shared/constants.dart';
-import 'package:nitwixt/shared/loading.dart';
+import 'package:nitwixt/widgets/widgets.dart';
 import 'package:nitwixt/widgets/widgets.dart' as widgets;
 
 class SignIn extends StatefulWidget {
@@ -137,7 +137,7 @@ class _SignInState extends State<SignIn> {
                       error,
                       style: TextStyle(color: Colors.red, fontSize: 14.0),
                     ),
-                    loading ? Loading() : Container(),
+                    loading ? LoadingCircle() : Container(),
                     Expanded(child: Container()),
                     SizedBox(height: 12.0),
                     SliderButton(

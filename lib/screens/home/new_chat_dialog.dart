@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/screens/chat/chat_home.dart';
 import 'package:nitwixt/screens/chat/chat_provider.dart';
-import 'package:nitwixt/shared/loading.dart';
+import 'package:nitwixt/widgets/widgets.dart';
 import 'package:nitwixt/widgets/button_simple.dart';
-import 'package:nitwixt/widgets/froms/forms.dart';
+import 'package:nitwixt/widgets/forms/forms.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
 
@@ -70,7 +70,7 @@ class _NewChatDialogState extends State<NewChatDialog> {
                 ),
                 SizedBox(height: 10.0),
                 isLoading
-                    ? Loading()
+                    ? LoadingCircle()
                     : Text(
                         error,
                         style: TextStyle(color: Colors.red),

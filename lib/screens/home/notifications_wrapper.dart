@@ -6,7 +6,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:nitwixt/screens/home/home.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:nitwixt/shared/loading.dart';
+import 'package:nitwixt/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
 
@@ -114,7 +114,7 @@ class PushTokenReceiver extends StatelessWidget {
     models.PushToken pushToken = Provider.of<models.PushToken>(context);
 
     if (pushToken == null) {
-      return Loading();
+      return LoadingCircle();
     } else {
       return Home();
     }

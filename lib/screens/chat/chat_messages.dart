@@ -4,7 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/screens/message/message_tile.dart';
 import 'package:nitwixt/shared/constants.dart';
-import 'package:nitwixt/shared/loading.dart';
+import 'package:nitwixt/widgets/widgets.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/services/database/database.dart' as database;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -62,7 +62,7 @@ class _ChatMessagesState extends State<ChatMessages> {
       stream: _databaseMessage.getMessageList(limit: _nbMessages),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return Loading();
+          return LoadingCircle();
         } else {
           List<models.Message> messageList = snapshot.data;
           double height = MediaQuery.of(context).size.height;
@@ -76,24 +76,9 @@ class _ChatMessagesState extends State<ChatMessages> {
                   enablePullUp: true,
                   reverse: true,
                   enablePullDown: false,
-                   // TODO: Custom Footer
-                  header: WaterDropHeader(
-                    waterDropColor: Colors.black,
-                    complete: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        const Icon(
-                          Icons.done,
-                          color: Colors.grey,
-                        ),
-                      ],
-                    ),
-                  ),
                   scrollController: _scrollController,
                   controller: _refreshController,
                     primary: false,
-  //                  onLoading: _onLoading,
-//                  onRefresh: _onLoading,
                   onLoading: _onLoading,
                   child: ListView.builder(
                     scrollDirection: Axis.vertical,
