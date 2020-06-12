@@ -15,30 +15,12 @@ class ChatList extends StatefulWidget {
 
 class _ChatListState extends State<ChatList> {
   int _nbChats = 8;
-  ScrollController _scrollController;
   RefreshController _refreshController = RefreshController(initialRefresh: false);
   List<GlobalKey<ChatTileState>> chatTileStateList;
-
-  _scrollListener() {
-    if (_scrollController.position.maxScrollExtent == _scrollController.position.pixels) {
-      setState(() {
-        _nbChats += 4;
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    _scrollController = ScrollController();
-    _scrollController.addListener(_scrollListener);
-
-    super.initState();
-  }
 
   @override
   void dispose() {
     _refreshController.dispose();
-    _scrollController.dispose();
   }
 
   void _onRefresh() async {
@@ -48,11 +30,13 @@ class _ChatListState extends State<ChatList> {
         chatTileState.currentState.refresh();
       });
     }
-
     _refreshController.refreshCompleted();
   }
 
   void _onLoading() async {
+    setState(() {
+      _nbChats += 4;
+    });
     _refreshController.loadComplete();
   }
 

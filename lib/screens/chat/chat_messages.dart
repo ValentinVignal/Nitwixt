@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/screens/message/message_tile.dart';
 import 'package:nitwixt/shared/constants.dart';
 import 'package:nitwixt/shared/loading.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/services/database/database.dart' as database;
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ChatMessages extends StatefulWidget {
   @override
@@ -14,25 +16,30 @@ class ChatMessages extends StatefulWidget {
 
 class _ChatMessagesState extends State<ChatMessages> {
   TextEditingController textController = TextEditingController();
-  int _nbMessages = 10;
+  int _nbMessages = 8;
+
   ScrollController _scrollController;
+
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
   bool showSendButton = false;
 
   @override
   void dispose() {
     textController.dispose();
+    _scrollController.dispose();
+    _refreshController.dispose();
     super.dispose();
   }
 
-  _scrollListener() {
-    if (_scrollController.position.maxScrollExtent == _scrollController.position.pixels) {
-      setState(() {
-        _nbMessages += 8;
-      });
-    }
+  void _onLoading() async {
+    setState(() {
+      _nbMessages += 8;
+    });
+    _refreshController.loadComplete();
+    _refreshController.refreshCompleted();
   }
 
-  _textListener() {
+  void _textListener() {
     setState(() {
       showSendButton = textController.text.trim().isNotEmpty;
     });
@@ -41,9 +48,7 @@ class _ChatMessagesState extends State<ChatMessages> {
   @override
   void initState() {
     _scrollController = ScrollController();
-    _scrollController.addListener(_scrollListener);
     textController.addListener(_textListener);
-
     super.initState();
   }
 
@@ -62,66 +67,88 @@ class _ChatMessagesState extends State<ChatMessages> {
           List<models.Message> messageList = snapshot.data;
           double height = MediaQuery.of(context).size.height;
 
-          return SizedBox(
-            height: height,
-            child: Column(
-              children: <Widget>[
-                SizedBox(width: 5.0),
-                Expanded(
+          return Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Expanded(
+                child: SmartRefresher(
+                  enablePullUp: true,
+                  reverse: true,
+                  enablePullDown: false,
+                   // TODO: Custom Footer
+                  header: WaterDropHeader(
+                    waterDropColor: Colors.black,
+                    complete: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        const Icon(
+                          Icons.done,
+                          color: Colors.grey,
+                        ),
+                      ],
+                    ),
+                  ),
+                  scrollController: _scrollController,
+                  controller: _refreshController,
+                    primary: false,
+  //                  onLoading: _onLoading,
+//                  onRefresh: _onLoading,
+                  onLoading: _onLoading,
                   child: ListView.builder(
-                    controller: _scrollController,
+                    scrollDirection: Axis.vertical,
                     itemCount: messageList.length,
                     reverse: true,
                     itemBuilder: (context, index) {
                       models.Message message = messageList[index];
                       return MessageTile(message: message);
                     },
-                    shrinkWrap: true,
+                    shrinkWrap: false,
                   ),
                 ),
-                Container(
-                  color: Colors.black,
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: TextFormField(
-                          keyboardType: TextInputType.multiline,
-                          textCapitalization: TextCapitalization.sentences,
-                          minLines: 1,
-                          onChanged: (val) {
-                            print('val $val');
-                            print('textController ${textController.text.isEmpty}');
-                          },
-                          maxLines: 7,
-                          style: TextStyle(color: Colors.white),
-                          controller: textController,
-                          decoration: textInputDecorationMessage.copyWith(
-                            hintText: 'Type your message',
-                          ),
+              ),
+              Container(
+                color: Colors.black,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: TextFormField(
+                        keyboardType: TextInputType.multiline,
+                        textCapitalization: TextCapitalization.sentences,
+                        minLines: 1,
+                        onChanged: (val) {
+                          print('val $val');
+                          print('textController ${textController.text.isEmpty}');
+                        },
+                        maxLines: 7,
+                        style: TextStyle(color: Colors.white),
+                        controller: textController,
+                        decoration: textInputDecorationMessage.copyWith(
+                          hintText: 'Type your message',
                         ),
                       ),
-                      SizedBox(width: 5.0),
-                      showSendButton
-                          ? IconButton(
-                              icon: Icon(
-                                Icons.send,
-                                color: Colors.blue,
-                              ),
-                              onPressed: () async {
-                                if (textController.text.trim().isNotEmpty) {
+                    ),
+                    SizedBox(width: 5.0),
+                    showSendButton
+                        ? IconButton(
+                            icon: Icon(
+                              Icons.send,
+                              color: Colors.blue,
+                            ),
+                            onPressed: () async {
+                              if (textController.text.trim().isNotEmpty) {
 //                                  await _databaseMessage.sendMessage(text: textController.text.trim(), userid: user.id);
-                                  _databaseMessage.sendMessage(text: textController.text.trim(), userid: user.id);
-                                  WidgetsBinding.instance.addPostFrameCallback((_) => textController.clear());
-                                }
-                              },
-                            )
-                          : SizedBox(width: 0.0),
-                      SizedBox(width: textController.text.isEmpty ? 0.0 : 5.0),
-                    ],
-                  ),
+                                _databaseMessage.sendMessage(text: textController.text.trim(), userid: user.id);
+                                WidgetsBinding.instance.addPostFrameCallback((_) => textController.clear());
+                              }
+                            },
+                          )
+                        : SizedBox(width: 0.0),
+                    SizedBox(width: textController.text.isEmpty ? 0.0 : 5.0),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         }
       },
