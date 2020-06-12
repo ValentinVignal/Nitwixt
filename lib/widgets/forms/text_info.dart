@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-enum TextInfoMode { show, edit, blocked }
+import 'text_info_mode.dart';
 
 class TextInfo extends StatelessWidget {
   final String title;
@@ -30,7 +30,7 @@ class TextInfo extends StatelessWidget {
     this.scrollDirection,
   }) : super() {
     assert(value == null || controller == null);
-    assert((maxLines == null) == (scrollDirection == null));
+    assert(!((maxLines == null) && (scrollDirection == Axis.vertical)));
     textStyleInfo = TextStyle(
       fontSize: this.fontSize,
       color: Colors.white,

@@ -118,8 +118,7 @@ class _AccountState extends State<Account> {
                       return null;
                     },
                     controller: _textControllerName,
-                    maxLines: 2,
-                    scrollDirection: Axis.vertical,
+                    scrollDirection: Axis.horizontal,
                   ),
                   SizedBox(height: 10.0),
                   TextInfo(

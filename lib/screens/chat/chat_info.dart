@@ -126,7 +126,7 @@ class _ChatInfo extends State<ChatInfo> {
               child: ListView(
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
-                padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
+                padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
                 children: <Widget>[
                   error.isEmpty
                       ? SizedBox(
@@ -142,6 +142,7 @@ class _ChatInfo extends State<ChatInfo> {
                     title: 'Name',
                     mode: _isEditing ? TextInfoMode.edit : TextInfoMode.show,
                     controller: _textControllerName,
+                    scrollDirection: Axis.horizontal,
                   ),
                   Divider(
                     color: Colors.blueGrey,
@@ -160,10 +161,11 @@ class _ChatInfo extends State<ChatInfo> {
                     itemCount: members.length,
                     itemBuilder: (contextList, index) {
                       String username_ = members[index].id == user.id ? '(@You) ${members[index].username}' : members[index].username;
-                      return TextInfo(
+                      return TextInfoSubtitle(
                         title: username_,
-                        mode: _isEditing ? TextInfoMode.blocked : TextInfoMode.show,
+                        mode: TextInfoMode.show,
                         value: members[index].name,
+                        scrollDirection: Axis.horizontal,
                       );
                     },
                   ),
