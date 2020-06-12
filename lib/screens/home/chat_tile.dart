@@ -4,6 +4,7 @@ import 'package:nitwixt/screens/chat/chat_home.dart';
 import 'package:nitwixt/screens/chat/chat_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
+import 'package:nitwixt/widgets/widgets.dart';
 
 class ChatTile extends StatefulWidget {
   final models.Chat chat;
@@ -52,10 +53,9 @@ class ChatTileState extends State<ChatTile> {
                     future: widget.chat.nameToDisplay(user),
                     builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Text(
-                          '...',
-                          style: TextStyle(color: Colors.grey, fontSize: 18.0),
-                          textAlign: TextAlign.left,
+                        return LoadingDots(
+                          color: Colors.grey,
+                          fontSize: 18.0,
                         );
                       } else {
                         if (snapshot.hasError) {
@@ -80,7 +80,10 @@ class ChatTileState extends State<ChatTile> {
                     builder: (contextStreamBuilder, snapshot) {
                       String text;
                       if (!snapshot.hasData) {
-                        text = '...';
+                        return LoadingDots(
+                          color: Colors.grey,
+                          fontSize: 14.0,
+                        );
                       } else {
                         List<models.Message> messageList = snapshot.data;
                         if (messageList.isEmpty) {

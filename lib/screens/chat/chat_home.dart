@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nitwixt/screens/chat/chat_provider.dart';
+import 'package:nitwixt/widgets/loading/loading.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/screens/chat/chat_messages.dart';
 import 'package:nitwixt/models/models.dart' as models;
@@ -25,9 +26,9 @@ class _ChatHomeState extends State<ChatHome> {
           future: chat.nameToDisplay(user),
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text(
-                '...',
-                style: TextStyle(color: Colors.grey, fontSize: 18.0),
+              return LoadingDots(
+                color: Colors.grey,
+                fontSize: 18.0,
               );
             } else {
               if (snapshot.hasError) {
