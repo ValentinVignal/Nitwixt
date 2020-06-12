@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/screens/chat/chat_home.dart';
-import 'package:nitwixt/screens/chat/chat_provider.dart';
+import 'package:nitwixt/services/providers/providers.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
 import 'package:nitwixt/widgets/widgets.dart';

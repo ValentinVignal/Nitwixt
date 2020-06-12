@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:nitwixt/screens/chat/members_provider.dart';
+import 'file:///D:/Valentin/Code/Nitwixt/Nitwixt/lib/services/providers/members_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:nitwixt/screens/chat/chat_home.dart';
-import 'package:nitwixt/services/database/database_chat.dart';
+import '../database/database_chat.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/widgets/widgets.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nitwixt/screens/chat/chat_provider.dart';
+import 'package:nitwixt/services/providers/providers.dart';
 import 'package:nitwixt/widgets/loading/loading.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/screens/chat/chat_messages.dart';

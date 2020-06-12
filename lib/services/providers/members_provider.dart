@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/widgets/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:nitwixt/services/database/database.dart';
+import '../database/database.dart';
 
 class MembersProvider extends StatelessWidget {
   final models.Chat chat;
