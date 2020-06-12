@@ -38,7 +38,8 @@ class _AccountState extends State<Account> {
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
         title: Text('Account'),
-        backgroundColor: Colors.blueGrey[800],
+//        backgroundColor: Colors.blueGrey[800],
+      backgroundColor: Colors.black,
         leading: new IconButton(
           icon: Icon(Icons.arrow_back_ios),
           onPressed: () {

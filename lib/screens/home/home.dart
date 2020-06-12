@@ -97,7 +97,8 @@ class _HomeState extends State<Home> {
         backgroundColor: Colors.grey[900],
         appBar: AppBar(
           title: Text('Nitwixt'),
-          backgroundColor: Colors.blueGrey[800],
+//          backgroundColor: Colors.grey[900],
+          backgroundColor: Colors.black,
           elevation: 0.0,
           actions: <Widget>[
             Builder(

@@ -59,7 +59,7 @@ class _ChatInfo extends State<ChatInfo> {
             }
           },
         ),
-        backgroundColor: Colors.blueGrey[800],
+        backgroundColor: Colors.black,
         leading: new IconButton(
           icon: Icon(Icons.arrow_back_ios),
           onPressed: () {
