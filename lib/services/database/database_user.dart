@@ -96,18 +96,18 @@ class DatabaseUser {
     return await userCollection.document(id).updateData(obj);
   }
 
-  static Future<List<models.User>> usersFromUsernames(List<String> usernames) async {
-    if (usernames.isEmpty) {
+  static Future<List<models.User>> usersFromField(List<String> fieldValuesList, {String fieldName = 'username'}) async {
+    if (fieldValuesList.isEmpty) {
       return Future.error('No username provided');
     }
     // Get the
-    List<QuerySnapshot> documentsList = await Future.wait(usernames.map((String username) async {
-      return await collections.userCollection.where('username', isEqualTo: username).getDocuments();
+    List<QuerySnapshot> documentsList = await Future.wait(fieldValuesList.map((String username) async {
+      return await collections.userCollection.where(fieldName, isEqualTo: username).getDocuments();
     }));
     List<String> unkownUsers = [];
     documentsList.asMap().forEach((int index, QuerySnapshot documents) {
       if (documents.documents.isEmpty) {
-        unkownUsers.add(usernames[index]);
+        unkownUsers.add(fieldValuesList[index]);
       }
     });
     if (unkownUsers.isNotEmpty) {

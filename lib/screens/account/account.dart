@@ -79,6 +79,14 @@ class _AccountState extends State<Account> {
               }
             },
           ),
+          _isEditing ? IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () {
+              setState(() {
+                _isEditing = false;
+              });
+            },
+          ) : SizedBox(width: 0.0,),
         ],
       ),
 //      body: isEditing ? AccountEdit() : AccountInfo(),

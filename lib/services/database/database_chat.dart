@@ -19,8 +19,13 @@ class DatabaseChat {
     return querySnapshot.documents.map(chatFromDocumentSnapshot).toList();
   }
 
-  Stream<models.Chat> get chat {
+  Stream<models.Chat> get chatStream {
     return chatCollection.document(chatId).snapshots().map(chatFromDocumentSnapshot);
+  }
+
+  Future<models.Chat> get chatFuture async {
+    DocumentSnapshot documentSnapshot = await chatCollection.document(chatId).get();
+    return chatFromDocumentSnapshot(documentSnapshot);
   }
 
 
@@ -37,7 +42,7 @@ class DatabaseChat {
   static Future<String> createNewChat(List<String> usernames) async {
     /// Creates a new chat from the usernames and a user
 
-    List<models.User> allUserList = await DatabaseUser.usersFromUsernames(usernames);
+    List<models.User> allUserList = await DatabaseUser.usersFromField(usernames);
 
     // members field of the new chat
     List<String> members = allUserList.map<String>((models.User user) {
@@ -90,7 +95,7 @@ class DatabaseChat {
 
   Future updateMembers(List<String> usernames) async {
 
-    List<models.User> allUserList = await DatabaseUser.usersFromUsernames(usernames);
+    List<models.User> allUserList = await DatabaseUser.usersFromField(usernames);
     DocumentSnapshot documentSnapshot = await chatCollection.document(chatId).get();
     models.Chat chat = chatFromDocumentSnapshot(documentSnapshot);
 
@@ -118,4 +123,25 @@ class DatabaseChat {
     });
     return Future.value(null);
   }
+
+  /// Delete the chat
+  Future delete({List<models.User> members}) async {
+    // Reconstruct members if not provided
+    if (members == null) {
+      models.Chat chat = await this.chatFuture;
+      members = await DatabaseUser.usersFromField(chat.members, fieldName: 'id');
+    }
+
+    // Delete the chat in the user documents
+    members.forEach((models.User member) async {
+      member.chats.remove(chatId);
+      await DatabaseUser(id: member.id).update({
+        'chat': member.toFirebaseObject()['chats'],
+      });
+    });
+
+    // Remove the chat
+    return chatCollection.document(chatId).delete();
+  }
+
 }

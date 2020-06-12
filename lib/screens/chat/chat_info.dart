@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nitwixt/models/models.dart' as models;
+import 'package:nitwixt/screens/chat/delete_chat_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
 import 'package:nitwixt/widgets/widgets.dart';
@@ -36,6 +38,18 @@ class _ChatInfo extends State<ChatInfo> {
     }
     final database.DatabaseChat _databaseChat = database.DatabaseChat(chatId: chat.id);
 
+    void _showDeleteChatPanel() {
+      showDialog(
+        context: context,
+        builder: ((BuildContext contextDialog) {
+          return DeleteChatDialog(
+            chat: chat,
+            members: members,
+          );
+        }),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
@@ -43,9 +57,9 @@ class _ChatInfo extends State<ChatInfo> {
           future: chat.nameToDisplay(user),
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text(
-                '...',
-                style: TextStyle(color: Colors.grey, fontSize: 18.0),
+              return LoadingDots(
+                color: Colors.grey,
+                fontSize: 18.0,
               );
             } else {
               if (snapshot.hasError) {
@@ -77,7 +91,7 @@ class _ChatInfo extends State<ChatInfo> {
                   });
                   try {
                     // * ----- Name -----
-                    if(user.name != _textControllerName.text.trim()) {
+                    if (user.name != _textControllerName.text.trim()) {
                       await _databaseChat.update({
                         'name': _textControllerName.text.trim(),
                       });
@@ -87,16 +101,16 @@ class _ChatInfo extends State<ChatInfo> {
                     }
                     // * ----- Members -----
                     if (_listInputController.isNotEmpty) {
-                      List<String> allUsernames = _listInputController.values + members.map<String>((models.User user) {
-                        return user.username;
-                      }).toList();
+                      List<String> allUsernames = _listInputController.values +
+                          members.map<String>((models.User user) {
+                            return user.username;
+                          }).toList();
                       await database.DatabaseChat(chatId: chat.id).updateMembers(allUsernames);
                     }
                     setState(() {
                       _isEditing = false;
                       error = '';
                     });
-
                   } catch (err) {
                     print('err $err');
                     setState(() {
@@ -114,12 +128,23 @@ class _ChatInfo extends State<ChatInfo> {
               }
             },
           ),
+          _isEditing
+              ? IconButton(
+                  icon: Icon(Icons.close),
+                  onPressed: () {
+                    setState(() {
+                      _isEditing = false;
+                    });
+                  },
+                )
+              : SizedBox(
+                  width: 0.0,
+                ),
         ],
       ),
 //      body: isEditing ? AccountEdit() : AccountInfo(),
       body: Stack(
         children: <Widget>[
-          loading ? LoadingCircle() : SizedBox(width: 0.0, height: 0.0),
           Container(
             child: Form(
               key: _formKey,
@@ -169,28 +194,107 @@ class _ChatInfo extends State<ChatInfo> {
                       );
                     },
                   ),
-                  _isEditing ? ListInput(
-                    controller: _listInputController,
-                    physics: NeverScrollableScrollPhysics(),
-                    hintText: 'Username',
-                    validator: (val) {
-                      if (val.trim().isEmpty) {
-                        return 'Enter username';
-                      } else if (val == user.username) {
-                        return 'Enter another username than yours';
-                      } else if (members.map((models.User member) {
-                        return member.username;
-                      }).toList().contains(val)) {
-                        return '"$val" is already in the chat';
-                      }
-                      return null;
-                    },
-                  ) : SizedBox(height: 0.0),
-                  SizedBox(height: 10.0),
+                  _isEditing
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            ListInput(
+                              controller: _listInputController,
+                              physics: NeverScrollableScrollPhysics(),
+                              hintText: 'Username',
+                              validator: (val) {
+                                if (val.trim().isEmpty) {
+                                  return 'Enter username';
+                                } else if (val == user.username) {
+                                  return 'Enter another username than yours';
+                                } else if (members
+                                    .map((models.User member) {
+                                      return member.username;
+                                    })
+                                    .toList()
+                                    .contains(val)) {
+                                  return '"$val" is already in the chat';
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(height: 100.0),
+                            Divider(
+                              color: Colors.red[900],
+                            ),
+                            Container(
+//                        padding: EdgeInsets.symmetric(
+//                          vertical: 10.0,
+//                          horizontal: 10.0,
+//                        ),
+//                        decoration: BoxDecoration(
+//                          border: Border.all(
+//                            color: Colors.red[900],
+//                            width: 2.0,
+//                          ),
+//                          borderRadius: BorderRadius.circular(20.0),
+//                        ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: <Widget>[
+                                  RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        WidgetSpan(
+                                          child: Icon(
+                                            Icons.warning,
+                                            color: Colors.red[900],
+                                            size: 20.0,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: '   Danger Zone   ',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.red[900],
+                                            fontSize: 20.0,
+                                          ),
+                                        ),
+                                        WidgetSpan(
+                                          child: Icon(
+                                            Icons.warning,
+                                            color: Colors.red[900],
+                                            size: 20.0,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  SizedBox(height: 20.0),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      ButtonSimple(
+                                        color: Colors.red[900],
+                                        text: 'Delete Chat',
+                                        icon: Icons.delete,
+                                        onTap: () {
+                                          _showDeleteChatPanel();
+                                        },
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
+                        )
+                      : SizedBox(height: 0.0),
                 ],
               ),
             ),
           ),
+          loading ? LoadingCircle() : SizedBox(width: 0.0, height: 0.0),
         ],
       ),
     );

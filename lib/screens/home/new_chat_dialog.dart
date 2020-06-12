@@ -106,7 +106,6 @@ class _NewChatDialogState extends State<NewChatDialog> {
                               isLoading = true;
                             });
                             try {
-
                               String chatId = await database.DatabaseChat.createNewChat(listInputController.values + [user.username]);
                               setState(() {
                                 isLoading = false;
