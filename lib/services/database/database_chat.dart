@@ -136,7 +136,7 @@ class DatabaseChat {
     members.forEach((models.User member) async {
       member.chats.remove(chatId);
       await DatabaseUser(id: member.id).update({
-        'chat': member.toFirebaseObject()['chats'],
+        'chats': member.toFirebaseObject()['chats'],
       });
     });
 

@@ -10,6 +10,10 @@ admin.initializeApp();
 // export const helloWorld = functions.https.onRequest((request, response) => {
 //  response.send("Hello from Firebase!");
 // });
+
+/**
+ * This function send notification to all the members of a chat when a message is written
+ */
 export const messageNotification = functions.firestore.document('chats/{chatId}/messages/{messageId}').onCreate(async function (snapshot, context) {
     console.log('---------- Start function ----------');
 
@@ -76,3 +80,25 @@ export const messageNotification = functions.firestore.document('chats/{chatId}/
     }
     return null;
 });
+
+
+
+/**
+ * This function deletes all the messages on the deletion of a chat
+ */
+export const chatDelete = functions.firestore.document('chats/{chatId}').onDelete(async function (snapshot, context) {
+    console.log('---------- Start function ----------');
+
+    // const ref: FirebaseFirestore.DocumentReference = snapshot.ref;
+    const chat: FirebaseFirestore.DocumentData = snapshot.data();
+    const documentReferences: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData> = await admin.firestore().collection('chats').doc(chat.id).collection('messages').get();
+    documentReferences.forEach(async function(documentData) {
+        try {
+            await documentData.ref.delete();
+        } catch (err) {
+            console.log(err);
+        }
+    });
+})
+
+
