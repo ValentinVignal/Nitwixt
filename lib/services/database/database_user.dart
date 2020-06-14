@@ -27,13 +27,9 @@ class DatabaseUser {
     return querySnapshot.documents.map(userFromDocumentSnapshot).toList();
   }
 
-  static Stream<List<models.User>> getUserList({List<String> userIdList}) {
-    if (userIdList == null || userIdList.isEmpty) {
-      return new Stream.value([]);
-    } else {
-      Query query = collections.userCollection.where('id', whereIn: userIdList);
-      return query.snapshots().map(userFromQuerySnapshot);
-    }
+  static Stream<List<models.User>> getUserList({String chatid}) {
+    Query query = collections.userCollection.where('chats', arrayContains: chatid);
+    return query.snapshots().map(userFromQuerySnapshot);
   }
 
   static Future createEmptyUser({String id}) async {

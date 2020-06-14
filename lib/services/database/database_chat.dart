@@ -29,13 +29,9 @@ class DatabaseChat {
   }
 
 
-  static Stream<List<models.Chat>> getChatList({List<String> chatIdList, int limit = 10}) {
-    if (chatIdList == null || chatIdList.isEmpty) {
-      return new Stream.value([]);
-    } else {
-      Query query = collections.chatCollection.where('id', whereIn: chatIdList).limit(limit);
-      return query.snapshots().map(chatFromQuerySnapshot);
-    }
+  static Stream<List<models.Chat>> getChatList({String userid, int limit = 10}) {
+    Query query = collections.chatCollection.where('members', arrayContains: userid).limit(limit);
+    return query.snapshots().map(chatFromQuerySnapshot);
   }
 
 

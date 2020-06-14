@@ -45,7 +45,7 @@ class _ChatListState extends State<ChatList> {
     final models.User user = Provider.of<models.User>(context) ?? [];
 
     return StreamBuilder<List<models.Chat>>(
-      stream: DatabaseChat.getChatList(chatIdList: user.chats, limit: _nbChats),
+      stream: DatabaseChat.getChatList(userid: user.id, limit: _nbChats),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return LoadingCircle();

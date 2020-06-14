@@ -16,7 +16,7 @@ class MembersProvider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<models.User>>.value(
-      value: DatabaseUser.getUserList(userIdList: chat.members),
+      value: DatabaseUser.getUserList(chatid: chat.id),
       child: MembersReceiver(
         child: this.child,
       ),
