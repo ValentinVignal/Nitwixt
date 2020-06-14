@@ -124,6 +124,7 @@ class _DeleteChatDialogState extends State<DeleteChatDialog> {
                           } catch (e) {
                             print(e);
                             setState(() {
+//                              error = e.toString();
                               error = 'Could not delete the chat';
                             });
                             setState(() {

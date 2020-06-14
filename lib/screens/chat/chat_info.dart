@@ -114,7 +114,8 @@ class _ChatInfo extends State<ChatInfo> {
                   } catch (err) {
                     print('err $err');
                     setState(() {
-                      error = 'Could not update the profile';
+                      error = err.toString();
+//                      error = 'Could not update the profile';
                     });
                   }
                   setState(() {
