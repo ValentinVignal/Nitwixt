@@ -57,6 +57,7 @@ class _ChatMessagesState extends State<ChatMessages> {
     final models.User user = Provider.of<models.User>(context);
     final models.Chat chat = Provider.of<models.Chat>(context);
     final database.DatabaseMessage _databaseMessage = database.DatabaseMessage(chatId: chat.id);
+    print('chatid ${chat.id}');
 
     return StreamBuilder<List<models.Message>>(
       stream: _databaseMessage.getMessageList(limit: _nbMessages),
@@ -101,10 +102,6 @@ class _ChatMessagesState extends State<ChatMessages> {
                         keyboardType: TextInputType.multiline,
                         textCapitalization: TextCapitalization.sentences,
                         minLines: 1,
-                        onChanged: (val) {
-                          print('val $val');
-                          print('textController ${textController.text.isEmpty}');
-                        },
                         maxLines: 7,
                         style: TextStyle(color: Colors.white),
                         controller: textController,
