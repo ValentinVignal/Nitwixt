@@ -10,8 +10,12 @@ class MessageTile extends StatefulWidget {
   models.Message message;
   DateFormat format = DateFormat('HH:mm - d MMM');
   DateTime date;
+  void Function(models.Message message) onLongPress;
 
-  MessageTile({this.message}) {
+  MessageTile({
+    this.message,
+    this.onLongPress,
+  }) {
     date = message.date.toDate();
   }
 
@@ -127,10 +131,15 @@ class _MessageTileState extends State<MessageTile> {
                     child: GestureDetector(
                       onLongPress: () {
                         print('long press');
+                        if (widget.onLongPress != null) {
+                          widget.onLongPress(widget.message);
+
+                        }
+
 //                        _showOptionMessagePanel();
-                        setState(() {
-                          _showOptions = !_showOptions;
-                        });
+//                        setState(() {
+//                          _showOptions = !_showOptions;
+//                        });
 //                  showMenu(
 //                    context: context,
 //                    position: RelativeRect.fromRect(rect, container),
@@ -280,3 +289,8 @@ class _MessageOptionsState extends State<MessageOptions> {
   }
 }
 
+
+class MessageTileController {
+
+
+}
