@@ -8,6 +8,7 @@ import 'package:nitwixt/widgets/widgets.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/services/database/database.dart' as database;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:nitwixt/widgets/widgets.dart';
 
 class ChatMessages extends StatefulWidget {
   @override
@@ -23,7 +24,7 @@ class _ChatMessagesState extends State<ChatMessages> {
   RefreshController _refreshController = RefreshController(initialRefresh: false);
   bool showSendButton = false;
 
-  bool _showOptionMessageMenu = false;
+  PopupController _popupController = PopupController();
 
   @override
   void dispose() {
@@ -62,7 +63,6 @@ class _ChatMessagesState extends State<ChatMessages> {
 
     void _sendMessage() async {
       if (textController.text.trim().isNotEmpty) {
-//        await _databaseMessage.sendMessage(text: textController.text.trim(), userid: user.id);
         _databaseMessage.sendMessage(text: textController.text.trim(), userid: user.id);
         WidgetsBinding.instance.addPostFrameCallback((_) => textController.clear());
       }
@@ -75,83 +75,50 @@ class _ChatMessagesState extends State<ChatMessages> {
           return LoadingCircle();
         } else {
           List<models.Message> messageList = snapshot.data;
-          double height = MediaQuery.of(context).size.height;
-          print('show options $_showOptionMessageMenu');
+//          double height = MediaQuery.of(context).size.height;
+//          print('show options $_showOptionMessageMenu');
 
           return Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               Expanded(
-                child: Stack(
-//                overflow: Overflow.visible,
-//              alignment: Alignment.topCenter,
-                  children: <Widget>[
-//                  Text('coucou', style: TextStyle(color: Colors.white),),
-                  // If doesn't work: try Align or Positioned
-                    SizedBox(
-                      child: SmartRefresher(
-                        enablePullUp: true,
+                child: Popup(
+                  controller: _popupController,
+                  childBack: SizedBox(
+                    child: SmartRefresher(
+                      enablePullUp: true,
+                      reverse: true,
+                      enablePullDown: false,
+                      scrollController: _scrollController,
+                      controller: _refreshController,
+                      primary: false,
+                      onLoading: _onLoading,
+                      child: ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        itemCount: messageList.length,
                         reverse: true,
-                        enablePullDown: false,
-                        scrollController: _scrollController,
-                        controller: _refreshController,
-                        primary: false,
-                        onLoading: _onLoading,
-                        child: ListView.builder(
-                          scrollDirection: Axis.vertical,
-                          itemCount: messageList.length,
-                          reverse: true,
-                          itemBuilder: (context, index) {
-                            models.Message message = messageList[index];
-                            return MessageTile(
-                                message: message,
-                                onLongPress: (models.Message message) {
-                                  setState(() {
-                                    _showOptionMessageMenu = true;
-                                  });
-                                });
-                          },
-                          shrinkWrap: true,
-                        ),
+                        itemBuilder: (context, index) {
+                          models.Message message = messageList[index];
+                          return MessageTile(
+                              message: message,
+                              onLongPress: (models.Message message) {
+                                this._popupController.show();
+//                                setState(() {
+//                                  _showOptionMessageMenu = true;
+//                                });
+                              });
+                        },
+                        shrinkWrap: true,
                       ),
                     ),
-                    _showOptionMessageMenu
-                        ? Center(
-                            child: Stack(
-                              alignment: Alignment.center,
-//                          fit: StackFit.loose,
-//                        fit: StackFit.passthrough,
-                              overflow: Overflow.visible,
-                              children: <Widget>[
-                                GestureDetector(
-                                  behavior: HitTestBehavior.translucent,
-                                  child: Container(
-                                    height: double.maxFinite,
-                                    width: double.maxFinite,
-//                                    color: Color(0x00000000),
-                                  ),
-                                  onTap: () {
-                                    setState(() {
-                                      _showOptionMessageMenu = false;
-                                    });
-                                  },
-
-                                ),
-                                Container(
-                                  height: 100.0,
-                                  width: 100.0,
-                                  color: Colors.blue,
-                                  child: Text('cocou'),
-                                )
-                              ],
-                            ),
-                          )
-                        : SizedBox(
-                            height: 0.0,
-                            width: 0.0,
-                          )
-                  ],
+                  ),
+                  childFront: Container(
+                    height: 100.0,
+                    width: 100.0,
+                    color: Colors.blue,
+                    child: Text('cocou'),
+                  ),
                 ),
               ),
               Container(
