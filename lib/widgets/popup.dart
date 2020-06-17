@@ -28,12 +28,8 @@ class _PopupState extends State<Popup> {
 
   @override
   Widget build(BuildContext context) {
-//    widget.controller.show = () {
-//      setState(() {
-//        widget.controller.showPopup = true;
-//      });
-//    };
   widget.controller.getPopupSetState(setState);
+
 
     return Stack(
       children: <Widget>[
@@ -70,9 +66,13 @@ class PopupController {
   Function show;
   Function hide;
   Function toggle;
+  Function updateObject;
+  Object object;
 
   PopupController({
     this.showPopup = false,
+    this.updateObject,
+    this.object,
   }) {
     this.show = () {
       this.showPopup = true;
@@ -101,7 +101,11 @@ class PopupController {
         this.showPopup = !this.showPopup;
       });
     };
-
+    this.updateObject = (Object obj) {
+      setState(() {
+        this.object = obj;
+      });
+    };
   }
 
 

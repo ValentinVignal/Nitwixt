@@ -8,7 +8,6 @@ import 'package:nitwixt/widgets/widgets.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/services/database/database.dart' as database;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:nitwixt/widgets/widgets.dart';
 
 class ChatMessages extends StatefulWidget {
   @override
@@ -68,6 +67,23 @@ class _ChatMessagesState extends State<ChatMessages> {
       }
     }
 
+    void _reactToMessage(models.Message message, String react) async {
+      if (message.reacts.containsKey(user.id) && message.reacts[user.id] == react) {
+        // Unreact
+        message.reacts.remove(user.id);
+      } else {
+        // react
+        message.reacts[user.id] = react;
+      }
+      this._popupController.hide();
+      await _databaseMessage.updateMessage(
+        messageId: message.id,
+        obj: {
+          'reacts': message.toFirebaseObject()['reacts'],
+        },
+      );
+    }
+
     return StreamBuilder<List<models.Message>>(
       stream: _databaseMessage.getMessageList(limit: _nbMessages),
       builder: (context, snapshot) {
@@ -75,9 +91,6 @@ class _ChatMessagesState extends State<ChatMessages> {
           return LoadingCircle();
         } else {
           List<models.Message> messageList = snapshot.data;
-//          double height = MediaQuery.of(context).size.height;
-//          print('show options $_showOptionMessageMenu');
-
           return Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.end,
@@ -104,20 +117,20 @@ class _ChatMessagesState extends State<ChatMessages> {
                               message: message,
                               onLongPress: (models.Message message) {
                                 this._popupController.show();
-//                                setState(() {
-//                                  _showOptionMessageMenu = true;
-//                                });
+                                this._popupController.object = message;
                               });
                         },
                         shrinkWrap: true,
                       ),
                     ),
                   ),
-                  childFront: Container(
-                    height: 100.0,
-                    width: 100.0,
-                    color: Colors.blue,
-                    child: Text('cocou'),
+                  childFront: Builder(
+                    builder: (context) {
+                      return MessageOptions(
+                        message: this._popupController.object,
+                        onReactSelected: _reactToMessage,
+                      );
+                    },
                   ),
                 ),
               ),

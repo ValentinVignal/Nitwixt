@@ -76,7 +76,7 @@ class _MessageTileState extends State<MessageTile> {
           color: Colors.grey[700],
         ),
         onPressed: () {
-          print('button pressed');
+//          print('button pressed');
         },
         padding: EdgeInsets.all(2.0),
         constraints: BoxConstraints(
@@ -86,15 +86,17 @@ class _MessageTileState extends State<MessageTile> {
       ),
     );
 
-    void _showOptionMessagePanel() {
-      showDialog(
-          context: context,
-          builder: ((BuildContext contextDialog) {
-            return MessageOptionDialog(
-              message: widget.message,
-            );
-          }));
-    }
+    Widget reacts = widget.message.reacts.isEmpty
+        ? SizedBox(
+            height: 0.0,
+            width: 0.0,
+          )
+        : Container(
+            child: Text(
+              '${widget.message.reacts.reactList().join()} ${widget.message.reacts.length}',
+              style: TextStyle(color: Colors.white),
+            ),
+          );
 
     // * --------------------------------------------------
     // * --------------------------------------------------
@@ -104,91 +106,61 @@ class _MessageTileState extends State<MessageTile> {
       child: Stack(
         fit: StackFit.passthrough,
         children: <Widget>[
-          _showOptions ? MessageOptions() : SizedBox(height: 0.0, width: 0.0,),
+          _showOptions
+              ? MessageOptions()
+              : SizedBox(
+                  height: 0.0,
+                  width: 0.0,
+                ),
           Column(
             crossAxisAlignment: isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
             children: <Widget>[
-//        EmojiPicker(
-//          bgColor: Color(0x00000000),
-//          rows: 3,
-//          columns: 7,
-//          onEmojiSelected: (emoji, category) {
-//            print('$emoji - $category');
-//          },
-//        ),
               nameContainer,
               Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
                 children: <Widget>[
-//              isMyMessage
-//                  ? addReactButton
-//                  : Container(
-//                      height: 0.0,
-//                      width: 0.0,
-//                    ),
-                  Flexible(
-                    child: GestureDetector(
-                      onLongPress: () {
-                        print('long press');
-                        if (widget.onLongPress != null) {
-                          widget.onLongPress(widget.message);
-
-                        }
-
-//                        _showOptionMessagePanel();
-//                        setState(() {
-//                          _showOptions = !_showOptions;
-//                        });
-//                  showMenu(
-//                    context: context,
-//                    position: RelativeRect.fromRect(rect, container),
-//                    items: <PopupMenuEntry>[
-//                      PopupMenuItem<String>(
-//                        value: 'delete',
-//                        child: Row(
-//                          children: <Widget>[
-//                            Icon(Icons.delete),
-//                            Text('Delete'),
-//                          ],
-//                        )
-//                      )
-//                    ],
-//                  );
-                      },
-                      onTap: () {
-                        setState(() {
-                          _showInfo = !_showInfo;
-                        });
-                      },
-                      child: Container(
-                        margin: EdgeInsets.all(2.0),
-                        padding: EdgeInsets.only(top: 7.0, bottom: 7.0, right: 8.0, left: 8.0),
-                        decoration: BoxDecoration(
-                          color: isMyMessage ? Colors.blue[400] : Colors.black,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(
-                              20.0,
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Flexible(
+                        child: GestureDetector(
+                          onLongPress: () {
+                            if (widget.onLongPress != null) {
+                              widget.onLongPress(widget.message);
+                            }
+                          },
+                          onTap: () {
+                            setState(() {
+                              _showInfo = !_showInfo;
+                            });
+                          },
+                          child: Container(
+                            margin: EdgeInsets.all(2.0),
+                            padding: EdgeInsets.only(top: 7.0, bottom: 7.0, right: 8.0, left: 8.0),
+                            decoration: BoxDecoration(
+                              color: isMyMessage ? Colors.blue[400] : Colors.black,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(
+                                  20.0,
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              widget.message.text,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15.0,
+                              ),
+                              textAlign: TextAlign.left,
                             ),
                           ),
                         ),
-                        child: Text(
-                          widget.message.text,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15.0,
-                          ),
-                          textAlign: TextAlign.left,
-                        ),
                       ),
-                    ),
+                      reacts,
+                    ],
                   ),
-//              !isMyMessage
-//                  ? addReactButton
-//                  : Container(
-//                      height: 0.0,
-//                      width: 0.0,
-//                    ),
                 ],
               ),
               _showInfo
@@ -205,8 +177,15 @@ class _MessageTileState extends State<MessageTile> {
   }
 }
 
-
 class MessageOptions extends StatefulWidget {
+  models.Message message;
+  void Function(models.Message, String react) onReactSelected;
+
+  MessageOptions({
+    this.message,
+    this.onReactSelected,
+  }) : super();
+
   @override
   _MessageOptionsState createState() => _MessageOptionsState();
 }
@@ -214,20 +193,20 @@ class MessageOptions extends StatefulWidget {
 class _MessageOptionsState extends State<MessageOptions> {
   bool showEmojiPicker = false;
 
-  Widget emojiButton(value) {
-    return GestureDetector(
-      child: Container(
-        padding: EdgeInsets.all(5.0),
-        child: Text(value),
-      ),
-      onTap: () {
-        print(value);
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    Widget emojiButton(value) {
+      return GestureDetector(
+        child: Container(
+          padding: EdgeInsets.all(5.0),
+          child: Text(value),
+        ),
+        onTap: () {
+          widget.onReactSelected(widget.message, value);
+        },
+      );
+    }
+
     return Container(
       width: double.maxFinite,
       child: SingleChildScrollView(
@@ -271,17 +250,21 @@ class _MessageOptionsState extends State<MessageOptions> {
               ],
             ),
             showEmojiPicker
-                ? EmojiPicker(
-              bgColor: Color(0x00000000),
-              rows: 3,
-              columns: 7,
-              onEmojiSelected: (emoji, category) {
-                print('$emoji - $category');
-              },
-            )
+                ? Container(
+                    color: Colors.black,
+                    child: EmojiPicker(
+                      bgColor: Color(0x00000000),
+                      rows: 3,
+                      columns: 7,
+                      onEmojiSelected: (emoji, category) {
+                        widget.onReactSelected(widget.message, emoji.emoji);
+                      },
+                      buttonMode: ButtonMode.CUPERTINO,
+                    ),
+                  )
                 : SizedBox(
-              height: 0.0,
-            ),
+                    height: 0.0,
+                  ),
           ],
         ),
       ),
@@ -289,8 +272,4 @@ class _MessageOptionsState extends State<MessageOptions> {
   }
 }
 
-
-class MessageTileController {
-
-
-}
+class MessageTileController {}

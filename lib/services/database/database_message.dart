@@ -32,4 +32,8 @@ class DatabaseMessage extends DatabaseChat {
       'id': documentReference.documentID,
     });
   }
+
+  Future updateMessage({String messageId, Object obj}) async {
+    return await chatCollection.document(chatId).collection('messages').document(messageId).updateData(obj);
+  }
 }
