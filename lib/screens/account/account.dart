@@ -133,6 +133,7 @@ class _AccountState extends State<Account> {
                     title: 'Email',
                     value: userAuth.email,
                     mode: _isEditing ? TextInfoMode.blocked : TextInfoMode.show,
+                    scrollDirection: Axis.horizontal,
                   ),
                 ],
               ),

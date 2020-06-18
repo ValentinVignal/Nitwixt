@@ -120,12 +120,15 @@ class _MessageTileState extends State<MessageTile> {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
                 children: <Widget>[
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      Flexible(
-                        child: GestureDetector(
+                  SizedBox(
+                    width: isMyMessage ? 45.0 : 0.0,
+                  ),
+                  Flexible(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        GestureDetector(
                           onLongPress: () {
                             if (widget.onLongPress != null) {
                               widget.onLongPress(widget.message);
@@ -157,9 +160,12 @@ class _MessageTileState extends State<MessageTile> {
                             ),
                           ),
                         ),
-                      ),
-                      reacts,
-                    ],
+                        reacts,
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    width: isMyMessage ? 0.0 : 45.0,
                   ),
                 ],
               ),
