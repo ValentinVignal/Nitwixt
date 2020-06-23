@@ -11,10 +11,12 @@ class MessageTile extends StatefulWidget {
   DateFormat format = DateFormat('HH:mm - d MMM');
   DateTime date;
   void Function(models.Message message) onLongPress;
+  void Function(models.Message message) reactButtonOnTap;
 
   MessageTile({
     this.message,
     this.onLongPress,
+    this.reactButtonOnTap,
   }) {
     date = message.date.toDate();
   }
@@ -25,7 +27,6 @@ class MessageTile extends StatefulWidget {
 
 class _MessageTileState extends State<MessageTile> {
   bool _showInfo = false;
-  bool _showOptions = false;
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +70,7 @@ class _MessageTileState extends State<MessageTile> {
     );
 
     Widget addReactButton = Container(
+      alignment: Alignment.topCenter,
       padding: EdgeInsets.only(left: isMyMessage ? 15.0 : 0.0, right: isMyMessage ? 0.0 : 15.0),
       child: IconButton(
         icon: Icon(
@@ -76,6 +78,9 @@ class _MessageTileState extends State<MessageTile> {
           color: Colors.grey[700],
         ),
         onPressed: () {
+          if (widget.reactButtonOnTap != null) {
+            widget.reactButtonOnTap(widget.message);
+          }
 //          print('button pressed');
         },
         padding: EdgeInsets.all(2.0),
@@ -98,85 +103,97 @@ class _MessageTileState extends State<MessageTile> {
             ),
           );
 
+    Widget textWidget = Flexible(
+      child: GestureDetector(
+        onLongPress: () {
+          if (widget.onLongPress != null) {
+            widget.onLongPress(widget.message);
+          }
+        },
+        onTap: () {
+          setState(() {
+            _showInfo = !_showInfo;
+          });
+        },
+        child: Container(
+          margin: EdgeInsets.all(2.0),
+          padding: EdgeInsets.only(top: 7.0, bottom: 7.0, right: 8.0, left: 8.0),
+          decoration: BoxDecoration(
+            color: isMyMessage ? Colors.blue[400] : Colors.black,
+            borderRadius: BorderRadius.all(
+              Radius.circular(
+                20.0,
+              ),
+            ),
+          ),
+          child: Text(
+            widget.message.text,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 15.0,
+            ),
+            textAlign: TextAlign.left,
+          ),
+        ),
+      ),
+    );
+
     // * --------------------------------------------------
     // * --------------------------------------------------
     // * --------------------------------------------------
 
     return GestureDetector(
-      child: Stack(
-        fit: StackFit.passthrough,
+      child: Column(
+        crossAxisAlignment: isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          _showOptions
-              ? MessageOptions()
-              : SizedBox(
-                  height: 0.0,
-                  width: 0.0,
-                ),
+          nameContainer,
+          SizedBox(
+            width: isMyMessage ? 45.0 : 0.0,
+          ),
           Column(
-            crossAxisAlignment: isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
-              nameContainer,
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+                children: <Widget>[
+                  isMyMessage
+                      ? addReactButton
+                      : SizedBox(
+                          width: 0.0,
+                        ),
+                  textWidget,
+                  isMyMessage
+                      ? SizedBox(
+                          width: 0.0,
+                        )
+                      : addReactButton,
+                ],
+              ),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
                 children: <Widget>[
                   SizedBox(
-                    width: isMyMessage ? 45.0 : 0.0,
+                    width: isMyMessage ? 40.0 : 0.0,
                   ),
-                  Flexible(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        GestureDetector(
-                          onLongPress: () {
-                            if (widget.onLongPress != null) {
-                              widget.onLongPress(widget.message);
-                            }
-                          },
-                          onTap: () {
-                            setState(() {
-                              _showInfo = !_showInfo;
-                            });
-                          },
-                          child: Container(
-                            margin: EdgeInsets.all(2.0),
-                            padding: EdgeInsets.only(top: 7.0, bottom: 7.0, right: 8.0, left: 8.0),
-                            decoration: BoxDecoration(
-                              color: isMyMessage ? Colors.blue[400] : Colors.black,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(
-                                  20.0,
-                                ),
-                              ),
-                            ),
-                            child: Text(
-                              widget.message.text,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15.0,
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                        ),
-                        reacts,
-                      ],
-                    ),
-                  ),
+                  reacts,
                   SizedBox(
-                    width: isMyMessage ? 0.0 : 45.0,
+                    width: isMyMessage ? 0.0 : 40.0,
                   ),
                 ],
-              ),
-              _showInfo
-                  ? dateContainer
-                  : Container(
-                      height: 0.0,
-                      width: 0.0,
-                    )
+              )
             ],
           ),
+          _showInfo
+              ? dateContainer
+              : Container(
+                  height: 0.0,
+                  width: 0.0,
+                )
         ],
       ),
     );
@@ -214,68 +231,72 @@ class _MessageOptionsState extends State<MessageOptions> {
     }
 
     return Container(
-      width: double.maxFinite,
+      alignment: Alignment.center,
       child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                emojiButton(
-                  '❤',
-                ),
-                emojiButton(
-                  '😆',
-                ),
-                emojiButton(
-                  '😮',
-                ),
-                emojiButton(
-                  '😢',
-                ),
-                emojiButton(
-                  '😠',
-                ),
-                emojiButton(
-                  '👍',
-                ),
-                emojiButton(
-                  '👎',
-                ),
-                IconButton(
-                  icon: Icon(showEmojiPicker ? Icons.remove_circle : Icons.add_circle_outline, color: Colors.grey[700]),
-                  onPressed: () {
-                    setState(() {
-                      showEmojiPicker = !showEmojiPicker;
-                    });
-                  },
-                ),
-              ],
-            ),
-            showEmojiPicker
-                ? Container(
-                    color: Colors.black,
-                    child: EmojiPicker(
-                      bgColor: Color(0x00000000),
-                      rows: 3,
-                      columns: 7,
-                      onEmojiSelected: (emoji, category) {
-                        widget.onReactSelected(widget.message, emoji.emoji);
-                      },
-                      buttonMode: ButtonMode.CUPERTINO,
-                    ),
-                  )
-                : SizedBox(
-                    height: 0.0,
+        child: Container(
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.0), color: Colors.black),
+          padding: showEmojiPicker ? null : EdgeInsets.symmetric(horizontal: 5.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  emojiButton(
+                    '❤',
                   ),
-          ],
+                  emojiButton(
+                    '😆',
+                  ),
+                  emojiButton(
+                    '😮',
+                  ),
+                  emojiButton(
+                    '😢',
+                  ),
+                  emojiButton(
+                    '😠',
+                  ),
+                  emojiButton(
+                    '👍',
+                  ),
+                  emojiButton(
+                    '👎',
+                  ),
+                  IconButton(
+                    icon: Icon(showEmojiPicker ? Icons.remove_circle : Icons.add_circle_outline, color: Colors.grey[700]),
+                    onPressed: () {
+                      setState(() {
+                        showEmojiPicker = !showEmojiPicker;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              showEmojiPicker
+                  ? Container(
+                      color: Colors.black,
+                      child: EmojiPicker(
+                        bgColor: Color(0x00000000),
+                        rows: 4,
+                        columns: 12,
+                        onEmojiSelected: (emoji, category) {
+                          widget.onReactSelected(widget.message, emoji.emoji);
+                        },
+                        buttonMode: ButtonMode.CUPERTINO,
+                      ),
+                    )
+                  : SizedBox(
+                      height: 0.0,
+                      width: 0.0,
+                    ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
-
-class MessageTileController {}

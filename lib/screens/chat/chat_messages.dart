@@ -115,7 +115,7 @@ class _ChatMessagesState extends State<ChatMessages> {
                           models.Message message = messageList[index];
                           return MessageTile(
                               message: message,
-                              onLongPress: (models.Message message) {
+                              reactButtonOnTap: (models.Message message) {
                                 this._popupController.show();
                                 this._popupController.object = message;
                               });
