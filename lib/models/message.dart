@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:nitwixt/services/database/database.dart';
 
 class Message {
   final String id; // Id of the message
@@ -6,6 +7,7 @@ class Message {
   String text; // The text of the message
   String userid; // The user who sent the message
   MessageReacts reacts;
+  String previousMessageId;
 
   Message({
     this.id,
@@ -13,6 +15,7 @@ class Message {
     this.text,
     this.userid,
     this.reacts,
+    this.previousMessageId='',
   }) {
     if (this.reacts == null) {
       this.reacts = MessageReacts();
@@ -27,6 +30,7 @@ class Message {
     firebaseObject['text'] = this.text;
     firebaseObject['userid'] = this.userid;
     firebaseObject['reacts'] = this.reacts.toFirebaseObject();
+    firebaseObject['previousMessageId'] = this.previousMessageId;
 
     return firebaseObject;
   }
@@ -37,6 +41,15 @@ class Message {
     this.text = firebaseObject.containsKey('text') ? firebaseObject['text'] : '';
     this.userid = firebaseObject.containsKey('userid') ? firebaseObject['userid'] : '';
     this.reacts = firebaseObject.containsKey('reacts') ? MessageReacts.fromFirebaseObject(firebaseObject['reacts']) : MessageReacts();
+    this.previousMessageId = firebaseObject.containsKey('previousMessageId') ? firebaseObject['previousMessageId'].toString() : '';
+  }
+
+  Future<Message> answersToMessage(String chatId) async {
+    if (this.previousMessageId.isEmpty) {
+      return null;
+    } else {
+      return await DatabaseMessage(chatId: chatId).getMessageFuture(this.previousMessageId);
+    }
   }
 }
 

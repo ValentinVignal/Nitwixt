@@ -3,14 +3,14 @@ import 'package:nitwixt/services/database/database_user.dart';
 
 class Chat {
   // * -------------------- Stored in Firebase --------------------
-  String id;    // The id of the chat
-  String name;      // The name of the chat
+  String id; // The id of the chat
+  String name; // The name of the chat
   List<String> members;
 
   // * -------------------- Constructed later Firebase --------------------
-  Map<String, String> _nameToDisplay;     // user id -> other user name (user for private chat with 2 persons)
+  Map<String, String> _nameToDisplay; // user id -> other user name (user for private chat with 2 persons)
 
-  Chat({ this.id, this.name, this.members});
+  Chat({this.id, this.name, this.members});
 
   Map<String, Object> toFirebaseObject() {
     this.members.sort();
@@ -18,19 +18,10 @@ class Chat {
       'id': this.id,
       'name': this.name,
       'members': this.members,
-  };
-
-    Map<String, Object> firebaseObject = Map<String, Object>();
-
-    firebaseObject['name'] = this.name;
-    firebaseObject['members'] = this.members;
-    firebaseObject['id'] = this.id;
-
-    return firebaseObject;
+    };
   }
 
-  Chat.fromFirebaseObject(String id, Map firebaseObject):
-      id = id {
+  Chat.fromFirebaseObject(String id, Map firebaseObject) : id = id {
     if (firebaseObject != null) {
       this.name = firebaseObject.containsKey('name') ? firebaseObject['name'] : 'Unkown name';
       this.members = firebaseObject.containsKey('members') ? List.from(firebaseObject['members']) : [];
@@ -39,7 +30,7 @@ class Chat {
   }
 
   Future<String> nameToDisplay(User user) async {
-    if(!this.members.contains(user.id)) {
+    if (!this.members.contains(user.id)) {
       // The user is not in this chat
       return null;
     } else {
@@ -76,8 +67,5 @@ class Chat {
         }
       }
     }
-
   }
-
 }
-

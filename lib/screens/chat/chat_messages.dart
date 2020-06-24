@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/screens/message/message_tile.dart';
+import 'package:nitwixt/screens/message/message_to_answer_to.dart';
 import 'package:nitwixt/shared/constants.dart';
 import 'package:nitwixt/widgets/widgets.dart';
 import 'package:nitwixt/models/models.dart' as models;
@@ -15,19 +16,18 @@ class ChatMessages extends StatefulWidget {
 }
 
 class _ChatMessagesState extends State<ChatMessages> {
-  TextEditingController textController = TextEditingController();
   int _nbMessages = 8;
 
   ScrollController _scrollController;
 
   RefreshController _refreshController = RefreshController(initialRefresh: false);
-  bool showSendButton = false;
 
   PopupController _popupController = PopupController();
 
+  models.Message messageToAnswer;
+
   @override
   void dispose() {
-    textController.dispose();
     _scrollController.dispose();
     _refreshController.dispose();
     super.dispose();
@@ -41,17 +41,18 @@ class _ChatMessagesState extends State<ChatMessages> {
     _refreshController.refreshCompleted();
   }
 
-  void _textListener() {
-    setState(() {
-      showSendButton = textController.text.trim().isNotEmpty;
-    });
-  }
 
   @override
   void initState() {
     _scrollController = ScrollController();
-    textController.addListener(_textListener);
     super.initState();
+  }
+
+  void setMessageToAnswer(models.Message message) {
+    message == null ? print('message null') : print('message ${message.id}');
+    setState(() {
+      messageToAnswer = message;
+    });
   }
 
   @override
@@ -60,12 +61,18 @@ class _ChatMessagesState extends State<ChatMessages> {
     final models.Chat chat = Provider.of<models.Chat>(context);
     final database.DatabaseMessage _databaseMessage = database.DatabaseMessage(chatId: chat.id);
 
-    void _sendMessage() async {
-      if (textController.text.trim().isNotEmpty) {
-        _databaseMessage.sendMessage(text: textController.text.trim(), userid: user.id);
-        WidgetsBinding.instance.addPostFrameCallback((_) => textController.clear());
+    void _sendMessage(String text) async {
+      if (text.trim().isNotEmpty) {
+        _databaseMessage.sendMessage(
+          text: text.trim(),
+          userid: user.id,
+          previousMessageId: messageToAnswer != null ? messageToAnswer.id : null,
+        );
+        setMessageToAnswer(null);
       }
     }
+
+
 
     void _reactToMessage(models.Message message, String react) async {
       if (message.reacts.containsKey(user.id) && message.reacts[user.id] == react) {
@@ -114,11 +121,15 @@ class _ChatMessagesState extends State<ChatMessages> {
                         itemBuilder: (context, index) {
                           models.Message message = messageList[index];
                           return MessageTile(
-                              message: message,
-                              reactButtonOnTap: (models.Message message) {
-                                this._popupController.show();
-                                this._popupController.object = message;
-                              });
+                            message: message,
+                            reactButtonOnTap: (models.Message message) {
+                              this._popupController.show();
+                              this._popupController.object = message;
+                            },
+                            onAnswerDrag: (models.Message message) {
+                              setMessageToAnswer(message);
+                            },
+                          );
                         },
                         shrinkWrap: true,
                       ),
@@ -126,7 +137,7 @@ class _ChatMessagesState extends State<ChatMessages> {
                   ),
                   childFront: Builder(
                     builder: (context) {
-                      return MessageOptions(
+                      return ReactPopup(
                         message: this._popupController.object,
                         onReactSelected: _reactToMessage,
                       );
@@ -134,41 +145,93 @@ class _ChatMessagesState extends State<ChatMessages> {
                   ),
                 ),
               ),
-              Container(
-                color: Colors.black,
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: TextFormField(
-                        keyboardType: TextInputType.multiline,
-                        textCapitalization: TextCapitalization.sentences,
-                        minLines: 1,
-                        maxLines: 7,
-                        style: TextStyle(color: Colors.white),
-                        controller: textController,
-                        decoration: textInputDecorationMessage.copyWith(
-                          hintText: 'Type your message',
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 5.0),
-                    showSendButton
-                        ? IconButton(
-                            icon: Icon(
-                              Icons.send,
-                              color: Colors.blue,
-                            ),
-                            onPressed: _sendMessage,
-                          )
-                        : SizedBox(width: 0.0),
-                    SizedBox(width: textController.text.isEmpty ? 0.0 : 5.0),
-                  ],
-                ),
-              ),
+              messageToAnswer != null
+                  ? MessageToAnswerTo(
+                      message: messageToAnswer,
+                      onCancel: () {
+                        setMessageToAnswer(null);
+                      },
+                    )
+                  : SizedBox.shrink(),
+            InputTextMessage(
+              sendMessage: _sendMessage,
+            )
             ],
           );
         }
       },
+    );
+  }
+}
+
+class InputTextMessage extends StatefulWidget {
+  Function sendMessage;
+
+  InputTextMessage({
+    @required this.sendMessage,
+  }) : super();
+
+  @override
+  _InputTextMessageState createState() => _InputTextMessageState();
+}
+
+class _InputTextMessageState extends State<InputTextMessage> {
+  TextEditingController _textController = TextEditingController();
+  bool showSendButton = false;
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
+  void _textListener() {
+    setState(() {
+    showSendButton = _textController.text.trim().isNotEmpty;
+    });
+  }
+
+  @override
+  void initState() {
+    _textController.addListener(_textListener);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.black,
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: TextFormField(
+              keyboardType: TextInputType.multiline,
+              textCapitalization: TextCapitalization.sentences,
+              minLines: 1,
+              maxLines: 7,
+              style: TextStyle(color: Colors.white),
+              controller: _textController,
+              decoration: textInputDecorationMessage.copyWith(
+                hintText: 'Type your message',
+              ),
+            ),
+          ),
+          SizedBox(width: 5.0),
+          showSendButton
+              ? IconButton(
+                  icon: Icon(
+                    Icons.send,
+                    color: Colors.blue,
+                  ),
+                  onPressed: () {
+                    widget.sendMessage(_textController.text.trim());
+                    WidgetsBinding.instance.addPostFrameCallback((_) => _textController.clear());
+                  },
+                )
+              : SizedBox(width: 0.0),
+          SizedBox(width: _textController.text.isEmpty ? 0.0 : 5.0),
+        ],
+      ),
     );
   }
 }

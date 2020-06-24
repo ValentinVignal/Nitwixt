@@ -45,6 +45,7 @@ dependencies:
   progress_indicators: ^0.1.5
   emoji_picker: ^0.1.0
   flutter_emoji: ^2.2.1+1
+  swipe_button: ^0.0.2
 
 dev_dependencies:
   flutter_test:
