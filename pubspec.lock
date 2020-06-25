@@ -167,6 +167,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
+  flutter_markdown:
+    dependency: "direct main"
+    description:
+      name: flutter_markdown
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.2"
   flutter_parsed_text:
     dependency: transitive
     description:
@@ -261,6 +268,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.1+1"
+  markdown:
+    dependency: transitive
+    description:
+      name: markdown
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.5"
   matcher:
     dependency: transitive
     description:
@@ -413,13 +427,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.5"
-  swipe_button:
-    dependency: "direct main"
-    description:
-      name: swipe_button
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.2"
   term_glyph:
     dependency: transitive
     description:
@@ -478,4 +485,4 @@ packages:
     version: "2.2.1"
 sdks:
   dart: ">=2.7.0 <3.0.0"
-  flutter: ">=1.12.13+hotfix.5 <2.0.0"
+  flutter: ">=1.17.0 <2.0.0"

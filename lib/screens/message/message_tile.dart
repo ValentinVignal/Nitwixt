@@ -5,6 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:nitwixt/widgets/widgets.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:markdown/markdown.dart' as md;
+import 'package:flutter_emoji/flutter_emoji.dart';
 
 class MessageTile extends StatefulWidget {
   models.Message message;
@@ -30,6 +33,9 @@ class MessageTile extends StatefulWidget {
 class _MessageTileState extends State<MessageTile> {
   bool _showInfo = false;
   RefreshController _refreshController = RefreshController(initialRefresh: false);
+  final EmojiParser _emojiParser = EmojiParser();
+  final RegExp REGEX_ONLY_EMOJI = RegExp(r'^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])*$');
+
 
   @override
   void dispose() {
@@ -42,6 +48,9 @@ class _MessageTileState extends State<MessageTile> {
     final user = Provider.of<models.User>(context);
     final membersMap = Provider.of<Map<String, models.User>>(context);
     final chat = Provider.of<models.Chat>(context);
+    final MarkdownStyleSheet _markdownStyleSheet = MarkdownStyleSheet.fromTheme(Theme.of(context));
+    final String emojiedText = _emojiParser.emojify(widget.message.text);
+    final bool isOnlyEmojis = REGEX_ONLY_EMOJI.hasMatch(emojiedText);
 
     bool isMyMessage = user.id == widget.message.userid;
 
@@ -125,23 +134,42 @@ class _MessageTileState extends State<MessageTile> {
             _showInfo = !_showInfo;
           });
         },
-        child: Container(
+        child: isOnlyEmojis ? Container(
+          child: Text(emojiedText, style: TextStyle(color: Colors.white, fontSize: 50.0),),
+        )
+        :Container(
           padding: EdgeInsets.only(top: 7.0, bottom: 7.0, right: 8.0, left: 8.0),
           decoration: BoxDecoration(
-            color: isMyMessage ? Colors.blue[400] : Colors.black,
+            color: isMyMessage ? Colors.blue[600] : Colors.black,
             borderRadius: BorderRadius.all(
               Radius.circular(
                 20.0,
               ),
             ),
           ),
-          child: Text(
-            widget.message.text,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 15.0,
+//          child: Text(
+//            widget.message.text,
+//            style: TextStyle(
+//              color: Colors.white,
+//              fontSize: 15.0,
+//            ),
+//            textAlign: TextAlign.left,
+//          ),
+          child: MarkdownBody(
+            data: emojiedText,
+            selectable: true,
+            styleSheet: _markdownStyleSheet.copyWith(
+              a: _markdownStyleSheet.a.copyWith(color: Color(0xFF60E4FF), fontStyle: FontStyle.italic),
+              p: _markdownStyleSheet.p.copyWith(color: Colors.white),
+              blockSpacing: 3.0,
+              codeblockDecoration: BoxDecoration(
+                color: Colors.grey[800]
+              ),
+              code: _markdownStyleSheet.code.copyWith(
+                backgroundColor: Colors.grey[800],
+                color: Colors.grey[100],
+              ),
             ),
-            textAlign: TextAlign.left,
           ),
         ),
       ),
