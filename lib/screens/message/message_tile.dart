@@ -147,57 +147,57 @@ class _MessageTileState extends State<MessageTile> {
       ),
     );
 
-    Widget messageAnswered = Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
-      children: <Widget>[
-        SizedBox(
-          width: isMyMessage ? 40.0 : 0,
-        ),
-        Flexible(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 3.0),
-            decoration: BoxDecoration(
-              color: Color(0xFF151515),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10.0),
-                topRight: Radius.circular(10.0),
-              ),
-            ),
-            child: widget.message.previousMessageId.isNotEmpty
-                ? FutureBuilder<models.Message>(
-                    future: widget.message.answersToMessage(chat.id),
-                    builder: (BuildContext context, AsyncSnapshot<models.Message> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return LoadingDots(
-                          color: Colors.grey,
-                          fontSize: 13.0,
-                        );
-                      } else {
-                        if (snapshot.hasError) {
-                          print('could not find the message ${widget.message.previousMessageId} in chat ${chat.id}');
-                          return SizedBox.shrink();
-                        } else {
-                          return Text(
-                            snapshot.data.text.replaceAll('\n', ' '),
-                            style: TextStyle(color: Colors.grey),
-                            textAlign: TextAlign.left,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            softWrap: true,
-                          );
-                        }
-                      }
-                    },
-                  )
-                : SizedBox.shrink(),
-          ),
-        ),
-        SizedBox(
-          width: isMyMessage ? 0 : 40.0,
-        ),
-      ],
-    );
+    Widget messageAnswered = widget.message.previousMessageId.isNotEmpty
+        ? FutureBuilder<models.Message>(
+            future: widget.message.answersToMessage(chat.id),
+            builder: (BuildContext context, AsyncSnapshot<models.Message> snapshot) {
+              Widget content;
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                content = LoadingDots(
+                  color: Colors.grey,
+                  fontSize: 13.0,
+                );
+              } else {
+                if (snapshot.hasError) {
+                  print('could not find the message ${widget.message.previousMessageId} in chat ${chat.id}');
+                  content = SizedBox.shrink();
+                } else {
+                  content = Text(
+                    snapshot.data.text.replaceAll('\n', ' '),
+                    style: TextStyle(color: Colors.grey),
+                    textAlign: TextAlign.left,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: true,
+                  );
+                }
+              }
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(
+                    width: isMyMessage ? 40.0 : 0,
+                  ),
+                  Flexible(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 3.0),
+                      decoration: BoxDecoration(
+                        color: Color(0xFF151515),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10.0),
+                          topRight: Radius.circular(10.0),
+                        ),
+                      ),
+                      child: content,
+                    ),
+                  ),
+                ],
+              );
+            },
+          )
+        : SizedBox.shrink();
 
     // * --------------------------------------------------
     // * --------------------------------------------------
