@@ -8,6 +8,7 @@ import 'package:nitwixt/widgets/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:flutter_emoji/flutter_emoji.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class MessageTile extends StatefulWidget {
   models.Message message;
@@ -35,7 +36,6 @@ class _MessageTileState extends State<MessageTile> {
   RefreshController _refreshController = RefreshController(initialRefresh: false);
   final EmojiParser _emojiParser = EmojiParser();
   final RegExp REGEX_ONLY_EMOJI = RegExp(r'^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])*$');
-
 
   @override
   void dispose() {
@@ -134,44 +134,38 @@ class _MessageTileState extends State<MessageTile> {
             _showInfo = !_showInfo;
           });
         },
-        child: isOnlyEmojis ? Container(
-          child: Text(emojiedText, style: TextStyle(color: Colors.white, fontSize: 50.0),),
-        )
-        :Container(
-          padding: EdgeInsets.only(top: 7.0, bottom: 7.0, right: 8.0, left: 8.0),
-          decoration: BoxDecoration(
-            color: isMyMessage ? Colors.blue[600] : Colors.black,
-            borderRadius: BorderRadius.all(
-              Radius.circular(
-                20.0,
+        child: isOnlyEmojis
+            ? Container(
+                child: Text(
+                  emojiedText,
+                  style: TextStyle(color: Colors.white, fontSize: 50.0),
+                ),
+              )
+            : Container(
+                padding: EdgeInsets.only(top: 7.0, bottom: 7.0, right: 8.0, left: 8.0),
+                decoration: BoxDecoration(
+                  color: isMyMessage ? Colors.blue[600] : Colors.black,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(
+                      20.0,
+                    ),
+                  ),
+                ),
+                child: MarkdownBody(
+                  data: emojiedText,
+                  selectable: true,
+                  styleSheet: _markdownStyleSheet.copyWith(
+                    a: _markdownStyleSheet.a.copyWith(color: Color(0xFF60E4FF), fontStyle: FontStyle.italic),
+                    p: _markdownStyleSheet.p.copyWith(color: Colors.white),
+                    blockSpacing: 3.0,
+                    codeblockDecoration: BoxDecoration(color: Colors.grey[800]),
+                    code: _markdownStyleSheet.code.copyWith(
+                      backgroundColor: Colors.grey[800],
+                      color: Colors.grey[100],
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-//          child: Text(
-//            widget.message.text,
-//            style: TextStyle(
-//              color: Colors.white,
-//              fontSize: 15.0,
-//            ),
-//            textAlign: TextAlign.left,
-//          ),
-          child: MarkdownBody(
-            data: emojiedText,
-            selectable: true,
-            styleSheet: _markdownStyleSheet.copyWith(
-              a: _markdownStyleSheet.a.copyWith(color: Color(0xFF60E4FF), fontStyle: FontStyle.italic),
-              p: _markdownStyleSheet.p.copyWith(color: Colors.white),
-              blockSpacing: 3.0,
-              codeblockDecoration: BoxDecoration(
-                color: Colors.grey[800]
-              ),
-              code: _markdownStyleSheet.code.copyWith(
-                backgroundColor: Colors.grey[800],
-                color: Colors.grey[100],
-              ),
-            ),
-          ),
-        ),
       ),
     );
 
@@ -227,6 +221,16 @@ class _MessageTileState extends State<MessageTile> {
           )
         : SizedBox.shrink();
 
+    List<Widget> messageActions = [
+      IconSlideAction(
+        caption: 'Reply',
+        color: Color(0x00000000),
+        icon: Icons.reply,
+        foregroundColor: Colors.grey,
+        onTap: () => widget.onAnswerDrag(widget.message),
+      ),
+    ];
+
     // * --------------------------------------------------
     // * --------------------------------------------------
     // * --------------------------------------------------
@@ -241,50 +245,49 @@ class _MessageTileState extends State<MessageTile> {
           children: <Widget>[
             nameContainer,
             messageAnswered,
-            DraggableListener(
-              alignment: isMyMessage ? Alignment.centerRight : Alignment.centerLeft,
-              dragVertical: false,
-              dragHorizontal: true,
-              onDragEnd: widget.onAnswerDrag != null
-                  ? () {
-                      widget.onAnswerDrag(widget.message);
-                    }
-                  : null,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
-                    children: <Widget>[
-                      isMyMessage
-                          ? addReactButton
-                          : SizedBox(
-                              width: 0.0,
-                            ),
-                      textWidget,
-                      isMyMessage
-                          ? SizedBox(
-                              width: 0.0,
-                            )
-                          : addReactButton,
-                    ],
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(
-                        width: isMyMessage ? 40.0 : 0.0,
-                      ),
-                      reacts,
-                      SizedBox(
-                        width: isMyMessage ? 0.0 : 40.0,
-                      ),
-                    ],
-                  )
-                ],
+            Slidable(
+              actionPane: SlidableStrechActionPane(),
+              actions: messageActions,
+              secondaryActions: messageActions,
+              actionExtentRatio: 0.1,
+              child: SizedBox(
+                width: double.maxFinite,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+                      children: <Widget>[
+                        isMyMessage
+                            ? addReactButton
+                            : SizedBox(
+                                width: 0.0,
+                              ),
+                        textWidget,
+                        isMyMessage
+                            ? SizedBox(
+                                width: 0.0,
+                              )
+                            : addReactButton,
+                      ],
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+                      children: <Widget>[
+                        SizedBox(
+                          width: isMyMessage ? 40.0 : 0.0,
+                        ),
+                        reacts,
+                        SizedBox(
+                          width: isMyMessage ? 0.0 : 40.0,
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
             _showInfo
