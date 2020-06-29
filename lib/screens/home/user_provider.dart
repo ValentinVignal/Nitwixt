@@ -6,6 +6,7 @@ import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/screens/home/set_username.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
 import 'package:nitwixt/widgets/widgets.dart';
+import 'package:nitwixt/view/themes/theme.dart';
 
 class UserProvider extends StatelessWidget {
   @override
@@ -19,6 +20,7 @@ class UserProvider extends StatelessWidget {
       // * Provides the User to all the app
       value: databaseUser.userStream,
         child: MaterialApp(
+          theme: theme,
           home: UserReceiver(),
           ),
       );

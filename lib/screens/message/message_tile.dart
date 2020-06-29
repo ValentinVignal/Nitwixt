@@ -9,6 +9,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:flutter_emoji/flutter_emoji.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MessageTile extends StatefulWidget {
   models.Message message;
@@ -53,6 +54,39 @@ class _MessageTileState extends State<MessageTile> {
     final bool isOnlyEmojis = REGEX_ONLY_EMOJI.hasMatch(emojiedText);
 
     bool isMyMessage = user.id == widget.message.userid;
+
+    void _launchUrl(String url) {
+      print('aucnhing');
+      showDialog<void>(
+        context: context,
+        barrierDismissible: true, // false = user must tap button, true = tap outside dialog
+        builder: (BuildContext dialogContext) {
+          return AlertDialog(
+            title: Text('Do you want to launch this url ?'),
+            content: Text(url),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(dialogContext).pop(); // Dismiss alert dialog
+                },
+              ),
+              FlatButton(
+                child: Text('Launch'),
+                onPressed: () async {
+                  Navigator.of(dialogContext).pop(); // Dismiss alert dialog
+                  if (await canLaunch(url)) {
+                    await launch(url);
+                  } else {
+                  print('Could not launch url $url');
+                  }
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
 
     Widget nameContainer = isMyMessage || membersMap.keys.length <= 2
         ? Container(
@@ -153,7 +187,7 @@ class _MessageTileState extends State<MessageTile> {
                 ),
                 child: MarkdownBody(
                   data: emojiedText,
-                  selectable: true,
+                  selectable: false,
                   styleSheet: _markdownStyleSheet.copyWith(
                     a: _markdownStyleSheet.a.copyWith(color: Color(0xFF60E4FF), fontStyle: FontStyle.italic),
                     p: _markdownStyleSheet.p.copyWith(color: Colors.white),
@@ -164,6 +198,7 @@ class _MessageTileState extends State<MessageTile> {
                       color: Colors.grey[100],
                     ),
                   ),
+                  onTapLink: _launchUrl,
                 ),
               ),
       ),
@@ -236,6 +271,7 @@ class _MessageTileState extends State<MessageTile> {
     // * --------------------------------------------------
 
     return GestureDetector(
+      behavior: HitTestBehavior.translucent,
       child: Container(
         margin: EdgeInsets.all(2.0),
         child: Column(
