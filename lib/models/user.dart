@@ -1,3 +1,8 @@
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
+import 'package:flutter/material.dart';
+
+
 
 // Public user
 class User {
@@ -8,6 +13,7 @@ class User {
   String name = 'New User'; // The name to display
   List<String> chats = [];
   List<String> pushToken = [];
+  String _profilePictureUrl;
 
   // * -------------------- Constructor --------------------
 
@@ -27,15 +33,6 @@ class User {
       'pushToken': this.pushToken,
     };
 
-    Map<String, Object> firebaseObject = Map<String, Object>();
-
-    firebaseObject['id'] = this.id;
-    firebaseObject['username'] = this.username;
-    firebaseObject['name'] = this.name;
-    firebaseObject['chats'] = this.chats;
-    firebaseObject['pushToken'] = this.pushToken;
-
-    return firebaseObject;
   }
 
   User.fromFirebaseObject(String id, Map firebaseObject) : id = id {
@@ -49,5 +46,37 @@ class User {
 
   bool get hasUsername {
     return this.username == null || this.username.isEmpty;
+  }
+
+  // * -------------------- Profile Picture --------------------
+
+  String get profilePicturePath {
+    return 'users/${this.id}/profilePicture.jpg';
+  }
+
+  Future<String> get profilePictureUrl async {
+    if (_profilePictureUrl != null && _profilePictureUrl.isNotEmpty) {
+      return _profilePictureUrl;
+    } else {
+      StorageReference storageReference = FirebaseStorage.instance.ref().child(this.profilePicturePath);
+      String downloadURL;
+      try {
+        downloadURL = await storageReference.getDownloadURL();
+      } catch (err) {
+        downloadURL = '';
+      }
+      _profilePictureUrl = downloadURL;
+      return downloadURL;
+    }
+  }
+
+  Future<Image> get profilePicture async {
+    String url = await this.profilePictureUrl;
+    if (url.isEmpty) {
+      return Image.asset('assets/images/defaultProfilePicture.png');
+    } else {
+      return Image.network(url);
+    }
+
   }
 }

@@ -20,7 +20,9 @@ class UserProvider extends StatelessWidget {
       // * Provides the User to all the app
       value: databaseUser.userStream,
         child: MaterialApp(
+          themeMode: ThemeMode.dark,
           theme: theme,
+          darkTheme: theme,
           home: UserReceiver(),
           ),
       );

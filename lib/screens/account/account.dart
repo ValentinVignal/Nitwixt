@@ -1,9 +1,13 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:nitwixt/models/user.dart';
 import 'package:nitwixt/models/user_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
 import 'package:nitwixt/widgets/widgets.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Account extends StatefulWidget {
   @override
@@ -11,9 +15,14 @@ class Account extends StatefulWidget {
 }
 
 class _AccountState extends State<Account> {
+  // * -------------------- Attributs -----------------------------
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _textControllerName = TextEditingController();
+
+  final ImagePicker _imagePicker = ImagePicker();
+  File image;
 
   bool _isEditing = false;
   bool loading = false;
@@ -25,8 +34,17 @@ class _AccountState extends State<Account> {
     super.dispose();
   }
 
+  Future getImage() async {
+    PickedFile tempImage = await _imagePicker.getImage(source: ImageSource.gallery);
+    setState(() {
+      image = File(tempImage.path);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    // * -------------------- Attributs -----------------------------
+
     final userAuth = Provider.of<UserAuth>(context);
     final user = Provider.of<User>(context);
     if (!_isEditing) {
@@ -34,12 +52,100 @@ class _AccountState extends State<Account> {
     }
     final database.DatabaseUser _databaseUser = database.DatabaseUser(id: user.id);
 
+    // * -------------------- Functions -----------------------------
+
+    bool hasAChange() {
+      return (user.name != _textControllerName.text.trim()) || (image != null);
+    }
+
+    void confirmChanges() async {
+      if (_isEditing && hasAChange()) {
+        try {
+          if (_formKey.currentState.validate()) {
+            setState(() {
+              loading = true;
+            });
+            if (user.name != _textControllerName.text.trim()) {
+              await _databaseUser.update({
+                'name': _textControllerName.text.trim(),
+              });
+            }
+            if (image != null) {
+              final StorageReference storageReference = FirebaseStorage.instance.ref().child(user.profilePicturePath);
+              final StorageUploadTask storageUploadTask = storageReference.putFile(image);
+            }
+
+            setState(() {
+              _textControllerName.text = user.name;
+              _isEditing = false;
+              error = '';
+            });
+          }
+        } catch (err) {
+          setState(() {
+            error = 'Could not update the profile';
+          });
+        }
+        setState(() {
+          loading = false;
+        });
+      } else {
+        setState(() {
+          _isEditing = !_isEditing;
+        });
+      }
+    }
+
+    void cancelChanges() {
+      setState(() {
+        _isEditing = false;
+        image = null;
+      });
+    }
+
+    // * -------------------- Widget -----------------------------
+
+    Widget ImageWidget = Center(
+      child: Stack(
+        children: <Widget>[
+          image != null
+              ? CircleAvatar(
+                  backgroundImage: Image.file(image, height: 200, width: 200.0).image,
+                  radius: 50,
+                )
+              : FutureBuilder<Image>(
+                  future: user.profilePicture,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return CircleAvatar(
+                        backgroundImage: snapshot.data.image,
+                        radius: 50,
+                      );
+                    } else {
+                      return LoadingCircle();
+                    }
+                  },
+                ),
+          _isEditing
+              ? IconButton(
+                  enableFeedback: _isEditing,
+                  icon: Icon(
+                    Icons.edit,
+                    color: Colors.grey,
+                  ),
+                  onPressed: _isEditing ? getImage : null,
+                )
+              : SizedBox.shrink(),
+        ],
+      ),
+    );
+
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
         title: Text('Account'),
 //        backgroundColor: Colors.blueGrey[800],
-      backgroundColor: Colors.black,
+        backgroundColor: Colors.black,
         leading: new IconButton(
           icon: Icon(Icons.arrow_back_ios),
           onPressed: () {
@@ -49,44 +155,16 @@ class _AccountState extends State<Account> {
         actions: <Widget>[
           IconButton(
             icon: Icon(_isEditing ? Icons.done : Icons.edit),
-            onPressed: () async {
-              if (_isEditing && user.name != _textControllerName.text.trim() ) {
-                if (_formKey.currentState.validate()) {
-                  setState(() {
-                    loading = true;
-                  });
-                  await _databaseUser.update({
-                    'name': _textControllerName.text.trim(),
-                  }).then((res) {
-                    setState(() {
-                      _textControllerName.text = user.name;
-                      _isEditing = false;
-                      error = '';
-                    });
-                  }).catchError((err) {
-                    setState(() {
-                      error = 'Could not update the profile';
-                    });
-                  });
-                  setState(() {
-                    loading = false;
-                  });
-                }
-              } else {
-                setState(() {
-                  _isEditing = !_isEditing;
-                });
-              }
-            },
+            onPressed: confirmChanges,
           ),
-          _isEditing ? IconButton(
-            icon: Icon(Icons.close),
-            onPressed: () {
-              setState(() {
-                _isEditing = false;
-              });
-            },
-          ) : SizedBox(width: 0.0,),
+          _isEditing
+              ? IconButton(
+                  icon: Icon(Icons.close),
+                  onPressed: cancelChanges,
+                )
+              : SizedBox(
+                  width: 0.0,
+                ),
         ],
       ),
 //      body: isEditing ? AccountEdit() : AccountInfo(),
@@ -107,6 +185,7 @@ class _AccountState extends State<Account> {
                           error,
                           style: TextStyle(color: Colors.red),
                         ),
+                  ImageWidget,
                   // Username
                   TextInfo(
                     title: 'Username',
@@ -135,6 +214,24 @@ class _AccountState extends State<Account> {
                     mode: _isEditing ? TextInfoMode.blocked : TextInfoMode.show,
                     scrollDirection: Axis.horizontal,
                   ),
+//                  FutureBuilder(
+//                      future: user.profilePictureUrl,
+//                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+//                        if (snapshot.connectionState == ConnectionState.done) {
+//                          if (snapshot.hasError) {
+//                            print('error ${snapshot.error.toString()}');
+//                            return Text('Damn, error..');
+//                          } else {
+//                            return Container(
+//                              child: Image.network(snapshot.data),
+//                            );
+//                          }
+//                        } else if (snapshot.connectionState == ConnectionState.waiting) {
+//                          return LoadingDots();
+//                        } else {
+//                          return Text('Something bad happened');
+//                        }
+//                      })
                 ],
               ),
             ),
@@ -144,4 +241,3 @@ class _AccountState extends State<Account> {
     );
   }
 }
-

@@ -78,7 +78,7 @@ class _MessageTileState extends State<MessageTile> {
                   if (await canLaunch(url)) {
                     await launch(url);
                   } else {
-                  print('Could not launch url $url');
+                    print('Could not launch url $url');
                   }
                 },
               ),
@@ -178,7 +178,7 @@ class _MessageTileState extends State<MessageTile> {
             : Container(
                 padding: EdgeInsets.only(top: 7.0, bottom: 7.0, right: 8.0, left: 8.0),
                 decoration: BoxDecoration(
-                  color: isMyMessage ? Colors.blue[600] : Colors.black,
+                  color: isMyMessage ? Colors.grey[800] : Colors.black,
                   borderRadius: BorderRadius.all(
                     Radius.circular(
                       20.0,
@@ -188,16 +188,7 @@ class _MessageTileState extends State<MessageTile> {
                 child: MarkdownBody(
                   data: emojiedText,
                   selectable: false,
-                  styleSheet: _markdownStyleSheet.copyWith(
-                    a: _markdownStyleSheet.a.copyWith(color: Color(0xFF60E4FF), fontStyle: FontStyle.italic),
-                    p: _markdownStyleSheet.p.copyWith(color: Colors.white),
-                    blockSpacing: 3.0,
-                    codeblockDecoration: BoxDecoration(color: Colors.grey[800]),
-                    code: _markdownStyleSheet.code.copyWith(
-                      backgroundColor: Colors.grey[800],
-                      color: Colors.grey[100],
-                    ),
-                  ),
+                  styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
                   onTapLink: _launchUrl,
                 ),
               ),
@@ -288,41 +279,44 @@ class _MessageTileState extends State<MessageTile> {
               actionExtentRatio: 0.1,
               child: SizedBox(
                 width: double.maxFinite,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
-                      children: <Widget>[
-                        isMyMessage
-                            ? addReactButton
-                            : SizedBox(
-                                width: 0.0,
-                              ),
-                        textWidget,
-                        isMyMessage
-                            ? SizedBox(
-                                width: 0.0,
-                              )
-                            : addReactButton,
-                      ],
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
-                      children: <Widget>[
-                        SizedBox(
-                          width: isMyMessage ? 40.0 : 0.0,
-                        ),
-                        reacts,
-                        SizedBox(
-                          width: isMyMessage ? 0.0 : 40.0,
-                        ),
-                      ],
-                    )
-                  ],
+                child: Align(
+                  alignment: isMyMessage ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+                        children: <Widget>[
+                          isMyMessage
+                              ? addReactButton
+                              : SizedBox(
+                                  width: 0.0,
+                                ),
+                          textWidget,
+                          isMyMessage
+                              ? SizedBox(
+                                  width: 0.0,
+                                )
+                              : addReactButton,
+                        ],
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+                        children: <Widget>[
+                          SizedBox(
+                            width: isMyMessage ? 40.0 : 0.0,
+                          ),
+                          reacts,
+                          SizedBox(
+                            width: isMyMessage ? 0.0 : 40.0,
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),

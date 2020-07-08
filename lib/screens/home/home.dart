@@ -58,6 +58,7 @@ class _HomeState extends State<Home> {
   void showDisclaimerSnackBar() {
     scaffoldState.showSnackBar(
       SnackBar(
+//        backgroundColor: Colors.black,
         duration: const Duration(minutes: 5),
         content: Text('/!\\ Warning /!\\\nNitwixt is still a young project and I didn\'t spend much time on security and privacy of data.\nPlease don\'t put any sensitive information in this app. :)\nAlso, because of incoming data structure changes, all the data might be deleted soon O:)'),
         action: SnackBarAction(
@@ -100,6 +101,25 @@ class _HomeState extends State<Home> {
 //          backgroundColor: Colors.grey[900],
           backgroundColor: Colors.black,
           elevation: 0.0,
+          leading: Padding(
+            padding: EdgeInsets.symmetric(
+                vertical:2.0,
+              horizontal: 5.0,
+            ),
+            child: FutureBuilder<Image>(
+              future: user.profilePicture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done && !snapshot.hasError) {
+                  return CircleAvatar(
+                    radius: 20,
+                    backgroundImage: snapshot.data.image,
+                  );
+                } else {
+                  return LoadingCircle(size: 30);
+                }
+              }
+            ),
+          ),
           actions: <Widget>[
             Builder(
               builder: (context) {
