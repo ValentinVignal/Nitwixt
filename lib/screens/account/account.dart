@@ -72,8 +72,7 @@ class _AccountState extends State<Account> {
               });
             }
             if (image != null) {
-              final StorageReference storageReference = FirebaseStorage.instance.ref().child(user.profilePicturePath);
-              final StorageUploadTask storageUploadTask = storageReference.putFile(image);
+              database.DatabaseFile(path: user.profilePicturePath).uploadFile(image);
             }
 
             setState(() {
@@ -106,7 +105,7 @@ class _AccountState extends State<Account> {
 
     // * -------------------- Widget -----------------------------
 
-    Widget ImageWidget = Center(
+    Widget imageWidget = Center(
       child: Stack(
         children: <Widget>[
           image != null
@@ -115,7 +114,7 @@ class _AccountState extends State<Account> {
                   radius: 50,
                 )
               : ProfilePicture(
-                  path: user.profilePicturePath,
+                  urlAsync: user.profilePictureUrl,
                   size: 40.0,
                 ),
           _isEditing
@@ -177,7 +176,7 @@ class _AccountState extends State<Account> {
                           error,
                           style: TextStyle(color: Colors.red),
                         ),
-                  ImageWidget,
+                  imageWidget,
                   // Username
                   TextInfo(
                     title: 'Username',
@@ -206,24 +205,6 @@ class _AccountState extends State<Account> {
                     mode: _isEditing ? TextInfoMode.blocked : TextInfoMode.show,
                     scrollDirection: Axis.horizontal,
                   ),
-//                  FutureBuilder(
-//                      future: user.profilePictureUrl,
-//                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-//                        if (snapshot.connectionState == ConnectionState.done) {
-//                          if (snapshot.hasError) {
-//                            print('error ${snapshot.error.toString()}');
-//                            return Text('Damn, error..');
-//                          } else {
-//                            return Container(
-//                              child: Image.network(snapshot.data),
-//                            );
-//                          }
-//                        } else if (snapshot.connectionState == ConnectionState.waiting) {
-//                          return LoadingDots();
-//                        } else {
-//                          return Text('Something bad happened');
-//                        }
-//                      })
                 ],
               ),
             ),

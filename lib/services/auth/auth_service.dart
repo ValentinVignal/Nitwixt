@@ -19,6 +19,7 @@ class AuthService {
       id: firebaseUser.uid,
       email: firebaseUser.email,
       isEmailVerified: firebaseUser.isEmailVerified,
+      photoUrl: firebaseUser.photoUrl,
     );
     return userAuth;
   }
@@ -26,7 +27,6 @@ class AuthService {
   // Auth change user stream
   Stream<UserAuth> get user {
     return auth.onAuthStateChanged
-        // .map((FirebaseUser user) => _userFromFirebaseUser(user));
         .map(userFromFirebaseUser);
   }
 

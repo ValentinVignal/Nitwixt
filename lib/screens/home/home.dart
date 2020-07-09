@@ -85,6 +85,8 @@ class _HomeState extends State<Home> {
     final models.User user = Provider.of<models.User>(context);
     final models.UserAuth userAuth = Provider.of<models.UserAuth>(context);
     final models.PushToken pushToken = Provider.of<models.PushToken>(context);
+    print('in home user from provider');
+    print(user.defaultPhotoUrl);
 
     void _showCreateNewChatPanel() {
       showDialog(
@@ -104,11 +106,11 @@ class _HomeState extends State<Home> {
           backgroundColor: Colors.black,
           elevation: 0.0,
           leading: Padding(
-              padding: EdgeInsets.all(5.0),
-              child: ProfilePicture(
-                path: user.profilePicturePath,
-              )
-              ),
+            padding: EdgeInsets.all(5.0),
+            child: ProfilePicture(
+              urlAsync: user.profilePictureUrl,
+            ),
+          ),
           actions: <Widget>[
             Builder(
               builder: (context) {

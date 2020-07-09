@@ -25,6 +25,33 @@ class _SetUsernameState extends State<SetUsername> {
     User user = Provider.of<User>(context);
     double height = MediaQuery.of(context).size.height;
 
+    void _validate() async {
+      if (_formKey.currentState.validate()) {
+        setState(() {
+          loading = true;
+        });
+        QuerySnapshot documents = await userCollection.where('username', isEqualTo: username).getDocuments();
+        if (documents.documents.isNotEmpty) {
+          // There is already a user with this username
+          setState(() {
+            errorMessage = 'Username $username is already used';
+            loading = false;
+          });
+        } else {
+          // Username doesn't exist -> update the user record
+          user.username = username;
+          user.name = username;
+          await DatabaseUser.createUser(user: user).catchError((errorMessage) {
+            setState(() {
+              errorMessage = 'Could not set the username $username';
+              loading = false;
+            });
+          });
+        }
+      }
+
+    }
+
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
@@ -76,31 +103,7 @@ class _SetUsernameState extends State<SetUsername> {
                     height: 10.0,
                   ),
                   ButtonSimple(
-                    onTap: () async {
-                      if (_formKey.currentState.validate()) {
-                        setState(() {
-                          loading = true;
-                        });
-                        QuerySnapshot documents = await userCollection.where('username', isEqualTo: username).getDocuments();
-                        if (documents.documents.isNotEmpty) {
-                          // There is already a user with this username
-                          setState(() {
-                            errorMessage = 'Username $username is already used';
-                            loading = false;
-                          });
-                        } else {
-                          // Username doesn't exist -> update the user record
-                          user.username = username;
-                          user.name = username;
-                          await DatabaseUser.createUser(user: user).catchError((errorMessage) {
-                            setState(() {
-                              errorMessage = 'Could not set the username $username';
-                              loading = false;
-                            });
-                          });
-                        }
-                      }
-                    },
+                    onTap: _validate,
                     color: Colors.cyan[200],
                     icon: Icons.check,
                     text: 'Confirm',

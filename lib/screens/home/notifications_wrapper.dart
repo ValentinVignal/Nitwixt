@@ -51,13 +51,6 @@ class _NotificationsWrapperState extends State<NotificationsWrapper> {
       print('onLaunch $message');
       return;
     });
-//    firebaseMessaging.getToken().then((String token){
-//      pushToken = models.PushToken(current: token);
-//      database.DatabasePushToken(id: user.id).newToken(token);
-//    }).catchError((err) {
-//        print('err $err');
-//        Fluttertoast.showToast(msg: err.toString());
-//    });
   }
 
   configLocalNotification() {

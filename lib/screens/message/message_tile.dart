@@ -262,7 +262,7 @@ class _MessageTileState extends State<MessageTile> {
         : Padding(
             padding: EdgeInsets.symmetric(horizontal: 4.0),
             child: ProfilePicture(
-              path: membersMap[widget.message.userid].profilePicturePath,
+              urlAsync: membersMap[widget.message.userid].profilePictureUrl,
             )
             );
 

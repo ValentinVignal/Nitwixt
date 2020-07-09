@@ -11,7 +11,6 @@ import 'package:nitwixt/view/themes/theme.dart';
 class UserProvider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     final models.UserAuth userAuth = Provider.of<models.UserAuth>(context);
 
     database.DatabaseUser databaseUser = database.DatabaseUser(id: userAuth.id);
@@ -19,34 +18,41 @@ class UserProvider extends StatelessWidget {
     return StreamProvider<models.User>.value(
       // * Provides the User to all the app
       value: databaseUser.userStream,
-        child: MaterialApp(
-          themeMode: ThemeMode.dark,
-          theme: theme,
-          darkTheme: theme,
-          home: UserReceiver(),
-          ),
-      );
+      child: MaterialApp(
+        themeMode: ThemeMode.dark,
+        theme: theme,
+        darkTheme: theme,
+        home: UserReceiver(),
+      ),
+    );
   }
 }
 
 class UserReceiver extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     final models.User user = Provider.of<models.User>(context);
+    final models.UserAuth userAuth = Provider.of<models.UserAuth>(context);
 
     if (user == null) {
       // No user yet
       return Scaffold(
         body: LoadingCircle(),
-        );
-    } else if (user.hasUsername) {
+      );
+    } else if (user.hasNoUsername) {
 //    } else if (true) {
       // No record for now on database, we have to create it
       return SetUsername();
     } else {
-      return NotificationsWrapper(user: user,);
+      if (userAuth.hasPhoto && (userAuth.photoUrl != user.defaultPhotoUrl)) {
+        user.defaultPhotoUrl = userAuth.photoUrl;
+        database.DatabaseUser(id: user.id).update({
+          'defaultPhotoUrl': user.toFirebaseObject()['defaultPhotoUrl'],
+        });
+      }
+      return NotificationsWrapper(
+        user: user,
+      );
     }
   }
 }
-
