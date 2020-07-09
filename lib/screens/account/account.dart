@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:nitwixt/models/user.dart';
 import 'package:nitwixt/models/user_auth.dart';
+import 'package:nitwixt/widgets/profile_picture.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
 import 'package:nitwixt/widgets/widgets.dart';
@@ -113,18 +114,9 @@ class _AccountState extends State<Account> {
                   backgroundImage: Image.file(image, height: 200, width: 200.0).image,
                   radius: 50,
                 )
-              : FutureBuilder<Image>(
-                  future: user.profilePicture,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return CircleAvatar(
-                        backgroundImage: snapshot.data.image,
-                        radius: 50,
-                      );
-                    } else {
-                      return LoadingCircle();
-                    }
-                  },
+              : ProfilePicture(
+                  path: user.profilePicturePath,
+                  size: 40.0,
                 ),
           _isEditing
               ? IconButton(

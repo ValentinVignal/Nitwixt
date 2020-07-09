@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:nitwixt/widgets/profile_picture.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -56,7 +57,6 @@ class _MessageTileState extends State<MessageTile> {
     bool isMyMessage = user.id == widget.message.userid;
 
     void _launchUrl(String url) {
-      print('aucnhing');
       showDialog<void>(
         context: context,
         barrierDismissible: true, // false = user must tap button, true = tap outside dialog
@@ -88,7 +88,7 @@ class _MessageTileState extends State<MessageTile> {
       );
     }
 
-    Widget nameContainer = isMyMessage || membersMap.keys.length <= 2
+    Widget nameContainer = isMyMessage || membersMap.length <= 2
         ? Container(
             height: 0.0,
           )
@@ -257,6 +257,15 @@ class _MessageTileState extends State<MessageTile> {
       ),
     ];
 
+    Widget profilePicture = isMyMessage || membersMap.length <= 2
+        ? SizedBox.shrink()
+        : Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4.0),
+            child: ProfilePicture(
+              path: membersMap[widget.message.userid].profilePicturePath,
+            )
+            );
+
     // * --------------------------------------------------
     // * --------------------------------------------------
     // * --------------------------------------------------
@@ -284,22 +293,33 @@ class _MessageTileState extends State<MessageTile> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Row(
-                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          isMyMessage
-                              ? addReactButton
-                              : SizedBox(
-                                  width: 0.0,
-                                ),
-                          textWidget,
-                          isMyMessage
-                              ? SizedBox(
-                                  width: 0.0,
-                                )
-                              : addReactButton,
+                          profilePicture,
+                          Flexible(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+                              children: <Widget>[
+                                isMyMessage
+                                    ? addReactButton
+                                    : SizedBox(
+                                        width: 0.0,
+                                      ),
+                                textWidget,
+                                isMyMessage
+                                    ? SizedBox(
+                                        width: 0.0,
+                                      )
+                                    : addReactButton,
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                       Row(
@@ -320,12 +340,7 @@ class _MessageTileState extends State<MessageTile> {
                 ),
               ),
             ),
-            _showInfo
-                ? dateContainer
-                : Container(
-                    height: 0.0,
-                    width: 0.0,
-                  )
+            _showInfo ? dateContainer : SizedBox.shrink(),
           ],
         ),
       ),

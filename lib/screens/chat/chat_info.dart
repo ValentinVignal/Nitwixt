@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/screens/chat/delete_chat_dialog.dart';
+import 'package:nitwixt/widgets/profile_picture.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
 import 'package:nitwixt/widgets/widgets.dart';
@@ -50,6 +51,62 @@ class _ChatInfo extends State<ChatInfo> {
       );
     }
 
+    bool _hasChanges() {
+      return _isEditing && (user.name != _textControllerName.text.trim() || _listInputController.isNotEmpty);
+    }
+
+    void _applyChanges() async {
+      if (_hasChanges()) {
+        if (_formKey.currentState.validate()) {
+          setState(() {
+            loading = true;
+          });
+          try {
+            // * ----- Name -----
+            if (user.name != _textControllerName.text.trim()) {
+              await _databaseChat.update({
+                'name': _textControllerName.text.trim(),
+              });
+              setState(() {
+                _textControllerName.text = user.name;
+              });
+            }
+            // * ----- Members -----
+            if (_listInputController.isNotEmpty) {
+              List<String> allUsernames = _listInputController.values +
+                  members.map<String>((models.User user) {
+                    return user.username;
+                  }).toList();
+              await database.DatabaseChat(chatId: chat.id).updateMembers(allUsernames);
+            }
+            setState(() {
+              _isEditing = false;
+              error = '';
+            });
+          } catch (err) {
+            print('err $err');
+            setState(() {
+              error = err.toString();
+//                      error = 'Could not update the profile';
+            });
+          }
+          setState(() {
+            loading = false;
+          });
+        }
+      } else {
+        setState(() {
+          _isEditing = !_isEditing;
+        });
+      }
+    }
+
+    void _cancelChanges() {
+      setState(() {
+        _isEditing = false;
+      });
+    }
+
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
@@ -83,60 +140,12 @@ class _ChatInfo extends State<ChatInfo> {
         actions: <Widget>[
           IconButton(
             icon: Icon(_isEditing ? Icons.done : Icons.edit),
-            onPressed: () async {
-              if (_isEditing && (user.name != _textControllerName.text.trim() || _listInputController.isNotEmpty)) {
-                if (_formKey.currentState.validate()) {
-                  setState(() {
-                    loading = true;
-                  });
-                  try {
-                    // * ----- Name -----
-                    if (user.name != _textControllerName.text.trim()) {
-                      await _databaseChat.update({
-                        'name': _textControllerName.text.trim(),
-                      });
-                      setState(() {
-                        _textControllerName.text = user.name;
-                      });
-                    }
-                    // * ----- Members -----
-                    if (_listInputController.isNotEmpty) {
-                      List<String> allUsernames = _listInputController.values +
-                          members.map<String>((models.User user) {
-                            return user.username;
-                          }).toList();
-                      await database.DatabaseChat(chatId: chat.id).updateMembers(allUsernames);
-                    }
-                    setState(() {
-                      _isEditing = false;
-                      error = '';
-                    });
-                  } catch (err) {
-                    print('err $err');
-                    setState(() {
-                      error = err.toString();
-//                      error = 'Could not update the profile';
-                    });
-                  }
-                  setState(() {
-                    loading = false;
-                  });
-                }
-              } else {
-                setState(() {
-                  _isEditing = !_isEditing;
-                });
-              }
-            },
+            onPressed: _applyChanges,
           ),
           _isEditing
               ? IconButton(
                   icon: Icon(Icons.close),
-                  onPressed: () {
-                    setState(() {
-                      _isEditing = false;
-                    });
-                  },
+                  onPressed: _cancelChanges,
                 )
               : SizedBox(
                   width: 0.0,
@@ -187,11 +196,27 @@ class _ChatInfo extends State<ChatInfo> {
                     itemCount: members.length,
                     itemBuilder: (contextList, index) {
                       String username_ = members[index].id == user.id ? '(@You) ${members[index].username}' : members[index].username;
-                      return TextInfoSubtitle(
-                        title: username_,
-                        mode: TextInfoMode.show,
-                        value: members[index].name,
-                        scrollDirection: Axis.horizontal,
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            child: ProfilePicture(
+                              path: members[index].profilePicturePath,
+                              size: 20.0,
+                            ),
+                            padding: EdgeInsets.all(5.0),
+                          ),
+                          Flexible(
+                            child: TextInfoSubtitle(
+                              title: username_,
+                              mode: TextInfoMode.show,
+                              value: members[index].name,
+                              scrollDirection: Axis.horizontal,
+                            ),
+                          ),
+                        ],
                       );
                     },
                   ),
@@ -225,17 +250,6 @@ class _ChatInfo extends State<ChatInfo> {
                               color: Colors.red[900],
                             ),
                             Container(
-//                        padding: EdgeInsets.symmetric(
-//                          vertical: 10.0,
-//                          horizontal: 10.0,
-//                        ),
-//                        decoration: BoxDecoration(
-//                          border: Border.all(
-//                            color: Colors.red[900],
-//                            width: 2.0,
-//                          ),
-//                          borderRadius: BorderRadius.circular(20.0),
-//                        ),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,

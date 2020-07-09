@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:nitwixt/screens/account/account.dart';
 import 'package:nitwixt/screens/home/chat_list.dart';
 import 'package:nitwixt/services/auth/auth.dart' as auth;
+import 'package:nitwixt/widgets/profile_picture.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/widgets/widgets.dart';
@@ -60,7 +61,8 @@ class _HomeState extends State<Home> {
       SnackBar(
 //        backgroundColor: Colors.black,
         duration: const Duration(minutes: 5),
-        content: Text('/!\\ Warning /!\\\nNitwixt is still a young project and I didn\'t spend much time on security and privacy of data.\nPlease don\'t put any sensitive information in this app. :)\nAlso, because of incoming data structure changes, all the data might be deleted soon O:)'),
+        content: Text(
+            '/!\\ Warning /!\\\nNitwixt is still a young project and I didn\'t spend much time on security and privacy of data.\nPlease don\'t put any sensitive information in this app. :)\nAlso, because of incoming data structure changes, all the data might be deleted soon O:)'),
         action: SnackBarAction(
           label: 'Ok',
           onPressed: () {
@@ -102,24 +104,11 @@ class _HomeState extends State<Home> {
           backgroundColor: Colors.black,
           elevation: 0.0,
           leading: Padding(
-            padding: EdgeInsets.symmetric(
-                vertical:2.0,
-              horizontal: 5.0,
-            ),
-            child: FutureBuilder<Image>(
-              future: user.profilePicture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done && !snapshot.hasError) {
-                  return CircleAvatar(
-                    radius: 20,
-                    backgroundImage: snapshot.data.image,
-                  );
-                } else {
-                  return LoadingCircle(size: 30);
-                }
-              }
-            ),
-          ),
+              padding: EdgeInsets.all(5.0),
+              child: ProfilePicture(
+                path: user.profilePicturePath,
+              )
+              ),
           actions: <Widget>[
             Builder(
               builder: (context) {

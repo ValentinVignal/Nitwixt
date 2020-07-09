@@ -53,30 +53,4 @@ class User {
   String get profilePicturePath {
     return 'users/${this.id}/profilePicture.jpg';
   }
-
-  Future<String> get profilePictureUrl async {
-    if (_profilePictureUrl != null && _profilePictureUrl.isNotEmpty) {
-      return _profilePictureUrl;
-    } else {
-      StorageReference storageReference = FirebaseStorage.instance.ref().child(this.profilePicturePath);
-      String downloadURL;
-      try {
-        downloadURL = await storageReference.getDownloadURL();
-      } catch (err) {
-        downloadURL = '';
-      }
-      _profilePictureUrl = downloadURL;
-      return downloadURL;
-    }
-  }
-
-  Future<Image> get profilePicture async {
-    String url = await this.profilePictureUrl;
-    if (url.isEmpty) {
-      return Image.asset('assets/images/defaultProfilePicture.png');
-    } else {
-      return Image.network(url);
-    }
-
-  }
 }
