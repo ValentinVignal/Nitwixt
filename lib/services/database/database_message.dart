@@ -15,11 +15,11 @@ class DatabaseMessage extends DatabaseChat {
   }
 
   Stream<List<models.Message>> get messageList {
-    return chatCollection.document(chatId).collection('messages').orderBy('date', descending: true).snapshots().map(messagesFromQuerySnapshot);
+    return chatCollection.document(chatId).collection(CollectionNames.messages).orderBy(models.MessageKeys.date, descending: true).snapshots().map(messagesFromQuerySnapshot);
   }
 
   Stream<List<models.Message>> getMessageList({DocumentSnapshot startAfter, int limit = 10}) {
-    Query query = chatCollection.document(chatId).collection('messages').orderBy('date', descending: true);
+    Query query = chatCollection.document(chatId).collection(CollectionNames.messages).orderBy(models.MessageKeys.date, descending: true);
     if (startAfter != null) {
       query = query.startAt([startAfter.data]);
     }
@@ -35,18 +35,18 @@ class DatabaseMessage extends DatabaseChat {
       userid: userid,
       previousMessageId: previousMessageId ?? '',
     );
-    DocumentReference documentReference = await chatCollection.document(chatId).collection('messages').add(message.toFirebaseObject());
-    return await chatCollection.document(chatId).collection('messages').document(documentReference.documentID).updateData({
-      'id': documentReference.documentID,
+    DocumentReference documentReference = await chatCollection.document(chatId).collection(CollectionNames.messages).add(message.toFirebaseObject());
+    return await chatCollection.document(chatId).collection(CollectionNames.messages).document(documentReference.documentID).updateData({
+      models.MessageKeys.id: documentReference.documentID,
     });
   }
 
   Future updateMessage({String messageId, Object obj}) async {
-    return await chatCollection.document(chatId).collection('messages').document(messageId).updateData(obj);
+    return await chatCollection.document(chatId).collection(CollectionNames.messages).document(messageId).updateData(obj);
   }
 
   Future<models.Message> getMessageFuture(String messageId) async {
-    DocumentSnapshot documentSnapshot = await chatCollection.document(chatId).collection('messages').document(messageId).get();
+    DocumentSnapshot documentSnapshot = await chatCollection.document(chatId).collection(CollectionNames.messages).document(messageId).get();
     return messageFromDocumentSnapshot(documentSnapshot);
   }
 }

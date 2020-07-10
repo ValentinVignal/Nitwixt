@@ -65,7 +65,7 @@ class _ChatInfo extends State<ChatInfo> {
             // * ----- Name -----
             if (user.name != _textControllerName.text.trim()) {
               await _databaseChat.update({
-                'name': _textControllerName.text.trim(),
+                models.ChatKeys.name: _textControllerName.text.trim(),
               });
               setState(() {
                 _textControllerName.text = user.name;

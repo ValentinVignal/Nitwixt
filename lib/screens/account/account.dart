@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:nitwixt/models/user.dart';
 import 'package:nitwixt/models/user_auth.dart';
@@ -68,7 +67,7 @@ class _AccountState extends State<Account> {
             });
             if (user.name != _textControllerName.text.trim()) {
               await _databaseUser.update({
-                'name': _textControllerName.text.trim(),
+                UserKeys.name: _textControllerName.text.trim(),
               });
             }
             if (image != null) {

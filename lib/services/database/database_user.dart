@@ -28,7 +28,7 @@ class DatabaseUser {
   }
 
   static Stream<List<models.User>> getUserList({String chatid}) {
-    Query query = collections.userCollection.where('chats', arrayContains: chatid);
+    Query query = collections.userCollection.where(models.UserKeys.chats, arrayContains: chatid);
     return query.snapshots().map(userFromQuerySnapshot);
   }
 
@@ -40,7 +40,7 @@ class DatabaseUser {
       // Create a new user and send back the id
       DocumentReference documentReference = await collections.userCollection.add(user.toFirebaseObject());
       await collections.userCollection.document(documentReference.documentID).updateData({
-        'id': documentReference.documentID,
+        models.UserKeys.id: documentReference.documentID,
       });
       return documentReference.documentID;
     } else {

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:nitwixt/models/models.dart';
 import 'database_user.dart';
 
 class DatabasePushToken extends DatabaseUser {
@@ -8,7 +9,7 @@ class DatabasePushToken extends DatabaseUser {
 
   Future<List<String>> get tokens async {
     return await userCollection.document(id).get().then((DocumentSnapshot documentSnapshot) {
-      List<String> tokens =  documentSnapshot.data.containsKey('pushToken') ? List.from(documentSnapshot.data['pushToken']) : [];
+      List<String> tokens =  documentSnapshot.data.containsKey(UserKeys.pushToken) ? List.from(documentSnapshot.data[UserKeys.pushToken]) : [];
       // Make it maximum 3
       if (tokens.length > maxTokens) {
         return tokens.sublist(tokens.length - maxTokens);
@@ -22,7 +23,7 @@ class DatabasePushToken extends DatabaseUser {
     if (tokens_.length > maxTokens) {
       tokens_.sublist(tokens_.length - maxTokens);
     }
-    return await userCollection.document(id).updateData({'pushToken': tokens_});
+    return await userCollection.document(id).updateData({UserKeys.pushToken: tokens_});
 
   }
 

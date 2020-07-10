@@ -3,6 +3,16 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:nitwixt/services/database/database.dart';
 
+class UserKeys {
+  static final String id = 'id';
+  static final String username = 'username';
+  static final String name = 'name';
+  static final String pushToken = 'pushToken';
+  static final String chats = 'chats';
+  static final String defaultPhotoUrl = 'defaultPhotoUrl';
+
+}
+
 // Public user
 class User {
   // * -------------------- Attributes --------------------
@@ -32,22 +42,22 @@ class User {
   Map<String, Object> toFirebaseObject() {
     this.chats.sort();
     return {
-      'id': this.id,
-      'username': this.username,
-      'name': this.name,
-      'chats': this.chats,
-      'pushToken': this.pushToken,
-      'defaultPhotoUrl': this.defaultPhotoUrl,
+      UserKeys.id: this.id,
+      UserKeys.username: this.username,
+      UserKeys.name: this.name,
+      UserKeys.chats: this.chats,
+      UserKeys.pushToken: this.pushToken,
+      UserKeys.defaultPhotoUrl: this.defaultPhotoUrl,
     };
   }
 
   User.fromFirebaseObject(String id, Map firebaseObject) : id = id {
     if (firebaseObject != null) {
-      this.username = firebaseObject.containsKey('username') ? firebaseObject['username'] : '';
-      this.name = firebaseObject.containsKey('name') ? firebaseObject['name'] : '';
-      this.chats = firebaseObject.containsKey('chats') ? List.from(firebaseObject['chats']) : [];
-      this.pushToken = firebaseObject.containsKey('pushToken') ? List.from(firebaseObject['pushToken']) : [];
-      this.defaultPhotoUrl = firebaseObject.containsKey('defaultPhotoUrl') ? firebaseObject['defaultPhotoUrl'] : '';
+      this.username = firebaseObject.containsKey(UserKeys.username) ? firebaseObject[UserKeys.username] : '';
+      this.name = firebaseObject.containsKey(UserKeys.name) ? firebaseObject[UserKeys.name] : '';
+      this.chats = firebaseObject.containsKey(UserKeys.chats) ? List.from(firebaseObject[UserKeys.chats]) : [];
+      this.pushToken = firebaseObject.containsKey(UserKeys.pushToken) ? List.from(firebaseObject[UserKeys.pushToken]) : [];
+      this.defaultPhotoUrl = firebaseObject.containsKey(UserKeys.defaultPhotoUrl) ? firebaseObject[UserKeys.defaultPhotoUrl] : '';
     }
   }
 

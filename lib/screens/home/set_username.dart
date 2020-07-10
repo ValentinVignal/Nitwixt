@@ -30,7 +30,7 @@ class _SetUsernameState extends State<SetUsername> {
         setState(() {
           loading = true;
         });
-        QuerySnapshot documents = await userCollection.where('username', isEqualTo: username).getDocuments();
+        QuerySnapshot documents = await userCollection.where(UserKeys.username, isEqualTo: username).getDocuments();
         if (documents.documents.isNotEmpty) {
           // There is already a user with this username
           setState(() {

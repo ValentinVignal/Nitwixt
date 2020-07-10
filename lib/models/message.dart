@@ -1,5 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:nitwixt/models/models.dart';
 import 'package:nitwixt/services/database/database.dart';
+
+class MessageKeys {
+  static final String id = 'id';
+  static final String date = 'date';
+  static final String text = 'text';
+  static final String userid = 'userid';
+  static final String reacts = 'reacts';
+  static final String previousMessageId = 'previousMessageId';
+}
 
 class Message {
   final String id; // Id of the message
@@ -25,23 +35,23 @@ class Message {
   Map<String, Object> toFirebaseObject() {
     Map<String, Object> firebaseObject = Map<String, Object>();
 
-    firebaseObject['id'] = this.id;
-    firebaseObject['date'] = this.date;
-    firebaseObject['text'] = this.text;
-    firebaseObject['userid'] = this.userid;
-    firebaseObject['reacts'] = this.reacts.toFirebaseObject();
-    firebaseObject['previousMessageId'] = this.previousMessageId;
+    firebaseObject[MessageKeys.id] = this.id;
+    firebaseObject[MessageKeys.date] = this.date;
+    firebaseObject[MessageKeys.text] = this.text;
+    firebaseObject[MessageKeys.userid] = this.userid;
+    firebaseObject[MessageKeys.reacts] = this.reacts.toFirebaseObject();
+    firebaseObject[MessageKeys.previousMessageId] = this.previousMessageId;
 
     return firebaseObject;
   }
 
   Message.fromFirebaseObject(String id, Map firebaseObject)
       : id = id,
-        date = firebaseObject['date'] {
-    this.text = firebaseObject.containsKey('text') ? firebaseObject['text'] : '';
-    this.userid = firebaseObject.containsKey('userid') ? firebaseObject['userid'] : '';
-    this.reacts = firebaseObject.containsKey('reacts') ? MessageReacts.fromFirebaseObject(firebaseObject['reacts']) : MessageReacts();
-    this.previousMessageId = firebaseObject.containsKey('previousMessageId') ? firebaseObject['previousMessageId'].toString() : '';
+        date = firebaseObject[MessageKeys.date] {
+    this.text = firebaseObject.containsKey(MessageKeys.text) ? firebaseObject[MessageKeys.text] : '';
+    this.userid = firebaseObject.containsKey(MessageKeys.userid) ? firebaseObject[MessageKeys.userid] : '';
+    this.reacts = firebaseObject.containsKey(MessageKeys.reacts) ? MessageReacts.fromFirebaseObject(firebaseObject[MessageKeys.reacts]) : MessageReacts();
+    this.previousMessageId = firebaseObject.containsKey(MessageKeys.previousMessageId) ? firebaseObject[MessageKeys.previousMessageId].toString() : '';
   }
 
   Future<Message> answersToMessage(String chatId) async {

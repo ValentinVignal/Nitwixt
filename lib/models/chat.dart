@@ -1,33 +1,46 @@
 import 'package:nitwixt/models/models.dart';
 import 'package:nitwixt/services/database/database_user.dart';
 
+class ChatKeys {
+  static final String id = 'id';
+  static final String name = 'name';
+  static final String members = 'members';
+}
+
 class Chat {
   // * -------------------- Stored in Firebase --------------------
   String id; // The id of the chat
   String name; // The name of the chat
   List<String> members;
 
+
   // * -------------------- Constructed later Firebase --------------------
   Map<String, String> _nameToDisplay; // user id -> other user name (user for private chat with 2 persons)
 
-  Chat({this.id, this.name, this.members});
+  Chat({
+    this.id,
+    this.name,
+    this.members,
+  });
 
   Map<String, Object> toFirebaseObject() {
     this.members.sort();
     return {
-      'id': this.id,
-      'name': this.name,
-      'members': this.members,
+      ChatKeys.id: this.id,
+      ChatKeys.name: this.name,
+      ChatKeys.members: this.members,
     };
   }
 
   Chat.fromFirebaseObject(String id, Map firebaseObject) : id = id {
     if (firebaseObject != null) {
-      this.name = firebaseObject.containsKey('name') ? firebaseObject['name'] : 'Unkown name';
-      this.members = firebaseObject.containsKey('members') ? List.from(firebaseObject['members']) : [];
+      this.name = firebaseObject.containsKey(ChatKeys.name) ? firebaseObject[ChatKeys.name] : 'Unkown name';
+      this.members = firebaseObject.containsKey(ChatKeys.members) ? List.from(firebaseObject[ChatKeys.members]) : [];
       this.members.sort();
     }
   }
+
+  // * -------------------- Name --------------------
 
   Future<String> nameToDisplay(User user) async {
     if (!this.members.contains(user.id)) {
@@ -67,5 +80,11 @@ class Chat {
         }
       }
     }
+  }
+
+  // * -------------------- Profile Picture --------------------
+
+  String get profilePicturePath {
+    return 'chats/${this.id}/profilePicture.jpg';
   }
 }

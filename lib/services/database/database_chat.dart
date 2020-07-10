@@ -30,7 +30,7 @@ class DatabaseChat {
 
 
   static Stream<List<models.Chat>> getChatList({String userid, int limit = 10}) {
-    Query query = collections.chatCollection.where('members', arrayContains: userid).limit(limit);
+    Query query = collections.chatCollection.where(models.ChatKeys.members, arrayContains: userid).limit(limit);
     return query.snapshots().map(chatFromQuerySnapshot);
   }
 
@@ -46,7 +46,7 @@ class DatabaseChat {
     }).toList();
     members.sort();
     // Test the chat doesn't exists already
-    QuerySnapshot querySnapshot = await collections.chatCollection.where('members', isEqualTo: members).getDocuments();
+    QuerySnapshot querySnapshot = await collections.chatCollection.where(models.ChatKeys.members, isEqualTo: members).getDocuments();
     if (querySnapshot.documents.isNotEmpty) {
       // The chat already exists
       return Future.error('A chat already exists with these users');
@@ -69,13 +69,13 @@ class DatabaseChat {
 //      'id': chatid,
 //    });
     await DatabaseChat(chatId: chatid).update({
-      'id': chatid,
+      models.ChatKeys.id: chatid,
     });
     // * ----- Update the users -----
     allUserList.forEach((models.User user) {
       user.chats.add(chatid);
       DatabaseUser(id: user.id).update({
-        'chats': user.toFirebaseObject()['chats'], // Only update the chats to prevent bugs
+        models.UserKeys.chats: user.toFirebaseObject()[models.UserKeys.chats], // Only update the chats to prevent bugs
       });
 //      collections.userCollection.document(user.id).updateData({
 //        'chats': user.toFirebaseObject()['chats'], // Only update the chats to prevent bugs
@@ -109,12 +109,12 @@ class DatabaseChat {
       return Future.value('No changes of members');
     }
     await update({
-      'members': members
+      models.ChatKeys.members: members
     });
     membersToUpdate.forEach((models.User user) {
       user.chats.add(chatId);
       DatabaseUser(id: user.id).update({
-        'chats': user.toFirebaseObject()['chats'], // Only update the chats to prevent bugs
+        models.UserKeys.chats: user.toFirebaseObject()[models.UserKeys.chats], // Only update the chats to prevent bugs
       });
     });
     return Future.value(null);
@@ -132,7 +132,7 @@ class DatabaseChat {
     members.forEach((models.User member) async {
       member.chats.remove(chatId);
       await DatabaseUser(id: member.id).update({
-        'chats': member.toFirebaseObject()['chats'],
+        models.UserKeys.chats: member.toFirebaseObject()[models.UserKeys.chats],
       });
     });
 
