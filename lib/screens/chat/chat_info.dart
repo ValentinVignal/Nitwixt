@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nitwixt/models/models.dart' as models;
@@ -6,6 +8,7 @@ import 'package:nitwixt/widgets/profile_picture.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
 import 'package:nitwixt/widgets/widgets.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ChatInfo extends StatefulWidget {
   @override
@@ -21,6 +24,9 @@ class _ChatInfo extends State<ChatInfo> {
   bool _isEditing = false;
   bool loading = false;
   String error = '';
+
+  final ImagePicker _imagePicker = ImagePicker();
+  File image;
 
   @override
   void dispose() {
@@ -52,7 +58,7 @@ class _ChatInfo extends State<ChatInfo> {
     }
 
     bool _hasChanges() {
-      return _isEditing && (user.name != _textControllerName.text.trim() || _listInputController.isNotEmpty);
+      return _isEditing && (user.name != _textControllerName.text.trim() || _listInputController.isNotEmpty || image != null);
     }
 
     void _applyChanges() async {
@@ -78,6 +84,10 @@ class _ChatInfo extends State<ChatInfo> {
                     return user.username;
                   }).toList();
               await database.DatabaseChat(chatId: chat.id).updateMembers(allUsernames);
+            }
+            // * ----- Image -----
+            if (image != null) {
+              database.DatabaseFile(path: chat.profilePicturePath).uploadFile(image);
             }
             setState(() {
               _isEditing = false;
@@ -106,6 +116,40 @@ class _ChatInfo extends State<ChatInfo> {
         _isEditing = false;
       });
     }
+
+    Future getImage() async {
+      PickedFile tempImage = await _imagePicker.getImage(source: ImageSource.gallery);
+      setState(() {
+        image = File(tempImage.path);
+      });
+    }
+
+    Widget imageWidget = Center(
+      child: Stack(
+        children: <Widget>[
+          image != null
+              ? CircleAvatar(
+                  backgroundImage: Image.file(image).image,
+                  radius: 40,
+                )
+              : ProfilePicture(
+                  urlAsync: chat.profilePictureUrl(user),
+                  size: 40.0,
+                  defaultImage: Image.asset('assets/images/chatDefault.png', height: 50.0, width: 50.0,),
+                ),
+          _isEditing
+              ? IconButton(
+                  enableFeedback: _isEditing,
+                  icon: Icon(
+                    Icons.edit,
+                    color: Colors.grey,
+                  ),
+                  onPressed: _isEditing ? getImage : null,
+                )
+              : SizedBox.shrink(),
+        ],
+      ),
+    );
 
     return Scaffold(
       backgroundColor: Colors.grey[900],
@@ -173,6 +217,8 @@ class _ChatInfo extends State<ChatInfo> {
                         ),
                   // Name
                   SizedBox(height: error.isEmpty ? 0.0 : 10.0),
+                  imageWidget,
+                  SizedBox(height: 10.0),
                   TextInfo(
                     title: 'Name',
                     mode: _isEditing ? TextInfoMode.edit : TextInfoMode.show,

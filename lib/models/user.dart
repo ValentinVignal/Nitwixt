@@ -77,6 +77,6 @@ class User {
 
   Future<String> get profilePictureUrl async {
     String url = await DatabaseFile(path: this.profilePicturePath).url;
-    return url.isNotEmpty ? url:  this.defaultPhotoUrl;
+    return url.isNotEmpty ? url: this.defaultPhotoUrl;
   }
 }

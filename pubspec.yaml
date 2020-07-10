@@ -76,6 +76,7 @@ flutter:
     - assets/images/google_logo.png
     - assets/images/facebook_logo.png
     - assets/images/defaultProfilePicture.png
+    - assets/images/chatDefault.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

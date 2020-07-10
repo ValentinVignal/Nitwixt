@@ -65,11 +65,13 @@ class _AccountState extends State<Account> {
             setState(() {
               loading = true;
             });
+            // * ----- Name -----
             if (user.name != _textControllerName.text.trim()) {
               await _databaseUser.update({
                 UserKeys.name: _textControllerName.text.trim(),
               });
             }
+            // * ----- Image -----
             if (image != null) {
               database.DatabaseFile(path: user.profilePicturePath).uploadFile(image);
             }

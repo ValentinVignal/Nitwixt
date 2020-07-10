@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/screens/chat/chat_home.dart';
 import 'package:nitwixt/services/providers/providers.dart';
+import 'package:nitwixt/widgets/profile_picture.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
 import 'package:nitwixt/widgets/widgets.dart';
@@ -34,14 +35,15 @@ class ChatTileState extends State<ChatTile> {
 
     return GestureDetector(
       child: Container(
+        height: 55.0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Icon(
-              Icons.chat_bubble,
-              color: Colors.blue[800],
-              size: 50.0,
-            ),
+          ProfilePicture(
+            urlAsync: widget.chat.profilePictureUrl(user),
+            size: 25.0,
+            defaultImage: Image.asset('assets/images/chatDefault.png'),
+          ),
             SizedBox(
               width: 20.0,
             ),

@@ -1,10 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nitwixt/services/providers/providers.dart';
-import 'package:nitwixt/widgets/loading/loading.dart';
+import 'package:nitwixt/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/screens/chat/chat_messages.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/screens/chat/chat_info.dart';
+
 
 class ChatHome extends StatefulWidget {
   @override
@@ -22,25 +24,38 @@ class _ChatHomeState extends State<ChatHome> {
       appBar: AppBar(
 //        title: Text(chat.nameToDisplay(user)),
 //        title: Text(chat.name),
-        title: FutureBuilder<String>(
-          future: chat.nameToDisplay(user),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return LoadingDots(
-                color: Colors.grey,
-                fontSize: 18.0,
-              );
-            } else {
-              if (snapshot.hasError) {
-                return Text(
-                  'Could not display name',
-                  style: TextStyle(color: Colors.red, fontSize: 18.0),
-                );
-              } else {
-                return Text(snapshot.data, style: TextStyle(color: Colors.white, fontSize: 18.0));
-              }
-            }
-          },
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            ProfilePicture(
+              urlAsync: chat.profilePictureUrl(user),
+              size: 20.0,
+              defaultImage: Image.asset('assets/images/chatDefault.png'),
+            ),
+            SizedBox(width: 5.0),
+            FutureBuilder<String>(
+              future: chat.nameToDisplay(user),
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return LoadingDots(
+                    color: Colors.grey,
+                    fontSize: 18.0,
+                  );
+                } else {
+                  if (snapshot.hasError) {
+                    return Text(
+                      'Could not display name',
+                      style: TextStyle(color: Colors.red, fontSize: 18.0),
+                    );
+                  } else {
+                    return Text(snapshot.data, style: TextStyle(color: Colors.white, fontSize: 18.0));
+                  }
+                }
+              },
+            ),
+          ],
         ),
         backgroundColor: Colors.black,
         leading: new IconButton(

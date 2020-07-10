@@ -7,13 +7,15 @@ class ProfilePicture extends StatelessWidget {
   final String path;
   final String url;
   final Future<String> urlAsync;
+  final Image defaultImage;
   String _url;
 
   ProfilePicture({
     this.path,
     this.url,
     this.urlAsync,
-    this.size = 15.0
+    this.size = 15.0,
+    this.defaultImage,
   }) : super() {
 //    assert((path == null) != (url == null));
   }
@@ -32,7 +34,10 @@ class ProfilePicture extends StatelessWidget {
 
   Future<Image> _getImage() async {
     await this._getUrl();
-    return DatabaseFile.imageFromUrl(this._url);
+    return DatabaseFile.imageFromUrl(
+      this._url,
+      defaultImage: this.defaultImage,
+    );
   }
 
   @override
@@ -40,14 +45,12 @@ class ProfilePicture extends StatelessWidget {
     return FutureBuilder<Image>(
       future: _getImage(),
       builder: (BuildContext buildContext, AsyncSnapshot asyncSnapshot) {
-        if (asyncSnapshot.connectionState == ConnectionState.done && ! asyncSnapshot.hasError) {
+        if (asyncSnapshot.connectionState == ConnectionState.done && !asyncSnapshot.hasError) {
           return CircleAvatar(
             radius: this.size,
             backgroundImage: asyncSnapshot.data.image,
           );
         } else {
-          print('ProfilePicture error');
-          print(asyncSnapshot.error);
           return LoadingCircle(size: 1.5 * this.size);
         }
       },

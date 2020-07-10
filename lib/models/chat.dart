@@ -1,5 +1,6 @@
 import 'package:nitwixt/models/models.dart';
 import 'package:nitwixt/services/database/database_user.dart';
+import 'package:nitwixt/services/database/database_files.dart';
 
 class ChatKeys {
   static final String id = 'id';
@@ -42,6 +43,18 @@ class Chat {
 
   // * -------------------- Name --------------------
 
+  String _otherUserId(User user) {
+    return this.members.where((String memberId) {
+      return memberId != user.id;
+    }).toList()[0];
+  }
+
+  Future<User> _otherUser(User user) async {
+    String otherUserId = this._otherUserId(user);
+    User otherUser = await DatabaseUser(id: otherUserId).userFuture;
+    return otherUser;
+  }
+
   Future<String> nameToDisplay(User user) async {
     if (!this.members.contains(user.id)) {
       // The user is not in this chat
@@ -64,10 +77,7 @@ class Chat {
           } else {
             // Let's construct the object _nameToDisplay
             // First get the other user from database
-            String otherId = this.members.where((String memberId) {
-              return memberId != user.id;
-            }).toList()[0];
-            User otherUser = await DatabaseUser(id: otherId).userFuture;
+            User otherUser = await this._otherUser(user);
             // construct map
             this._nameToDisplay = new Map();
             this._nameToDisplay[user.id] = otherUser.name;
@@ -86,5 +96,20 @@ class Chat {
 
   String get profilePicturePath {
     return 'chats/${this.id}/profilePicture.jpg';
+  }
+
+  Future<String> profilePictureUrl(User user) async {
+    String url = await DatabaseFile(path: this.profilePicturePath).url;
+    if (url.isEmpty) {
+      if(this.members.length == 1) {
+        // Chat alone
+        url = await user.profilePictureUrl;
+      } else if (this.members.length == 2) {
+        // Private chat
+        User otherUser = await this._otherUser(user);
+        url = await otherUser.profilePictureUrl;
+      }
+    }
+    return url;
   }
 }
