@@ -43,10 +43,7 @@ class ChatTileState extends State<ChatTile> {
               user: user,
               size: 25.0,
             ),
-            LinkPreview(link: 'https://www.google.com'),
-            SizedBox(
-              width: 20.0,
-            ),
+            SizedBox(width: 20.0),
             Flexible(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

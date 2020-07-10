@@ -12,8 +12,8 @@ class DatabaseFiles {
 
   Future<bool> get exists async {
     bool _exists = true;
+    StorageReference storageReference = FirebaseStorage.instance.ref().child(this.path);
     try {
-      StorageReference storageReference = FirebaseStorage.instance.ref().child(this.path);
       await storageReference.getDownloadURL();
     } on Exception catch (exc) {
       _exists = false;

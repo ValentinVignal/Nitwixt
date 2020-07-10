@@ -17,7 +17,23 @@ class LinkPreview extends StatelessWidget {
       future: this._fetchPreview.fetch(this.link),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done && !snapshot.hasError) {
-          return DatabaseFiles.imageFromUrl(snapshot.data.imageUrl);
+          Preview preview = snapshot.data;
+          print('\n\n\n\n');
+          print('favIcon ${preview.favIcon}, appelIcon ${preview.appleIcon}');
+          return Container(
+            child: Stack(
+              children: <Widget>[
+                DatabaseFiles.imageFromUrl(preview.imageUrl),
+                Column(
+                  children: <Widget>[
+                    Text(preview.title, style: TextStyle(color: Colors.red)),
+                    Text(preview.description, style: TextStyle(color: Colors.blue)),
+//                    DatabaseFiles.imageFromUrl(preview.favIcon),
+                  ],
+                ),
+              ],
+            ),
+          );
         } else {
           return SizedBox.shrink();
         }

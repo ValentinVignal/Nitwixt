@@ -49,8 +49,6 @@ class ProfilePicture extends StatelessWidget {
       future: _getImage(),
       builder: (BuildContext buildContext, AsyncSnapshot asyncSnapshot) {
         if (asyncSnapshot.connectionState == ConnectionState.done && !asyncSnapshot.hasError) {
-          print('size');
-          print(size);
           return CircleAvatar(
             radius: this.size,
             backgroundImage: asyncSnapshot.data.image,

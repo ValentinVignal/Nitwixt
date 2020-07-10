@@ -263,8 +263,22 @@ class _MessageTileState extends State<MessageTile> {
             padding: EdgeInsets.symmetric(horizontal: 4.0),
             child: ProfilePicture(
               urlAsync: membersMap[widget.message.userid].profilePictureUrl,
-            )
-            );
+            ),
+          );
+
+    RegExp regExpLink = new RegExp(r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+');
+    List<RegExpMatch> matches = regExpLink.allMatches(widget.message.text).toList();
+    String linkToPreview;
+    if (matches.isNotEmpty) {
+      linkToPreview = widget.message.text.substring(matches[0].start, matches[0].end);
+    }
+    print('\n\n\n\n text ${widget.message.text} linkToPreview $linkToPreview, matches ${matches}');
+
+    Widget preview = linkToPreview == null
+        ? SizedBox.shrink()
+        : LinkPreview(
+            link: linkToPreview,
+          );
 
     // * --------------------------------------------------
     // * --------------------------------------------------
@@ -340,6 +354,7 @@ class _MessageTileState extends State<MessageTile> {
                 ),
               ),
             ),
+            preview,
             _showInfo ? dateContainer : SizedBox.shrink(),
           ],
         ),
