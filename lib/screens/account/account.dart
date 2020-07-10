@@ -73,7 +73,7 @@ class _AccountState extends State<Account> {
             }
             // * ----- Image -----
             if (image != null) {
-              database.DatabaseFile(path: user.profilePicturePath).uploadFile(image);
+              database.DatabaseFiles(path: user.profilePicturePath).uploadFile(image);
             }
 
             setState(() {

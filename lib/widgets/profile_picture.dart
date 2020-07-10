@@ -25,7 +25,7 @@ class ProfilePicture extends StatelessWidget {
       if (this.url != null) {
         this._url = url;
       } else if (path != null) {
-        this._url = await DatabaseFile(path: path).url;
+        this._url = await DatabaseFiles(path: path).url;
       } else if (urlAsync != null) {
         this._url = await urlAsync;
       }
@@ -34,7 +34,7 @@ class ProfilePicture extends StatelessWidget {
 
   Future<Image> _getImage() async {
     await this._getUrl();
-    return DatabaseFile.imageFromUrl(
+    return DatabaseFiles.imageFromUrl(
       this._url,
       defaultImage: this.defaultImage,
     );

@@ -99,7 +99,7 @@ class Chat {
   }
 
   Future<String> profilePictureUrl(User user) async {
-    String url = await DatabaseFile(path: this.profilePicturePath).url;
+    String url = await DatabaseFiles(path: this.profilePicturePath).url;
     if (url.isEmpty) {
       if(this.members.length == 1) {
         // Chat alone

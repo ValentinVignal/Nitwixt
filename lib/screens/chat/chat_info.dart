@@ -87,7 +87,7 @@ class _ChatInfo extends State<ChatInfo> {
             }
             // * ----- Image -----
             if (image != null) {
-              database.DatabaseFile(path: chat.profilePicturePath).uploadFile(image);
+              database.DatabaseFiles(path: chat.profilePicturePath).uploadFile(image);
             }
             setState(() {
               _isEditing = false;
