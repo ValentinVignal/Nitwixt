@@ -3,10 +3,8 @@ import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/screens/chat/chat_home.dart';
 import 'package:nitwixt/services/providers/providers.dart';
 import 'package:nitwixt/widgets/widgets.dart';
-import 'package:nitwixt/widgets/profile_picture.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
-import 'package:nitwixt/widgets/widgets.dart';
 
 class ChatTile extends StatefulWidget {
   final models.Chat chat;
@@ -40,10 +38,10 @@ class ChatTileState extends State<ChatTile> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            ProfilePicture(
-              urlAsync: widget.chat.profilePictureUrl(user),
+            ChatPicture(
+              chat: widget.chat,
+              user: user,
               size: 25.0,
-              defaultImage: Image.asset('assets/images/chatDefault.png'),
             ),
             LinkPreview(link: 'https://www.google.com'),
             SizedBox(

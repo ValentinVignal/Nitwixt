@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/screens/chat/delete_chat_dialog.dart';
+import 'package:nitwixt/widgets/chats/chat_picture.dart';
 import 'package:nitwixt/widgets/profile_picture.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
@@ -132,10 +133,10 @@ class _ChatInfo extends State<ChatInfo> {
                   backgroundImage: Image.file(image).image,
                   radius: 40,
                 )
-              : ProfilePicture(
-                  urlAsync: chat.profilePictureUrl(user),
+              : ChatPicture(
+                  chat: chat,
+                  user: user,
                   size: 40.0,
-                  defaultImage: Image.asset('assets/images/chatDefault.png', height: 50.0, width: 50.0,),
                 ),
           _isEditing
               ? IconButton(
@@ -248,8 +249,8 @@ class _ChatInfo extends State<ChatInfo> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Padding(
-                            child: ProfilePicture(
-                              path: members[index].profilePicturePath,
+                            child: UserPicture(
+                              user: members[index],
                               size: 20.0,
                             ),
                             padding: EdgeInsets.all(5.0),

@@ -114,8 +114,8 @@ class _AccountState extends State<Account> {
                   backgroundImage: Image.file(image, height: 200, width: 200.0).image,
                   radius: 50,
                 )
-              : ProfilePicture(
-                  urlAsync: user.profilePictureUrl,
+              : UserPicture(
+                  user: user,
                   size: 40.0,
                 ),
           _isEditing

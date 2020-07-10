@@ -104,8 +104,8 @@ class _HomeState extends State<Home> {
           elevation: 0.0,
           leading: Padding(
             padding: EdgeInsets.all(5.0),
-            child: ProfilePicture(
-              urlAsync: user.profilePictureUrl,
+            child: UserPicture(
+              user: user,
             ),
           ),
           actions: <Widget>[

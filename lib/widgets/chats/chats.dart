@@ -1,0 +1,1 @@
+export 'chat_picture.dart';

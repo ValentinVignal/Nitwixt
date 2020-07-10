@@ -29,10 +29,10 @@ class _ChatHomeState extends State<ChatHome> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            ProfilePicture(
-              urlAsync: chat.profilePictureUrl(user),
+            ChatPicture(
+              chat: chat,
+              user: user,
               size: 20.0,
-              defaultImage: Image.asset('assets/images/chatDefault.png'),
             ),
             SizedBox(width: 5.0),
             FutureBuilder<String>(

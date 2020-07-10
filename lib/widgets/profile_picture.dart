@@ -3,7 +3,7 @@ import 'package:nitwixt/services/database/database.dart';
 import 'loading/loading.dart';
 
 class ProfilePicture extends StatelessWidget {
-  final double size;
+  double size;
   final String path;
   final String url;
   final Future<String> urlAsync;
@@ -14,10 +14,13 @@ class ProfilePicture extends StatelessWidget {
     this.path,
     this.url,
     this.urlAsync,
-    this.size = 15.0,
+    this.size=15.0,
     this.defaultImage,
   }) : super() {
 //    assert((path == null) != (url == null));
+    if (size == null) {
+      this.size = 15.0;
+    }
   }
 
   Future _getUrl() async {
@@ -46,6 +49,8 @@ class ProfilePicture extends StatelessWidget {
       future: _getImage(),
       builder: (BuildContext buildContext, AsyncSnapshot asyncSnapshot) {
         if (asyncSnapshot.connectionState == ConnectionState.done && !asyncSnapshot.hasError) {
+          print('size');
+          print(size);
           return CircleAvatar(
             radius: this.size,
             backgroundImage: asyncSnapshot.data.image,
