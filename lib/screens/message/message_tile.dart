@@ -272,13 +272,26 @@ class _MessageTileState extends State<MessageTile> {
     if (matches.isNotEmpty) {
       linkToPreview = widget.message.text.substring(matches[0].start, matches[0].end);
     }
-    print('\n\n\n\n text ${widget.message.text} linkToPreview $linkToPreview, matches ${matches}');
 
     Widget preview = linkToPreview == null
         ? SizedBox.shrink()
-        : LinkPreview(
-            link: linkToPreview,
-          );
+        : Flexible(
+          child: Container(
+            constraints: BoxConstraints(
+              maxHeight: 100.0,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(
+                Radius.circular(
+                  20.0,
+                ),
+              ),
+            ),
+            child: LinkPreview(
+                link: linkToPreview,
+              ),
+          ),
+        );
 
     // * --------------------------------------------------
     // * --------------------------------------------------
@@ -354,7 +367,15 @@ class _MessageTileState extends State<MessageTile> {
                 ),
               ),
             ),
-            preview,
+            Row(
+              mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                SizedBox(width: isMyMessage ? 40.0 : 0.0),
+                preview,
+                SizedBox(width: isMyMessage ? 0.0 : 40.0),
+              ],
+            ),
             _showInfo ? dateContainer : SizedBox.shrink(),
           ],
         ),

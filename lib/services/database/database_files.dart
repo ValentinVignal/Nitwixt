@@ -33,7 +33,7 @@ class DatabaseFiles {
   }
 
   static Image imageFromUrl(String url, {Image defaultImage}) {
-    if (url.isEmpty) {
+    if (url == null || url.isEmpty) {
       if (defaultImage != null) {
         return defaultImage;
       } else {

@@ -15,10 +15,40 @@ class Preview {
     this.appleIcon = '',
     this.favIcon = '',
   });
-}
 
-class FetchPreview {
-  Future<Preview> fetch(url) async {
+  static bool _isEmpty(String str) {
+    return str == null || str.isEmpty;
+  }
+
+  bool get hasTitle {
+    return !_isEmpty(this.title);
+  }
+
+  bool get hasDescription {
+    return !_isEmpty(this.description);
+  }
+
+  bool get hasImageUrl {
+    return !_isEmpty(this.imageUrl);
+  }
+
+  bool get hasAppleIcon {
+    return !_isEmpty(this.appleIcon);
+  }
+
+  bool get hasFavIcon {
+    return !_isEmpty(this.favIcon);
+  }
+
+  bool get isEmpty {
+    return !this.hasTitle && !this.hasDescription && !this.hasImageUrl && !this.hasAppleIcon && !this.hasFavIcon;
+  }
+
+  bool get isNotEmpty {
+    return !(this.isEmpty);
+  }
+
+  static Future<Preview> fetchPreview(String url) async {
     final client = Client();
     final response = await client.get(_validateUrl(url));
     final document = parse(response.body);
@@ -65,13 +95,7 @@ class FetchPreview {
       }
     });
 
-    return Preview(
-      title: title,
-      description: description,
-      imageUrl: image,
-      appleIcon: appleIcon,
-      favIcon: favIcon
-    );
+    return Preview(title: title, description: description, imageUrl: image, appleIcon: appleIcon, favIcon: favIcon);
 
 //    return {
 //      'title': title ?? '',
@@ -82,7 +106,7 @@ class FetchPreview {
 //    };
   }
 
-  _validateUrl(String url) {
+  static _validateUrl(String url) {
     if (url?.startsWith('http://') == true || url?.startsWith('https://') == true) {
       return url;
     } else {
