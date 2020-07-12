@@ -7,7 +7,6 @@ import 'package:nitwixt/models/models.dart' as models;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:nitwixt/widgets/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:markdown/markdown.dart' as md;
 import 'package:flutter_emoji/flutter_emoji.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -56,37 +55,37 @@ class _MessageTileState extends State<MessageTile> {
 
     bool isMyMessage = user.id == widget.message.userid;
 
-    void _launchUrl(String url) {
-      showDialog<void>(
-        context: context,
-        barrierDismissible: true, // false = user must tap button, true = tap outside dialog
-        builder: (BuildContext dialogContext) {
-          return AlertDialog(
-            title: Text('Do you want to launch this url ?'),
-            content: Text(url),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Cancel'),
-                onPressed: () {
-                  Navigator.of(dialogContext).pop(); // Dismiss alert dialog
-                },
-              ),
-              FlatButton(
-                child: Text('Launch'),
-                onPressed: () async {
-                  Navigator.of(dialogContext).pop(); // Dismiss alert dialog
-                  if (await canLaunch(url)) {
-                    await launch(url);
-                  } else {
-                    print('Could not launch url $url');
-                  }
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
+//    void _launchUrl(String url) {
+//      showDialog<void>(
+//        context: context,
+//        barrierDismissible: true, // false = user must tap button, true = tap outside dialog
+//        builder: (BuildContext dialogContext) {
+//          return AlertDialog(
+//            title: Text('Do you want to launch this url ?'),
+//            content: Text(url),
+//            actions: <Widget>[
+//              FlatButton(
+//                child: Text('Cancel'),
+//                onPressed: () {
+//                  Navigator.of(dialogContext).pop(); // Dismiss alert dialog
+//                },
+//              ),
+//              FlatButton(
+//                child: Text('Launch'),
+//                onPressed: () async {
+//                  Navigator.of(dialogContext).pop(); // Dismiss alert dialog
+//                  if (await canLaunch(url)) {
+//                    await launch(url);
+//                  } else {
+//                    print('Could not launch url $url');
+//                  }
+//                },
+//              ),
+//            ],
+//          );
+//        },
+//      );
+//    }
 
     Widget nameContainer = isMyMessage || membersMap.length <= 2
         ? Container(
@@ -189,7 +188,7 @@ class _MessageTileState extends State<MessageTile> {
                   data: emojiedText,
                   selectable: false,
                   styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
-                  onTapLink: _launchUrl,
+                  onTapLink: (String url) => LinkPreview.launchUrl(context: context, url: url),
                 ),
               ),
       ),
@@ -276,22 +275,22 @@ class _MessageTileState extends State<MessageTile> {
     Widget preview = linkToPreview == null
         ? SizedBox.shrink()
         : Flexible(
-          child: Container(
-            constraints: BoxConstraints(
-              maxHeight: 100.0,
-            ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(
-                Radius.circular(
-                  20.0,
+            child: Container(
+              constraints: BoxConstraints(
+                maxHeight: 100.0,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(
+                    20.0,
+                  ),
                 ),
               ),
-            ),
-            child: LinkPreview(
+              child: LinkPreview(
                 link: linkToPreview,
               ),
-          ),
-        );
+            ),
+          );
 
     // * --------------------------------------------------
     // * --------------------------------------------------

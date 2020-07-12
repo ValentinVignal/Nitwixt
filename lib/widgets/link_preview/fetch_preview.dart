@@ -7,6 +7,7 @@ class Preview {
   String imageUrl;
   String appleIcon;
   String favIcon;
+  String link;
 
   Preview({
     this.title = '',
@@ -14,6 +15,7 @@ class Preview {
     this.imageUrl = '',
     this.appleIcon = '',
     this.favIcon = '',
+    this.link = '',
   });
 
   static bool _isEmpty(String str) {
@@ -95,15 +97,14 @@ class Preview {
       }
     });
 
-    return Preview(title: title, description: description, imageUrl: image, appleIcon: appleIcon, favIcon: favIcon);
-
-//    return {
-//      'title': title ?? '',
-//      'description': description ?? '',
-//      'image': image ?? '',
-//      'appleIcon': appleIcon ?? '',
-//      'favIcon': favIcon ?? '',
-//    };
+    return Preview(
+      title: title,
+      description: description,
+      imageUrl: image,
+      appleIcon: appleIcon,
+      favIcon: favIcon,
+      link: url,
+    );
   }
 
   static _validateUrl(String url) {
