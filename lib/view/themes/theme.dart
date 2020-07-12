@@ -15,9 +15,18 @@ final ThemeData theme = ThemeData(
 
   ),
 
+  appBarTheme: AppBarTheme(
+    brightness: Brightness.dark,
+    color: Colors.black,
+  ),
+
+  scaffoldBackgroundColor: Colors.grey[900],
+
   textTheme: TextTheme(
     headline1: TextStyle(color: Colors.white),
-    bodyText1: TextStyle(color: Colors.white)
+    bodyText1: TextStyle(color: Colors.white),
+    bodyText2: TextStyle(color: Colors.white),
+    subtitle1: TextStyle(color: Colors.grey),
   )
 );
 

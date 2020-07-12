@@ -96,11 +96,11 @@ class _HomeState extends State<Home> {
 
     return Scaffold(
         key: _scaffoldKey,
-        backgroundColor: Colors.grey[900],
+//        backgroundColor: Colors.grey[900],
         appBar: AppBar(
           title: Text('Nitwixt'),
 //          backgroundColor: Colors.grey[900],
-          backgroundColor: Colors.black,
+//          backgroundColor: Colors.black,
           elevation: 0.0,
           leading: Padding(
             padding: EdgeInsets.all(5.0),

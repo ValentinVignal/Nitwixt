@@ -66,7 +66,7 @@ class ChatTileState extends State<ChatTile> {
                         } else {
                           return Text(
                             snapshot.data,
-                            style: TextStyle(color: Colors.white, fontSize: 18.0),
+                            style: TextStyle(fontSize: 18.0),
                             textAlign: TextAlign.left,
                             overflow: TextOverflow.ellipsis,
                           );
@@ -93,7 +93,7 @@ class ChatTileState extends State<ChatTile> {
                       }
                       return Text(
                         text,
-                        style: TextStyle(color: Colors.grey),
+                        style: Theme.of(context).textTheme.subtitle1,
                         textAlign: TextAlign.left,
                         overflow: TextOverflow.ellipsis,
                         softWrap: true,
