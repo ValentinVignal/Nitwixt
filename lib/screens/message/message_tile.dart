@@ -9,7 +9,6 @@ import 'package:nitwixt/widgets/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_emoji/flutter_emoji.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class MessageTile extends StatefulWidget {
   models.Message message;
@@ -54,38 +53,6 @@ class _MessageTileState extends State<MessageTile> {
     final bool isOnlyEmojis = REGEX_ONLY_EMOJI.hasMatch(emojiedText);
 
     bool isMyMessage = user.id == widget.message.userid;
-
-//    void _launchUrl(String url) {
-//      showDialog<void>(
-//        context: context,
-//        barrierDismissible: true, // false = user must tap button, true = tap outside dialog
-//        builder: (BuildContext dialogContext) {
-//          return AlertDialog(
-//            title: Text('Do you want to launch this url ?'),
-//            content: Text(url),
-//            actions: <Widget>[
-//              FlatButton(
-//                child: Text('Cancel'),
-//                onPressed: () {
-//                  Navigator.of(dialogContext).pop(); // Dismiss alert dialog
-//                },
-//              ),
-//              FlatButton(
-//                child: Text('Launch'),
-//                onPressed: () async {
-//                  Navigator.of(dialogContext).pop(); // Dismiss alert dialog
-//                  if (await canLaunch(url)) {
-//                    await launch(url);
-//                  } else {
-//                    print('Could not launch url $url');
-//                  }
-//                },
-//              ),
-//            ],
-//          );
-//        },
-//      );
-//    }
 
     Widget nameContainer = isMyMessage || membersMap.length <= 2
         ? Container(
@@ -275,10 +242,8 @@ class _MessageTileState extends State<MessageTile> {
     Widget preview = linkToPreview == null
         ? SizedBox.shrink()
         : Flexible(
+            fit: FlexFit.tight,
             child: Container(
-              constraints: BoxConstraints(
-                maxHeight: 100.0,
-              ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(
                   Radius.circular(

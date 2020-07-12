@@ -49,10 +49,14 @@ class ProfilePicture extends StatelessWidget {
       future: _getImage(),
       builder: (BuildContext buildContext, AsyncSnapshot asyncSnapshot) {
         if (asyncSnapshot.connectionState == ConnectionState.done && !asyncSnapshot.hasError) {
-          return CircleAvatar(
-            radius: this.size,
-            backgroundImage: asyncSnapshot.data.image,
-          );
+          if (asyncSnapshot.data != null) {
+            return CircleAvatar(
+              radius: this.size,
+              backgroundImage: asyncSnapshot.data.image,
+            );
+          } else {
+            return SizedBox.shrink();
+          }
         } else {
           return LoadingCircle(size: 1.5 * this.size);
         }

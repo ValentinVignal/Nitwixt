@@ -37,10 +37,13 @@ class DatabaseFiles {
       if (defaultImage != null) {
         return defaultImage;
       } else {
-        return Image.asset('assets/images/defaultProfilePicture.png');
+//        return Image.asset('assets/images/defaultProfilePicture.png');
+      return null;
       }
     } else {
-      return Image.network(url);
+      return Image.network(url, errorBuilder: (BuildContext context, Object object, StackTrace stackTrace) {
+        return SizedBox.shrink();
+      },);
     }
   }
 

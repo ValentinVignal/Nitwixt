@@ -7,10 +7,12 @@ import 'package:url_launcher/url_launcher.dart';
 class LinkPreview extends StatelessWidget {
   String link;
   int maxLineDescription;
+  double maxHeight;
 
   LinkPreview({
     @required this.link,
     this.maxLineDescription = 3,
+    this.maxHeight=100.0,
   }) : super();
 
   static void launchUrl({BuildContext context, String url}) {
@@ -55,6 +57,9 @@ class LinkPreview extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.done && !snapshot.hasError && snapshot.hasData && snapshot.data.isNotEmpty) {
             Preview preview = snapshot.data;
             return Container(
+              constraints: preview.hasImageUrl ? BoxConstraints(
+                maxHeight: 100.0,
+              ) : null,
               decoration: BoxDecoration(
                 color: Colors.black,
                 borderRadius: BorderRadius.all(
@@ -66,10 +71,11 @@ class LinkPreview extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Container(
+                  preview.hasImageUrl ? Container(
                     child: DatabaseFiles.imageFromUrl(preview.imageUrl),
-                  ),
+                  ) : SizedBox.shrink(),
                   SizedBox(width: 5.0),
                   Flexible(
                     child: Container(
