@@ -26,7 +26,7 @@ final ThemeData theme = ThemeData(
     headline1: TextStyle(color: Colors.white),
     bodyText1: TextStyle(color: Colors.white),
     bodyText2: TextStyle(color: Colors.white),
-    subtitle1: TextStyle(color: Colors.grey),
+    subtitle1: TextStyle(color: Colors.grey, fontSize: 14.0,),
   )
 );
 

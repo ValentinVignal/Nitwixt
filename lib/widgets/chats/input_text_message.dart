@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nitwixt/shared/constants.dart';
+import 'package:nitwixt/shortcuts/shortcuts.dart' as sc;
 
 class InputTextMessage extends StatefulWidget {
   Function sendMessage;
@@ -22,15 +23,16 @@ class _InputTextMessageState extends State<InputTextMessage> {
     super.dispose();
   }
 
-  void _textListener() {
+  void _activateSendButton() {
     setState(() {
       showSendButton = _textController.text.trim().isNotEmpty;
     });
   }
 
+
   @override
   void initState() {
-    _textController.addListener(_textListener);
+    _textController.addListener(_activateSendButton);
     super.initState();
   }
 
@@ -61,7 +63,8 @@ class _InputTextMessageState extends State<InputTextMessage> {
               color: Colors.blue,
             ),
             onPressed: () {
-              widget.sendMessage(_textController.text.trim());
+              String parsedText = sc.TextParser.parse(_textController.text).trim();
+              widget.sendMessage(parsedText);
               WidgetsBinding.instance.addPostFrameCallback((_) => _textController.clear());
             },
           )

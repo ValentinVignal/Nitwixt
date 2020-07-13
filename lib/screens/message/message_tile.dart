@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:nitwixt/widgets/profile_picture.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -9,6 +8,7 @@ import 'package:nitwixt/widgets/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_emoji/flutter_emoji.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:nitwixt/shortcuts/shortcuts.dart' as shortcuts;
 
 class MessageTile extends StatefulWidget {
   models.Message message;
@@ -34,8 +34,6 @@ class MessageTile extends StatefulWidget {
 class _MessageTileState extends State<MessageTile> {
   bool _showInfo = false;
   RefreshController _refreshController = RefreshController(initialRefresh: false);
-  final EmojiParser _emojiParser = EmojiParser();
-  final RegExp REGEX_ONLY_EMOJI = RegExp(r'^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])*$');
 
   @override
   void dispose() {
@@ -48,9 +46,7 @@ class _MessageTileState extends State<MessageTile> {
     final user = Provider.of<models.User>(context);
     final membersMap = Provider.of<Map<String, models.User>>(context);
     final chat = Provider.of<models.Chat>(context);
-    final MarkdownStyleSheet _markdownStyleSheet = MarkdownStyleSheet.fromTheme(Theme.of(context));
-    final String emojiedText = _emojiParser.emojify(widget.message.text);
-    final bool isOnlyEmojis = REGEX_ONLY_EMOJI.hasMatch(emojiedText);
+    final bool isOnlyEmojis = shortcuts.TextParser.hasOnlyEmoji(widget.message.text.trim().trimLeft());
 
     bool isMyMessage = user.id == widget.message.userid;
 
@@ -137,7 +133,7 @@ class _MessageTileState extends State<MessageTile> {
         child: isOnlyEmojis
             ? Container(
                 child: Text(
-                  emojiedText,
+                  widget.message.text,
                   style: TextStyle(color: Colors.white, fontSize: 50.0),
                 ),
               )
@@ -152,7 +148,7 @@ class _MessageTileState extends State<MessageTile> {
                   ),
                 ),
                 child: MarkdownBody(
-                  data: emojiedText,
+                  data: widget.message.text,
                   selectable: false,
                   styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
                   onTapLink: (String url) => LinkPreview.launchUrl(context: context, url: url),
@@ -227,8 +223,8 @@ class _MessageTileState extends State<MessageTile> {
         ? SizedBox.shrink()
         : Padding(
             padding: EdgeInsets.symmetric(horizontal: 4.0),
-            child: ProfilePicture(
-              urlAsync: membersMap[widget.message.userid].profilePictureUrl,
+            child: UserPicture(
+              user: membersMap[widget.message.userid],
             ),
           );
 

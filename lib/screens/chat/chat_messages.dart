@@ -4,11 +4,11 @@ import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/screens/message/message_tile.dart';
 import 'package:nitwixt/screens/message/message_to_answer_to.dart';
-import 'package:nitwixt/shared/constants.dart';
 import 'package:nitwixt/widgets/widgets.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/services/database/database.dart' as database;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:nitwixt/shortcuts/shortcuts.dart' as sc;
 
 class ChatMessages extends StatefulWidget {
   @override
