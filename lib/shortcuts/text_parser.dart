@@ -11,7 +11,6 @@ class TextParser {
     text = SmileyParser.smileyfy(text);
     text = _emojiParser.emojify(text);
     text = text.replaceAll('️', '');
-    print('text "${text}" "${text.trim()}" bytes ${utf8.encode(' ')} - ${utf8.encode(text)}');
 
     return text;
   }

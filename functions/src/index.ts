@@ -24,9 +24,17 @@ export const messageNotification = functions.firestore.document('chats/{chatId}/
         console.log(`chatRef is null`);
         return null;
     }
+
+
     const chatSnapshot: FirebaseFirestore.DocumentSnapshot = await chatRef.get()
     const chat = chatSnapshot.data();
-    // console.log('doc', doc, 'chat', chat);
+
+    // Update the correct date if people change the time of their phone
+    doc.date = admin.firestore.Timestamp.now();
+    await ref.update({
+        date: doc.date
+    });
+
 
     const userid: string = doc.userid;
     let text: string = doc.text;
