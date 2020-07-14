@@ -48,6 +48,45 @@ class _MessageTileState extends State<MessageTile> {
     final chat = Provider.of<models.Chat>(context);
     final bool isOnlyEmojis = shortcuts.TextParser.hasOnlyEmoji(widget.message.text.trim().trimLeft());
 
+    void _showReacts() {
+      showDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (BuildContext buildContext) {
+            return AlertDialog(
+                title: Center(child: Text('Reacts')),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(40.0),
+                ),
+                backgroundColor: Color(0xFF202020),
+                content: SingleChildScrollView(
+                  child: ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: widget.message.reacts.length,
+                    itemBuilder: (BuildContext buildContext, int index) {
+                      String userId = widget.message.reacts.keys[index];
+                      models.User reactUser = membersMap[userId];
+                      String react = widget.message.reacts[userId];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5.0),
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              react,
+                              style: TextStyle(fontSize: 20.0),
+                            ),
+                            SizedBox(width: 10.0),
+                            Text(reactUser.name, style: TextStyle(fontSize: 17.0),),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ));
+          });
+    }
+
     bool isMyMessage = user.id == widget.message.userid;
 
     Widget nameContainer = isMyMessage || membersMap.length <= 2
@@ -111,10 +150,13 @@ class _MessageTileState extends State<MessageTile> {
             height: 0.0,
             width: 0.0,
           )
-        : Container(
-            child: Text(
-              '${widget.message.reacts.reactList().join()} ${widget.message.reacts.length}',
-              style: TextStyle(color: Colors.white),
+        : GestureDetector(
+            onTap: _showReacts,
+            child: Container(
+              child: Text(
+                '${widget.message.reacts.reactList().join()} ${widget.message.reacts.length}',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           );
 
@@ -124,8 +166,14 @@ class _MessageTileState extends State<MessageTile> {
             child: FutureBuilder<String>(
               future: widget.message.imageUrl,
               builder: (BuildContext buildContext, AsyncSnapshot asyncSnapshot) {
-                if (asyncSnapshot.connectionState == ConnectionState.done && !asyncSnapshot.hasError && asyncSnapshot.hasData && asyncSnapshot.data.isNotEmpty) {
-                  return Image.network(asyncSnapshot.data, width: 200.0,);
+                if (asyncSnapshot.connectionState == ConnectionState.done &&
+                    !asyncSnapshot.hasError &&
+                    asyncSnapshot.hasData &&
+                    asyncSnapshot.data.isNotEmpty) {
+                  return Image.network(
+                    asyncSnapshot.data,
+                    width: 200.0,
+                  );
                 } else {
                   return SizedBox.shrink();
                 }

@@ -126,7 +126,7 @@ class MessageReacts {
   }
 
   int get length {
-    return this.reactMap.values.length;
+    return this.reactMap.length;
   }
 
   bool get isEmpty {
@@ -137,6 +137,9 @@ class MessageReacts {
     return this.reactMap.isNotEmpty;
   }
 
+  List<String> get keys {
+    return this.reactMap.keys.toList();
+  }
 
   List<String> reactList({bool unique=true}) {
     List<String> reacts = this.reactMap.values.toList();
