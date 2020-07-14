@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:nitwixt/models/user.dart';
 import 'package:nitwixt/models/user_auth.dart';
-import 'package:nitwixt/widgets/profile_picture.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
 import 'package:nitwixt/widgets/widgets.dart';

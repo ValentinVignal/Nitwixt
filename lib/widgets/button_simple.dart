@@ -8,6 +8,7 @@ class ButtonSimple extends StatelessWidget {
   final IconData icon;
   final double horizontalPadding;
   final bool withBorder;
+  Color backgroundcolor;
 
   ButtonSimple({
     this.onTap,
@@ -17,7 +18,10 @@ class ButtonSimple extends StatelessWidget {
     this.fontSize = 18.0,
     this.horizontalPadding = 10.0,
     this.withBorder = true,
-  });
+    this.backgroundcolor,
+  }) {
+    this.backgroundcolor ??= Color(0x00000000);
+}
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +38,7 @@ class ButtonSimple extends StatelessWidget {
             color: this.color,
             width: 2.0,
           ),
+          color: this.backgroundcolor,
         ) : null,
         child: Row(
           mainAxisSize: MainAxisSize.min,

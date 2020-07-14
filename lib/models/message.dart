@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:nitwixt/models/models.dart';
 import 'package:nitwixt/services/database/database.dart';
 
 class MessageKeys {
@@ -9,15 +8,19 @@ class MessageKeys {
   static final String userid = 'userid';
   static final String reacts = 'reacts';
   static final String previousMessageId = 'previousMessageId';
+  static final String images = 'images';
+  static final String chatid = 'chatid';
 }
 
 class Message {
-  final String id; // Id of the message
+  String id; // Id of the message
   final Timestamp date; // When the message has been sent
   String text; // The text of the message
   String userid; // The user who sent the message
   MessageReacts reacts;
   String previousMessageId;
+  List<String> images = [];
+  String chatid;
 
   Message({
     this.id,
@@ -26,6 +29,8 @@ class Message {
     this.userid,
     this.reacts,
     this.previousMessageId='',
+    this.images,
+    this.chatid,
   }) {
     if (this.reacts == null) {
       this.reacts = MessageReacts();
@@ -41,6 +46,8 @@ class Message {
     firebaseObject[MessageKeys.userid] = this.userid;
     firebaseObject[MessageKeys.reacts] = this.reacts.toFirebaseObject();
     firebaseObject[MessageKeys.previousMessageId] = this.previousMessageId;
+    firebaseObject[MessageKeys.images] = this.images;
+    firebaseObject[MessageKeys.chatid] = this.chatid;
 
     return firebaseObject;
   }
@@ -52,6 +59,8 @@ class Message {
     this.userid = firebaseObject.containsKey(MessageKeys.userid) ? firebaseObject[MessageKeys.userid] : '';
     this.reacts = firebaseObject.containsKey(MessageKeys.reacts) ? MessageReacts.fromFirebaseObject(firebaseObject[MessageKeys.reacts]) : MessageReacts();
     this.previousMessageId = firebaseObject.containsKey(MessageKeys.previousMessageId) ? firebaseObject[MessageKeys.previousMessageId].toString() : '';
+    this.images = firebaseObject.containsKey(MessageKeys.images) ? List.from(firebaseObject[MessageKeys.images]) : [];
+    this.chatid = firebaseObject.containsKey(MessageKeys.chatid) ? firebaseObject[MessageKeys.chatid] : '';
   }
 
   Future<Message> answersToMessage(String chatId) async {
@@ -59,6 +68,24 @@ class Message {
       return null;
     } else {
       return await DatabaseMessage(chatId: chatId).getMessageFuture(this.previousMessageId);
+    }
+  }
+
+  void setNumImages(int numImages, {String chatId}) {
+    print('this chat id ${this.chatid}');
+    assert(!((this.chatid == null || this.chatid.isEmpty) && (chatId == null || chatId.isEmpty)), 'message.chatid and chatId can t be both null or empty');
+    chatId ??= this.chatid;
+    this.images = [];
+    for (var i=0; i < numImages; i++) {
+      this.images.add('chats/$chatId/messages/${this.id}/image_$i');
+    }
+  }
+
+  Future<String> get imageUrl async {
+    if (this.images.isEmpty) {
+      return '';
+    } else {
+      return await DatabaseFiles(path: this.images[0]).url;
     }
   }
 }

@@ -8,7 +8,7 @@ import 'package:nitwixt/widgets/widgets.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/services/database/database.dart' as database;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:nitwixt/shortcuts/shortcuts.dart' as sc;
+import 'dart:io';
 
 class ChatMessages extends StatefulWidget {
   @override
@@ -60,13 +60,13 @@ class _ChatMessagesState extends State<ChatMessages> {
     final models.User user = Provider.of<models.User>(context);
     final models.Chat chat = Provider.of<models.Chat>(context);
     final database.DatabaseMessage _databaseMessage = database.DatabaseMessage(chatId: chat.id);
-
-    void _sendMessage(String text) async {
-      if (text.trim().isNotEmpty) {
+    void _sendMessage({String text, File image}) async {
+      if (text.trim().isNotEmpty || image != null) {
         _databaseMessage.sendMessage(
           text: text.trim(),
           userid: user.id,
           previousMessageId: messageToAnswer != null ? messageToAnswer.id : null,
+          image: image,
         );
         setMessageToAnswer(null);
       }

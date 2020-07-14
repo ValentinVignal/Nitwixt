@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:nitwixt/services/database/database.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:nitwixt/widgets/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:flutter_emoji/flutter_emoji.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:nitwixt/shortcuts/shortcuts.dart' as shortcuts;
 
@@ -118,6 +118,26 @@ class _MessageTileState extends State<MessageTile> {
             ),
           );
 
+    Widget imageWidget = widget.message.images.isNotEmpty
+        ? ClipRRect(
+            borderRadius: BorderRadius.circular(20.0),
+            child: FutureBuilder<String>(
+              future: widget.message.imageUrl,
+              builder: (BuildContext buildContext, AsyncSnapshot asyncSnapshot) {
+                if (asyncSnapshot.connectionState == ConnectionState.done && !asyncSnapshot.hasError && asyncSnapshot.hasData && asyncSnapshot.data.isNotEmpty) {
+                  return Image.network(asyncSnapshot.data, width: 200.0,);
+                } else {
+                  return SizedBox.shrink();
+                }
+              },
+            ),
+          )
+        : SizedBox.shrink();
+
+    Color colorContainerText = Color(0x00000000);
+    if (widget.message.text.isNotEmpty) {
+      colorContainerText = isMyMessage ? Colors.grey[800] : Colors.black;
+    }
     Widget textWidget = Flexible(
       child: GestureDetector(
         onLongPress: () {
@@ -130,7 +150,7 @@ class _MessageTileState extends State<MessageTile> {
             _showInfo = !_showInfo;
           });
         },
-        child: isOnlyEmojis
+        child: isOnlyEmojis && widget.message.images.isEmpty
             ? Container(
                 child: Text(
                   widget.message.text,
@@ -140,18 +160,25 @@ class _MessageTileState extends State<MessageTile> {
             : Container(
                 padding: EdgeInsets.only(top: 7.0, bottom: 7.0, right: 8.0, left: 8.0),
                 decoration: BoxDecoration(
-                  color: isMyMessage ? Colors.grey[800] : Colors.black,
+                  color: colorContainerText,
                   borderRadius: BorderRadius.all(
                     Radius.circular(
                       20.0,
                     ),
                   ),
                 ),
-                child: MarkdownBody(
-                  data: widget.message.text,
-                  selectable: false,
-                  styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
-                  onTapLink: (String url) => LinkPreview.launchUrl(context: context, url: url),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    MarkdownBody(
+                      data: widget.message.text,
+                      selectable: false,
+                      styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
+                      onTapLink: (String url) => LinkPreview.launchUrl(context: context, url: url),
+                    ),
+                    imageWidget,
+                  ],
                 ),
               ),
       ),
