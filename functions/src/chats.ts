@@ -1,5 +1,14 @@
-
-
+/**
+ * @function
+ * @name nameToDisplay
+ * @description Returns the name of the chat for a specific user
+ * 
+ * @param chat 
+ * @param user 
+ * @param sender 
+ * 
+ * @returns {string}
+ */
 export function nameToDisplay(chat: any, user: any, sender: any) {
     if(chat.name) {
         return chat.name;

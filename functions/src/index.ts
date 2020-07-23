@@ -14,7 +14,7 @@ admin.initializeApp();
 /**
  * This function send notification to all the members of a chat when a message is written
  */
-export const messageNotification = functions.firestore.document('chats/{chatId}/messages/{messageId}').onCreate(async function (snapshot, context) {
+export const newMessage = functions.firestore.document('chats/{chatId}/messages/{messageId}').onCreate(async function (snapshot, context) {
     console.log('---------- Start function ----------');
 
     const ref: FirebaseFirestore.DocumentReference = snapshot.ref;
@@ -42,9 +42,9 @@ export const messageNotification = functions.firestore.document('chats/{chatId}/
     if (chat !== undefined) {
         // Get all the users
         const queryUsers = await admin.firestore().collection('users').where(admin.firestore.FieldPath.documentId(), 'in', chat.members).get();
-        let users: Array<FirebaseFirestore.DocumentData> = [];
+        const users: Array<FirebaseFirestore.DocumentData> = [];
         queryUsers.forEach(function(queryUser) {
-            let user = queryUser.data();
+            const user = queryUser.data();
             user.id = queryUser.id;
             users.push(user);
         });
@@ -63,7 +63,6 @@ export const messageNotification = functions.firestore.document('chats/{chatId}/
                 sound: 'default'
             }
         }
-        // console.log('users', users);
         users.forEach(function(user) {
             // For all the member of the chat
             if (user.id !== userid) {
@@ -94,17 +93,29 @@ export const messageNotification = functions.firestore.document('chats/{chatId}/
 /**
  * This function deletes all the messages on the deletion of a chat
  */
-export const chatDelete = functions.firestore.document('chats/{chatId}').onDelete(async function (snapshot, context) {
+export const deleteChat = functions.firestore.document('chats/{chatId}').onDelete(async function (snapshot, context) {
     console.log('---------- Start function ----------');
 
     // const ref: FirebaseFirestore.DocumentReference = snapshot.ref;
     const chat: FirebaseFirestore.DocumentData = snapshot.data();
+    // Delete the pictures in it
+    const folderPath: string = `chats/${chat.id}/`;
+    const bucket = admin.storage().bucket();
+    try {
+        // await paths.deleteFolder(bucket, folderPath);
+        await bucket.deleteFiles({
+            prefix: folderPath
+        });
+    } catch (err) {
+        console.log(`Error when deleting pictures of chat ${chat.id}, ${chat.name} :`, err)
+    }
+    // Delete all the messages
     const documentReferences: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData> = await admin.firestore().collection('chats').doc(chat.id).collection('messages').get();
     documentReferences.forEach(async function(documentData) {
         try {
             await documentData.ref.delete();
         } catch (err) {
-            console.log(err);
+            console.log(`Error when deleting chat ${chat.id}, ${chat.name}:`, err);
         }
     });
 })
