@@ -42,6 +42,7 @@ class SmileyParser {
     'cry': r":\'\(",
     'sob': r"T_T",
     'angry': r">:\(",
+    'innocent': r'O:\)',
     'smiling_imp': r"3:\)",
     'sunglasses': r'B\)',
     'heart': r'<3',
@@ -55,7 +56,7 @@ class SmileyParser {
 
   static String smileyfy(String text) {
     _smileyMap.forEach((String key, String value) {
-      text = text.replaceAll(RegExp(r'((^| )' + value + r'($| ))'), ':$key:');
+      text = text.replaceAll(RegExp(r'((^| )' + value + r'($| ))'), ' :$key: ');
     });
     return text;
   }
