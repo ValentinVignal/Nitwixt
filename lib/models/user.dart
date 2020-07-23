@@ -72,7 +72,7 @@ class User {
   // * -------------------- Profile Picture --------------------
 
   String get profilePicturePath {
-    return 'users/${this.id}/profilePicture.jpg';
+    return 'users/${this.id}/picture';
   }
 
   Future<String> get profilePictureUrl async {

@@ -95,7 +95,7 @@ class Chat {
   // * -------------------- Profile Picture --------------------
 
   String get profilePicturePath {
-    return 'chats/${this.id}/profilePicture.jpg';
+    return 'chats/${this.id}/picture';
   }
 
   Future<String> profilePictureUrl(User user) async {
