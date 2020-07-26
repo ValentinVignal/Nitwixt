@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nitwixt/screens/home/loading_screen.dart';
 import 'package:nitwixt/screens/home/notifications_wrapper.dart';
 import 'package:provider/provider.dart';
 
@@ -36,9 +37,10 @@ class UserReceiver extends StatelessWidget {
 
     if (user == null) {
       // No user yet
-      return Scaffold(
-        body: LoadingCircle(),
-      );
+//      return Scaffold(
+//        body: LoadingCircle(),
+//      );
+    return LoadingScreen();
     } else if (user.hasNoUsername) {
 //    } else if (true) {
       // No record for now on database, we have to create it
