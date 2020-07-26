@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:nitwixt/services/providers/providers.dart';
 import 'package:nitwixt/widgets/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:nitwixt/screens/chat/chat_messages.dart';
+import 'chat_messages.dart';
 import 'package:nitwixt/models/models.dart' as models;
-import 'package:nitwixt/screens/chat/chat_info.dart';
+import 'chat_info.dart';
 
 
 class ChatHome extends StatefulWidget {

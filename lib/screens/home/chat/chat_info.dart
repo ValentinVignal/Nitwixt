@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nitwixt/models/models.dart' as models;
-import 'package:nitwixt/screens/chat/delete_chat_dialog.dart';
+import 'delete_chat_dialog.dart';
 import 'package:nitwixt/widgets/chats/chat_picture.dart';
 import 'package:nitwixt/widgets/profile_picture.dart';
 import 'package:provider/provider.dart';

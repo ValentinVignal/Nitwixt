@@ -1,9 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:nitwixt/screens/account/account.dart';
+import 'account/account.dart';
 import 'package:nitwixt/screens/home/chat_list.dart';
 import 'package:nitwixt/services/auth/auth.dart' as auth;
-import 'package:nitwixt/widgets/profile_picture.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/widgets/widgets.dart';
