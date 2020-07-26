@@ -8,7 +8,6 @@
  */
 export async function deleteFolder(bucket: any, path: string) {
     const files: File[] = (await bucket.getFiles({directory: path}))[0];
-    bucket.file 
     const deletions: Promise<any>[] = [];
     files.forEach(function(file: File) {
         deletions.push(bucket.file(file.name).delete().catch(function(err: any) {

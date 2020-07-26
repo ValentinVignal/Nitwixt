@@ -118,6 +118,8 @@ export const deleteChat = functions.firestore.document('chats/{chatId}').onDelet
             console.log(`Error when deleting chat ${chat.id}, ${chat.name}:`, err);
         }
     });
-})
+});
+
+
 
 
