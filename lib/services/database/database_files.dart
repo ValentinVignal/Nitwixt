@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -62,10 +63,13 @@ class DatabaseFiles {
   }
 
   /// replace: if false : won't upload the file if it already exists
-  void uploadFile(File file, {bool replace = true}) async {
+  Future uploadFile(File file, {bool replace = true}) async {
     if (replace || !(await this.exists)) {
       final StorageReference storageReference = FirebaseStorage.instance.ref().child(this.path);
       final StorageUploadTask storageUploadTask = storageReference.putFile(file);
+      return new Future.value('Uploaded');
+    } else {
+      return new Future.value('No upload');
     }
   }
 }

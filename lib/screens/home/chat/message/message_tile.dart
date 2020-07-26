@@ -135,7 +135,6 @@ class _MessageTileState extends State<MessageTile> {
           if (widget.reactButtonOnTap != null) {
             widget.reactButtonOnTap(widget.message);
           }
-//          print('button pressed');
         },
         padding: EdgeInsets.all(2.0),
         constraints: BoxConstraints(

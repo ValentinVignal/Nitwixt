@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'delete_chat_dialog.dart';
 import 'package:nitwixt/widgets/chats/chat_picture.dart';
-import 'package:nitwixt/widgets/profile_picture.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
 import 'package:nitwixt/widgets/widgets.dart';
@@ -88,7 +87,8 @@ class _ChatInfo extends State<ChatInfo> {
             }
             // * ----- Image -----
             if (image != null) {
-              database.DatabaseFiles(path: chat.profilePicturePath).uploadFile(image);
+              database.DatabaseFiles(path: chat.picturePath).uploadFile(image);
+              chat.emptyPictureUrl();
             }
             setState(() {
               _isEditing = false;

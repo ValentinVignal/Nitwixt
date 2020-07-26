@@ -16,7 +16,7 @@ class ChatPicture extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ProfilePicture(
-      urlAsync: this.chat.profilePictureUrl(this.user),
+      urlAsync: this.chat.pictureUrl(this.user),
       size: this.size,
       defaultImage: Image.asset('assets/images/chatDefault.png', height: 50.0, width: 50.0,),
     );

@@ -72,7 +72,8 @@ class _AccountState extends State<Account> {
             }
             // * ----- Image -----
             if (image != null) {
-              database.DatabaseFiles(path: user.picturePath).uploadFile(image);
+              await database.DatabaseFiles(path: user.picturePath).uploadFile(image);
+              user.emptyPictureUrl(reload: true);
             }
 
             setState(() {

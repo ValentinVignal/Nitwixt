@@ -1,6 +1,7 @@
 import 'package:nitwixt/models/models.dart';
 import 'package:nitwixt/services/database/database_user.dart';
 import 'package:nitwixt/services/database/database_files.dart';
+import 'utils/picture_url.dart';
 
 class ChatKeys {
   static final String id = 'id';
@@ -13,6 +14,10 @@ class Chat {
   String id; // The id of the chat
   String name; // The name of the chat
   List<String> members;
+
+  // ----------------------------------------
+
+  PictureUrl _pictureUrl = PictureUrl();
 
 
   // * -------------------- Constructed later Firebase --------------------
@@ -94,22 +99,33 @@ class Chat {
 
   // * -------------------- Profile Picture --------------------
 
-  String get profilePicturePath {
+  String get picturePath {
     return 'chats/${this.id}/picture';
   }
 
-  Future<String> profilePictureUrl(User user) async {
-    String url = await DatabaseFiles(path: this.profilePicturePath).url;
-    if (url.isEmpty) {
-      if(this.members.length == 1) {
-        // Chat alone
-        url = await user.pictureUrl;
-      } else if (this.members.length == 2) {
-        // Private chat
-        User otherUser = await this._otherUser(user);
-        url = await otherUser.pictureUrl;
+  Future<String> pictureUrl(User user) async {
+    if (this._pictureUrl.isEmpty && this._pictureUrl.hasUrl) {
+      this._pictureUrl.url = await DatabaseFiles(path: this.picturePath).url;
+      if (this._pictureUrl.isEmpty) {
+        if(this.members.length == 1) {
+          // Chat alone
+          this._pictureUrl.url = await user.pictureUrl;
+        } else if (this.members.length == 2) {
+          // Private chat
+          User otherUser = await this._otherUser(user);
+          this._pictureUrl.url = await otherUser.pictureUrl;
+        }
+        if (this._pictureUrl.isEmpty) {
+          this._pictureUrl.hasUrl = false;
+        }
       }
+
     }
-    return url;
+    return this._pictureUrl.url;
+  }
+
+  String emptyPictureUrl () {
+    this._pictureUrl.empty();
+    return this._pictureUrl.url;
   }
 }

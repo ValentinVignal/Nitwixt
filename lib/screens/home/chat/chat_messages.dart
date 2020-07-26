@@ -49,7 +49,6 @@ class _ChatMessagesState extends State<ChatMessages> {
   }
 
   void setMessageToAnswer(models.Message message) {
-    message == null ? print('message null') : print('message ${message.id}');
     setState(() {
       messageToAnswer = message;
     });

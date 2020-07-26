@@ -1,7 +1,5 @@
-import 'package:firebase_storage/firebase_storage.dart';
-import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:nitwixt/services/database/database.dart';
+import 'utils/picture_url.dart';
 
 class UserKeys {
   static final String id = 'id';
@@ -24,7 +22,10 @@ class User {
   List<String> pushToken = [];
   String defaultPictureUrl;
 
-  String _pictureUlr = '';
+  // ----------------------------------------
+
+  PictureUrl _pictureUrl = PictureUrl();
+
 
   // * -------------------- Constructor --------------------
 
@@ -78,10 +79,22 @@ class User {
   }
 
   Future<String> get pictureUrl async {
-    if (this._pictureUlr.isEmpty) {
+    if (this._pictureUrl.isEmpty && this._pictureUrl.hasUrl) {
       String url = await DatabaseFiles(path: this.picturePath).url;
-      this._pictureUlr = url.isNotEmpty ? url: this.defaultPictureUrl;
+      this._pictureUrl.url = url.isNotEmpty ? url: this.defaultPictureUrl;
+      if (this._pictureUrl.isEmpty) {
+        this._pictureUrl.hasUrl = false;
+      }
     }
-    return this._pictureUlr;
+    return this._pictureUrl.url;
   }
+
+  Future<String> emptyPictureUrl ({bool reload=false}) async {
+    this._pictureUrl.empty();
+    if (reload) {
+      return this.pictureUrl;
+    }
+    return this._pictureUrl.url;
+  }
+
 }
