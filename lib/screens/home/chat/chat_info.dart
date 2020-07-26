@@ -37,7 +37,7 @@ class _ChatInfo extends State<ChatInfo> {
   @override
   Widget build(BuildContext context) {
     final models.Chat chat = Provider.of<models.Chat>(context);
-    final List<models.User> members = Provider.of<List<models.User>>(context);
+    final Map<String, models.User> members = Provider.of<Map<String, models.User>>(context);
     final models.User user = Provider.of<models.User>(context);
 
     if (!_isEditing) {
@@ -80,7 +80,7 @@ class _ChatInfo extends State<ChatInfo> {
             // * ----- Members -----
             if (_listInputController.isNotEmpty) {
               List<String> allUsernames = _listInputController.values +
-                  members.map<String>((models.User user) {
+                  members.values.map<String>((models.User user) {
                     return user.username;
                   }).toList();
               await database.DatabaseChat(chatId: chat.id).updateMembers(allUsernames);
@@ -242,7 +242,8 @@ class _ChatInfo extends State<ChatInfo> {
                     physics: NeverScrollableScrollPhysics(),
                     itemCount: members.length,
                     itemBuilder: (contextList, index) {
-                      String username_ = members[index].id == user.id ? '(@You) ${members[index].username}' : members[index].username;
+                      models.User member = members.values.toList()[index];
+                      String username_ = member.id == user.id ? '(@You) ${member.username}' : member.username;
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
@@ -250,7 +251,7 @@ class _ChatInfo extends State<ChatInfo> {
                         children: <Widget>[
                           Padding(
                             child: UserPicture(
-                              user: members[index],
+                              user: member,
                               size: 20.0,
                             ),
                             padding: EdgeInsets.all(5.0),
@@ -259,7 +260,7 @@ class _ChatInfo extends State<ChatInfo> {
                             child: TextInfoSubtitle(
                               title: username_,
                               mode: TextInfoMode.show,
-                              value: members[index].name,
+                              value: member.name,
                               scrollDirection: Axis.horizontal,
                             ),
                           ),
@@ -281,7 +282,7 @@ class _ChatInfo extends State<ChatInfo> {
                                   return 'Enter username';
                                 } else if (val == user.username) {
                                   return 'Enter another username than yours';
-                                } else if (members
+                                } else if (members.values
                                     .map((models.User member) {
                                       return member.username;
                                     })

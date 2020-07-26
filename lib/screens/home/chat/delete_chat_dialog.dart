@@ -7,7 +7,7 @@ import 'package:nitwixt/shared/constants.dart';
 
 class DeleteChatDialog extends StatefulWidget {
   final models.Chat chat;
-  final List<models.User> members;
+  final Map<String, models.User> members;
 
 
   DeleteChatDialog({
@@ -118,7 +118,7 @@ class _DeleteChatDialogState extends State<DeleteChatDialog> {
                             isLoading = true;
                           });
                           try {
-                            await _databaseChat.delete(members: widget.members);
+                            await _databaseChat.delete(members: widget.members.values.toList());
                             int count = 0;
                             Navigator.of(context).popUntil((_) => count++ >= 3);    // Come back 3 windows
                           } catch (e) {
