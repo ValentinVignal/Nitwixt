@@ -14,7 +14,7 @@ class UserPicture extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ProfilePicture(
-      urlAsync: user.profilePictureUrl,
+      urlAsync: user.pictureUrl,
       size: this.size,
       defaultImage: Image.asset('assets/images/defaultProfilePicture.png'),
     );

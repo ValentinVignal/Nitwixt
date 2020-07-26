@@ -44,10 +44,10 @@ class UserReceiver extends StatelessWidget {
       // No record for now on database, we have to create it
       return SetUsername();
     } else {
-      if (userAuth.hasPhoto && (userAuth.photoUrl != user.defaultPhotoUrl)) {
+      if (userAuth.hasPhoto && (userAuth.photoUrl != user.defaultPictureUrl)) {
 //        user.defaultPhotoUrl = userAuth.photoUrl;
         database.DatabaseUser(id: user.id).update({
-          models.UserKeys.defaultPhotoUrl: user.toFirebaseObject()[models.UserKeys.defaultPhotoUrl],
+          models.UserKeys.defaultPictureUrl: user.toFirebaseObject()[models.UserKeys.defaultPictureUrl],
         });
       }
       return NotificationsWrapper(

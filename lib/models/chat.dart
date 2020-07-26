@@ -103,11 +103,11 @@ class Chat {
     if (url.isEmpty) {
       if(this.members.length == 1) {
         // Chat alone
-        url = await user.profilePictureUrl;
+        url = await user.pictureUrl;
       } else if (this.members.length == 2) {
         // Private chat
         User otherUser = await this._otherUser(user);
-        url = await otherUser.profilePictureUrl;
+        url = await otherUser.pictureUrl;
       }
     }
     return url;
