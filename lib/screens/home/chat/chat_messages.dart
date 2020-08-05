@@ -16,7 +16,7 @@ class ChatMessages extends StatefulWidget {
 }
 
 class _ChatMessagesState extends State<ChatMessages> {
-  int _nbMessages = 8;
+  int _nbMessages = 16;
 
   ScrollController _scrollController;
 

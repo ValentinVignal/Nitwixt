@@ -6,22 +6,35 @@ import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/widgets/widgets.dart';
 
 class ChatProvider extends StatelessWidget {
-  final String id;
+  final String id; // Id of the chat
+  final models.Chat chat;
   final Widget child;
 
   ChatProvider({
-    @required this.id,
+    this.id,
+    this.chat,
     @required this.child,
-  }) : super();
+  }) : super() {
+    assert ((chat == null) != (id == null));
+  }
 
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<models.Chat>.value(
-      value: DatabaseChat(chatId: this.id).chatStream,
-      child: ChatReceiver(
-        child: this.child,
-      ),
-    );
+    if (id != null) {
+      return StreamProvider<models.Chat>.value(
+        value: DatabaseChat(chatId: this.id).chatStream,
+        child: ChatReceiver(
+          child: this.child,
+        ),
+      );
+    } else {
+      return Provider<models.Chat>.value(
+        value: this.chat,
+        child: ChatReceiver(
+          child: this.child,
+        ),
+      );
+    }
   }
 }
 

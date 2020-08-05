@@ -16,10 +16,14 @@ class UserProvider extends StatelessWidget {
 
     database.DatabaseUser databaseUser = database.DatabaseUser(id: userAuth.id);
 
+    GlobalKey<NavigatorState> _mainNavigatorKey = GlobalKey<NavigatorState>();
+
+
     return StreamProvider<models.User>.value(
       // * Provides the User to all the app
       value: databaseUser.userStream,
       child: MaterialApp(
+        navigatorKey: _mainNavigatorKey,
         themeMode: ThemeMode.dark,
         theme: theme,
         darkTheme: theme,
