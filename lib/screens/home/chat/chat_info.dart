@@ -3,12 +3,13 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nitwixt/models/models.dart' as models;
-import 'delete_chat_dialog.dart';
 import 'package:nitwixt/widgets/chats/chat_picture.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
 import 'package:nitwixt/widgets/widgets.dart';
 import 'package:image_picker/image_picker.dart';
+
+import 'delete_chat_dialog.dart';
 
 class ChatInfo extends StatefulWidget {
   @override

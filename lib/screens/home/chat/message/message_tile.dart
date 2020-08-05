@@ -47,6 +47,7 @@ class _MessageTileState extends State<MessageTile> {
     final chat = Provider.of<models.Chat>(context);
     final bool isOnlyEmojis = shortcuts.TextParser.hasOnlyEmoji(widget.message.text.trim().trimLeft());
 
+    /*
     void _showReacts() {
       showDialog(
           context: context,
@@ -85,6 +86,7 @@ class _MessageTileState extends State<MessageTile> {
                 ));
           });
     }
+    */
 
     bool isMyMessage = user.id == widget.message.userid;
 
@@ -122,6 +124,7 @@ class _MessageTileState extends State<MessageTile> {
       ),
     );
 
+    /*
     Widget addReactButton = Container(
       alignment: Alignment.topCenter,
       padding: EdgeInsets.only(left: isMyMessage ? 15.0 : 0.0, right: isMyMessage ? 0.0 : 15.0),
@@ -180,10 +183,12 @@ class _MessageTileState extends State<MessageTile> {
           )
         : SizedBox.shrink();
 
+    */
     Color colorContainerText = Color(0x00000000);
     if (widget.message.text.isNotEmpty) {
       colorContainerText = isMyMessage ? Colors.grey[800] : Colors.black;
     }
+
     Widget textWidget = Flexible(
       child: GestureDetector(
         onLongPress: () {
@@ -223,13 +228,14 @@ class _MessageTileState extends State<MessageTile> {
                       styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
                       onTapLink: (String url) => LinkPreview.launchUrl(context: context, url: url),
                     ),
-                    imageWidget,
+//                    imageWidget,
                   ],
                 ),
               ),
       ),
     );
 
+    /*
     Widget messageAnswered = widget.message.previousMessageId.isNotEmpty
         ? FutureBuilder<models.Message>(
             future: widget.message.answersToMessage(chat.id),
@@ -326,6 +332,8 @@ class _MessageTileState extends State<MessageTile> {
             ),
           );
 
+     */
+
     // * --------------------------------------------------
     // * --------------------------------------------------
     // * --------------------------------------------------
@@ -340,11 +348,11 @@ class _MessageTileState extends State<MessageTile> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             nameContainer,
-            messageAnswered,
+//            messageAnswered,
             Slidable(
               actionPane: SlidableStrechActionPane(),
-              actions: messageActions,
-              secondaryActions: messageActions,
+//              actions: messageActions,
+//              secondaryActions: messageActions,
               actionExtentRatio: 0.1,
               child: SizedBox(
                 width: double.maxFinite,
@@ -360,23 +368,23 @@ class _MessageTileState extends State<MessageTile> {
                         mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          profilePicture,
+//                          profilePicture,
                           Flexible(
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
                               children: <Widget>[
-                                isMyMessage
-                                    ? addReactButton
-                                    : SizedBox(
-                                        width: 0.0,
-                                      ),
+//                                isMyMessage
+//                                    ? addReactButton
+//                                    : SizedBox(
+//                                        width: 0.0,
+//                                      ),
                                 textWidget,
-                                isMyMessage
-                                    ? SizedBox(
-                                        width: 0.0,
-                                      )
-                                    : addReactButton,
+//                                isMyMessage
+//                                    ? SizedBox(
+//                                        width: 0.0,
+//                                      )
+//                                    : addReactButton,
                               ],
                             ),
                           ),
@@ -389,7 +397,7 @@ class _MessageTileState extends State<MessageTile> {
                           SizedBox(
                             width: isMyMessage ? 40.0 : 0.0,
                           ),
-                          reacts,
+//                          reacts,
                           SizedBox(
                             width: isMyMessage ? 0.0 : 40.0,
                           ),
@@ -405,7 +413,7 @@ class _MessageTileState extends State<MessageTile> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 SizedBox(width: isMyMessage ? 40.0 : 0.0),
-                preview,
+//                preview,
                 SizedBox(width: isMyMessage ? 0.0 : 40.0),
               ],
             ),
