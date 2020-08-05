@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:nitwixt/screens/home/chat/message/react_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -47,46 +48,46 @@ class _MessageTileState extends State<MessageTile> {
     final chat = Provider.of<models.Chat>(context);
     final bool isOnlyEmojis = shortcuts.TextParser.hasOnlyEmoji(widget.message.text.trim().trimLeft());
 
-    /*
-    void _showReacts() {
-      showDialog(
-          context: context,
-          barrierDismissible: true,
-          builder: (BuildContext buildContext) {
-            return AlertDialog(
-                title: Center(child: Text('Reacts')),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(40.0),
-                ),
-                backgroundColor: Color(0xFF202020),
-                content: SingleChildScrollView(
-                  child: ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: widget.message.reacts.length,
-                    itemBuilder: (BuildContext buildContext, int index) {
-                      String userId = widget.message.reacts.keys[index];
-                      models.User reactUser = membersMap[userId];
-                      String react = widget.message.reacts[userId];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: Row(
-                          children: <Widget>[
-                            Text(
-                              react,
-                              style: TextStyle(fontSize: 20.0),
-                            ),
-                            SizedBox(width: 10.0),
-                            Text(reactUser.name, style: TextStyle(fontSize: 17.0),),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ));
-          });
-    }
-    */
+//    void _showReacts() {
+//      showDialog(
+//        context: context,
+//        barrierDismissible: true,
+//        builder: (BuildContext buildContext) {
+//          return AlertDialog(
+//            title: Center(child: Text('Reacts')),
+//            shape: RoundedRectangleBorder(
+//              borderRadius: BorderRadius.circular(40.0),
+//            ),
+//            backgroundColor: Color(0xFF202020),
+//            content: SingleChildScrollView(
+//              child: ListView.builder(
+//                physics: NeverScrollableScrollPhysics(),
+//                shrinkWrap: true,
+//                itemCount: widget.message.reacts.length,
+//                itemBuilder: (BuildContext buildContext, int index) {
+//                  String userId = widget.message.reacts.keys[index];
+//                  models.User reactUser = membersMap[userId];
+//                  String react = widget.message.reacts[userId];
+//                  return Padding(
+//                    padding: const EdgeInsets.symmetric(vertical: 5.0),
+//                    child: Row(
+//                      children: <Widget>[
+//                        Text(
+//                          react,
+//                          style: TextStyle(fontSize: 20.0),
+//                        ),
+//                        SizedBox(width: 10.0),
+//                        Text(reactUser.name, style: TextStyle(fontSize: 17.0),),
+//                      ],
+//                    ),
+//                  );
+//                },
+//              ),
+//            ),
+//          );
+//        },
+//      );
+//    }
 
     bool isMyMessage = user.id == widget.message.userid;
 
@@ -146,13 +147,19 @@ class _MessageTileState extends State<MessageTile> {
       ),
     );
 
+     */
+
     Widget reacts = widget.message.reacts.isEmpty
         ? SizedBox(
             height: 0.0,
             width: 0.0,
           )
         : GestureDetector(
-            onTap: _showReacts,
+            onTap: () => ReactsDialog.showReactsDialog(
+              context: context,
+              message: widget.message,
+              membersMap: membersMap,
+            ),
             child: Container(
               child: Text(
                 '${widget.message.reacts.reactList().join()} ${widget.message.reacts.length}',
@@ -160,6 +167,7 @@ class _MessageTileState extends State<MessageTile> {
               ),
             ),
           );
+    /*
 
     Widget imageWidget = widget.message.images.isNotEmpty
         ? ClipRRect(
@@ -397,7 +405,7 @@ class _MessageTileState extends State<MessageTile> {
                           SizedBox(
                             width: isMyMessage ? 40.0 : 0.0,
                           ),
-//                          reacts,
+                          reacts,
                           SizedBox(
                             width: isMyMessage ? 0.0 : 40.0,
                           ),

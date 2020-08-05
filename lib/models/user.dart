@@ -96,5 +96,6 @@ class User {
     }
     return this._pictureUrl.url;
   }
-
 }
+
+
