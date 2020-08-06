@@ -48,47 +48,6 @@ class _MessageTileState extends State<MessageTile> {
     final chat = Provider.of<models.Chat>(context);
     final bool isOnlyEmojis = shortcuts.TextParser.hasOnlyEmoji(widget.message.text.trim().trimLeft());
 
-//    void _showReacts() {
-//      showDialog(
-//        context: context,
-//        barrierDismissible: true,
-//        builder: (BuildContext buildContext) {
-//          return AlertDialog(
-//            title: Center(child: Text('Reacts')),
-//            shape: RoundedRectangleBorder(
-//              borderRadius: BorderRadius.circular(40.0),
-//            ),
-//            backgroundColor: Color(0xFF202020),
-//            content: SingleChildScrollView(
-//              child: ListView.builder(
-//                physics: NeverScrollableScrollPhysics(),
-//                shrinkWrap: true,
-//                itemCount: widget.message.reacts.length,
-//                itemBuilder: (BuildContext buildContext, int index) {
-//                  String userId = widget.message.reacts.keys[index];
-//                  models.User reactUser = membersMap[userId];
-//                  String react = widget.message.reacts[userId];
-//                  return Padding(
-//                    padding: const EdgeInsets.symmetric(vertical: 5.0),
-//                    child: Row(
-//                      children: <Widget>[
-//                        Text(
-//                          react,
-//                          style: TextStyle(fontSize: 20.0),
-//                        ),
-//                        SizedBox(width: 10.0),
-//                        Text(reactUser.name, style: TextStyle(fontSize: 17.0),),
-//                      ],
-//                    ),
-//                  );
-//                },
-//              ),
-//            ),
-//          );
-//        },
-//      );
-//    }
-
     bool isMyMessage = user.id == widget.message.userid;
 
     Widget nameContainer = isMyMessage || membersMap.length <= 2
@@ -125,7 +84,6 @@ class _MessageTileState extends State<MessageTile> {
       ),
     );
 
-    /*
     Widget addReactButton = Container(
       alignment: Alignment.topCenter,
       padding: EdgeInsets.only(left: isMyMessage ? 15.0 : 0.0, right: isMyMessage ? 0.0 : 15.0),
@@ -147,7 +105,6 @@ class _MessageTileState extends State<MessageTile> {
       ),
     );
 
-     */
 
     Widget reacts = widget.message.reacts.isEmpty
         ? SizedBox(
@@ -306,6 +263,8 @@ class _MessageTileState extends State<MessageTile> {
       ),
     ];
 
+    */
+
     Widget profilePicture = isMyMessage || membersMap.length <= 2
         ? SizedBox.shrink()
         : Padding(
@@ -321,6 +280,7 @@ class _MessageTileState extends State<MessageTile> {
     if (matches.isNotEmpty) {
       linkToPreview = widget.message.text.substring(matches[0].start, matches[0].end);
     }
+    /*
 
     Widget preview = linkToPreview == null
         ? SizedBox.shrink()
@@ -376,23 +336,19 @@ class _MessageTileState extends State<MessageTile> {
                         mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-//                          profilePicture,
+                          profilePicture,
                           Flexible(
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
                               children: <Widget>[
-//                                isMyMessage
-//                                    ? addReactButton
-//                                    : SizedBox(
-//                                        width: 0.0,
-//                                      ),
+                                isMyMessage
+                                    ? addReactButton
+                                    : SizedBox.shrink(),
                                 textWidget,
-//                                isMyMessage
-//                                    ? SizedBox(
-//                                        width: 0.0,
-//                                      )
-//                                    : addReactButton,
+                                isMyMessage
+                                    ? SizedBox.shrink()
+                                    : addReactButton,
                               ],
                             ),
                           ),

@@ -15,6 +15,7 @@ class UserPicture extends StatelessWidget {
   Widget build(BuildContext context) {
     return ProfilePicture(
       urlAsync: user.pictureUrl,
+//      path: user.picturePath,
       size: this.size,
       defaultImage: Image.asset('assets/images/defaultProfilePicture.png'),
     );

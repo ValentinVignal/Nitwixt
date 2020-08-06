@@ -86,7 +86,7 @@ class User {
         this._pictureUrl.hasUrl = false;
       }
     }
-    return this._pictureUrl.url;
+    return this._pictureUrl.getUrl(defaultAdorableAvatar: this.id);
   }
 
   Future<String> emptyPictureUrl ({bool reload=false}) async {

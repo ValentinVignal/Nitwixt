@@ -2,9 +2,7 @@ class PictureUrl {
   String _url = '';
   bool _hasUrl = true;
 
-  PictureUrl({
-    String url = ''
-  }) {
+  PictureUrl({String url = ''}) {
     this._url = url;
   }
 
@@ -28,7 +26,7 @@ class PictureUrl {
     return this._hasUrl;
   }
 
-  set hasUrl (bool hasUrl) {
+  set hasUrl(bool hasUrl) {
     this._hasUrl = hasUrl;
     if (!this._hasUrl) {
       this._url = '';
@@ -39,7 +37,7 @@ class PictureUrl {
     return !this._hasUrl;
   }
 
-  set hasNoUrl (bool hasNoUrl) {
+  set hasNoUrl(bool hasNoUrl) {
     this._hasUrl = !hasNoUrl;
     if (!this._hasUrl) {
       this._url = '';
@@ -51,5 +49,15 @@ class PictureUrl {
     this._url = '';
   }
 
+  static String adorableAvatar({String id = ''}) {
+    return 'https://api.adorable.io/avatars/60/$id.png';
+  }
 
+  String getUrl({String defaultAdorableAvatar = ''}) {
+    if (_url.isNotEmpty) {
+      return this._url;
+    } else {
+      return PictureUrl.adorableAvatar(id: defaultAdorableAvatar);
+    }
+  }
 }

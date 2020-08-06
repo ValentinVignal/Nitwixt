@@ -104,9 +104,7 @@ class Chat {
   }
 
   Future<String> pictureUrl(User user) async {
-    print('chatname ${this.name} - ${this._pictureUrl.isEmpty} - ${this._pictureUrl.url}');
     if (this._pictureUrl.isEmpty && this._pictureUrl.hasUrl) {
-      print('in if');
       this._pictureUrl.url = await DatabaseFiles(path: this.picturePath).url;
       if (this._pictureUrl.isEmpty) {
         if(this.members.length == 1) {
@@ -122,8 +120,7 @@ class Chat {
         this._pictureUrl.hasUrl = false;
       }
     }
-    print('after if ${this._pictureUrl.url}');
-    return this._pictureUrl.url;
+    return this._pictureUrl.getUrl(defaultAdorableAvatar: this.id);
   }
 
   String emptyPictureUrl () {
