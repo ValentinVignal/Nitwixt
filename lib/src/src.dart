@@ -1,0 +1,1 @@
+export 'shortcuts/shortcuts.dart';

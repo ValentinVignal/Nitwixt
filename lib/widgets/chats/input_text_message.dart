@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nitwixt/shared/constants.dart';
-import 'package:nitwixt/shortcuts/shortcuts.dart' as sc;
+import 'package:nitwixt/src/shortcuts/shortcuts.dart' as sc;
 import 'package:nitwixt/widgets/widgets.dart';
 
 class InputTextMessage extends StatefulWidget {

@@ -8,7 +8,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:nitwixt/widgets/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:nitwixt/shortcuts/shortcuts.dart' as shortcuts;
+import 'package:nitwixt/src/shortcuts/shortcuts.dart' as shortcuts;
 
 class MessageTile extends StatefulWidget {
   models.Message message;
