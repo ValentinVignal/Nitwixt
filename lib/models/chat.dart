@@ -120,7 +120,7 @@ class Chat {
         this._pictureUrl.hasUrl = false;
       }
     }
-    return this._pictureUrl.getUrl(defaultAdorableAvatar: this.id);
+    return this._pictureUrl.getUrl(defaultAdorableAvatar: this.name ?? this.id);
   }
 
   String emptyPictureUrl () {

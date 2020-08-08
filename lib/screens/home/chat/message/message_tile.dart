@@ -200,7 +200,6 @@ class _MessageTileState extends State<MessageTile> {
       ),
     );
 
-    /*
     Widget messageAnswered = widget.message.previousMessageId.isNotEmpty
         ? FutureBuilder<models.Message>(
             future: widget.message.answersToMessage(chat.id),
@@ -221,7 +220,7 @@ class _MessageTileState extends State<MessageTile> {
                     snapshot.data.text.replaceAll('\n', ' '),
                     style: TextStyle(color: Colors.grey),
                     textAlign: TextAlign.left,
-                    maxLines: 1,
+                    maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                     softWrap: true,
                   );
@@ -253,6 +252,7 @@ class _MessageTileState extends State<MessageTile> {
           )
         : SizedBox.shrink();
 
+    /*
     List<Widget> messageActions = [
       IconSlideAction(
         caption: 'Reply',
@@ -316,7 +316,7 @@ class _MessageTileState extends State<MessageTile> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             nameContainer,
-//            messageAnswered,
+            messageAnswered,
             Slidable(
               actionPane: SlidableStrechActionPane(),
 //              actions: messageActions,

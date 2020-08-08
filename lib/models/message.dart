@@ -31,11 +31,17 @@ class Message with EquatableMixin{
   Message.fromFirebaseObject(this.id, Map<String, dynamic> firebaseObject)
 //      : date = Timestamp(int.parse(firebaseObject[MessageKeys.date]['_seconds'].toString()), int.parse(firebaseObject[MessageKeys.date]['_nanoseconds'].toString())) {
       : date = firebaseObject[MessageKeys.date] as Timestamp {
+    print('before text');
     text = firebaseObject.containsKey(MessageKeys.text) ? firebaseObject[MessageKeys.text].toString() : '';
+    print('before userid');
     userid = firebaseObject.containsKey(MessageKeys.userid) ? firebaseObject[MessageKeys.userid].toString() : '';
-    reacts = firebaseObject.containsKey(MessageKeys.reacts) ? MessageReacts.fromFirebaseObject(firebaseObject[MessageKeys.reacts] as Map<String, dynamic>) : MessageReacts();
+    print('before reacts');
+    reacts = firebaseObject.containsKey(MessageKeys.reacts) ? MessageReacts.fromFirebaseObject(Map<String, String>.from(firebaseObject[MessageKeys.reacts] as Map<dynamic, dynamic>)) : MessageReacts();
+    print('before previous message');
     previousMessageId = firebaseObject.containsKey(MessageKeys.previousMessageId) ? firebaseObject[MessageKeys.previousMessageId].toString() : '';
+    print('before images');
     images = firebaseObject.containsKey(MessageKeys.images) ? List<String>.from(firebaseObject[MessageKeys.images] as Iterable<dynamic>) : <String>[];
+    print('before chatid');
     chatid = firebaseObject.containsKey(MessageKeys.chatid) ? firebaseObject[MessageKeys.chatid].toString() : '';
   }
 
@@ -107,7 +113,8 @@ class MessageReacts with EquatableMixin{
     reactMap ??= <String, String>{};
   }
 
-  MessageReacts.fromFirebaseObject(Map<String, dynamic> firebaseObject) {
+  MessageReacts.fromFirebaseObject(Map<String, String> firebaseObject) {
+    print('in message react');
     reactMap = firebaseObject == null ? <String, String>{} : Map<String, String>.from(firebaseObject);
   }
 

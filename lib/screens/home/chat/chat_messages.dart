@@ -1,14 +1,45 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
-import 'message/message_tile.dart';
-import 'message/message_to_answer_to.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+
 import 'package:nitwixt/widgets/widgets.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/services/database/database.dart' as database;
-import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'dart:io';
+
+import 'message/message_tile.dart';
+import 'message/message_to_answer_to.dart';
+
+class ChatMessagesCache {
+  ChatMessagesCache();
+
+  Map<String, models.Message> messages = <String, models.Message>{};
+
+  bool get isEmpty => messages.isEmpty;
+
+  bool get isNotEmpty => messages.isNotEmpty;
+
+  void addMessage(models.Message message) {
+    if (!messages.containsKey(message.id) || messages[message.id] != message) {
+      messages[message.id] = message;
+    }
+  }
+
+  void addMessageList(List<models.Message> messageList) {
+    messageList.forEach(addMessage);
+  }
+
+  List<models.Message> get messageList {
+    final List<models.Message> list = messages.values.toList();
+    list.sort((models.Message message1, models.Message message2) {
+      return message2.date.compareTo(message1.date);
+    });
+    return list;
+  }
+}
 
 class ChatMessages extends StatefulWidget {
   @override
@@ -20,11 +51,13 @@ class _ChatMessagesState extends State<ChatMessages> {
 
   ScrollController _scrollController;
 
-  RefreshController _refreshController = RefreshController(initialRefresh: false);
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
 
-  PopupController _popupController = PopupController();
+  final PopupController _popupController = PopupController();
 
   models.Message messageToAnswer;
+
+  final ChatMessagesCache _chatMessagesCache = ChatMessagesCache();
 
   @override
   void dispose() {
@@ -33,14 +66,13 @@ class _ChatMessagesState extends State<ChatMessages> {
     super.dispose();
   }
 
-  void _onLoading() async {
+  void _onLoading() {
     setState(() {
       _nbMessages += 8;
     });
     _refreshController.loadComplete();
     _refreshController.refreshCompleted();
   }
-
 
   @override
   void initState() {
@@ -59,7 +91,7 @@ class _ChatMessagesState extends State<ChatMessages> {
     final models.User user = Provider.of<models.User>(context);
     final models.Chat chat = Provider.of<models.Chat>(context);
     final database.DatabaseMessage _databaseMessage = database.DatabaseMessage(chatId: chat.id);
-    void _sendMessage({String text, File image}) async {
+    void _sendMessage({String text, File image}) {
       if (text.trim().isNotEmpty || image != null) {
         _databaseMessage.sendMessage(
           text: text.trim(),
@@ -71,9 +103,7 @@ class _ChatMessagesState extends State<ChatMessages> {
       }
     }
 
-
-
-    void _reactToMessage(models.Message message, String react) async {
+    Future<void> _reactToMessage(models.Message message, String react) async {
       if (message.reacts.containsKey(user.id) && message.reacts[user.id] == react) {
         // Unreact
         message.reacts.remove(user.id);
@@ -81,10 +111,10 @@ class _ChatMessagesState extends State<ChatMessages> {
         // react
         message.reacts[user.id] = react;
       }
-      this._popupController.hide();
+      _popupController.hide();
       await _databaseMessage.updateMessage(
         messageId: message.id,
-        obj: {
+        obj: <String, dynamic>{
           'reacts': message.toFirebaseObject()['reacts'],
         },
       );
@@ -92,11 +122,14 @@ class _ChatMessagesState extends State<ChatMessages> {
 
     return StreamBuilder<List<models.Message>>(
       stream: _databaseMessage.getMessageList(limit: _nbMessages),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
+      builder: (BuildContext context, AsyncSnapshot<List<models.Message>> snapshot) {
+        if (snapshot.hasData) {
+          _chatMessagesCache.addMessageList(snapshot.data);
+        }
+        if (_chatMessagesCache.isEmpty) {
           return LoadingCircle();
         } else {
-          List<models.Message> messageList = snapshot.data;
+//          final List<models.Message> messageList = snapshot.data;
           return Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.end,
@@ -115,15 +148,15 @@ class _ChatMessagesState extends State<ChatMessages> {
                       onLoading: _onLoading,
                       child: ListView.builder(
                         scrollDirection: Axis.vertical,
-                        itemCount: messageList.length,
+                        itemCount: _chatMessagesCache.messageList.length,
                         reverse: true,
-                        itemBuilder: (context, index) {
-                          models.Message message = messageList[index];
+                        itemBuilder: (BuildContext context, int index) {
+                          final models.Message message = _chatMessagesCache.messageList[index];
                           return MessageTile(
                             message: message,
                             reactButtonOnTap: (models.Message message) {
-                              this._popupController.show();
-                              this._popupController.object = message;
+                              _popupController.show();
+                              _popupController.object = message;
                             },
                             onAnswerDrag: (models.Message message) {
                               setMessageToAnswer(message);
@@ -135,26 +168,27 @@ class _ChatMessagesState extends State<ChatMessages> {
                     ),
                   ),
                   childFront: Builder(
-                    builder: (context) {
+                    builder: (BuildContext context) {
                       return ReactPopup(
-                        message: this._popupController.object,
+                        message: _popupController.object as models.Message,
                         onReactSelected: _reactToMessage,
                       );
                     },
                   ),
                 ),
               ),
-              messageToAnswer != null
-                  ? MessageToAnswerTo(
-                      message: messageToAnswer,
-                      onCancel: () {
-                        setMessageToAnswer(null);
-                      },
-                    )
-                  : SizedBox.shrink(),
-            InputTextMessage(
-              sendMessage: _sendMessage,
-            )
+              if (messageToAnswer != null)
+                MessageToAnswerTo(
+                  message: messageToAnswer,
+                  onCancel: () {
+                    setMessageToAnswer(null);
+                  },
+                )
+              else
+                const SizedBox.shrink(),
+              InputTextMessage(
+                sendMessage: _sendMessage,
+              )
             ],
           );
         }
@@ -162,4 +196,3 @@ class _ChatMessagesState extends State<ChatMessages> {
     );
   }
 }
-

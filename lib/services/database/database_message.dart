@@ -1,14 +1,15 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'database_files.dart';
-import 'database_chat.dart';
-import 'collections.dart';
-import 'package:nitwixt/models/models.dart' as models;
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:nitwixt/models/models.dart' as models;
+import 'collections.dart';
+import 'database_chat.dart';
+import 'database_files.dart';
 
 class DatabaseMessage extends DatabaseChat {
-  DatabaseMessage({chatId}) : super(chatId: chatId);
+  DatabaseMessage({String chatId}) : super(chatId: chatId);
 
   static models.Message messageFromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
+    print('before from firebase');
     return models.Message.fromFirebaseObject(documentSnapshot.documentID, documentSnapshot.data);
   }
 
@@ -23,7 +24,7 @@ class DatabaseMessage extends DatabaseChat {
   Stream<List<models.Message>> getMessageList({DocumentSnapshot startAfter, int limit = 10}) {
     Query query = chatCollection.document(chatId).collection(CollectionNames.messages).orderBy(models.MessageKeys.date, descending: true);
     if (startAfter != null) {
-      query = query.startAt([startAfter.data]);
+      query = query.startAt(<dynamic>[startAfter.data]);
     }
     query = query.limit(limit);
     return query.snapshots().map(messagesFromQuerySnapshot);
