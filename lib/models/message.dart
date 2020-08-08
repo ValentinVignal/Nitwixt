@@ -1,26 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nitwixt/services/database/database.dart';
+import 'package:equatable/equatable.dart';
 
 class MessageKeys {
-  static final String id = 'id';
-  static final String date = 'date';
-  static final String text = 'text';
-  static final String userid = 'userid';
-  static final String reacts = 'reacts';
-  static final String previousMessageId = 'previousMessageId';
-  static final String images = 'images';
-  static final String chatid = 'chatid';
+  static const String id = 'id';
+  static const String date = 'date';
+  static const String text = 'text';
+  static const String userid = 'userid';
+  static const String reacts = 'reacts';
+  static const String previousMessageId = 'previousMessageId';
+  static const String images = 'images';
+  static const String chatid = 'chatid';
 }
 
-class Message {
-  String id; // Id of the message
-  final Timestamp date; // When the message has been sent
-  String text; // The text of the message
-  String userid; // The user who sent the message
-  MessageReacts reacts;
-  String previousMessageId;
-  List<String> images = [];
-  String chatid;
+class Message with EquatableMixin{
 
   Message({
     this.id,
@@ -32,119 +25,139 @@ class Message {
     this.images,
     this.chatid,
   }) {
-    if (this.reacts == null) {
-      this.reacts = MessageReacts();
-    }
+    reacts ??= MessageReacts();
   }
 
-  Map<String, Object> toFirebaseObject() {
-    Map<String, Object> firebaseObject = Map<String, Object>();
+  Message.fromFirebaseObject(this.id, Map<String, dynamic> firebaseObject)
+//      : date = Timestamp(int.parse(firebaseObject[MessageKeys.date]['_seconds'].toString()), int.parse(firebaseObject[MessageKeys.date]['_nanoseconds'].toString())) {
+      : date = firebaseObject[MessageKeys.date] as Timestamp {
+    text = firebaseObject.containsKey(MessageKeys.text) ? firebaseObject[MessageKeys.text].toString() : '';
+    userid = firebaseObject.containsKey(MessageKeys.userid) ? firebaseObject[MessageKeys.userid].toString() : '';
+    reacts = firebaseObject.containsKey(MessageKeys.reacts) ? MessageReacts.fromFirebaseObject(firebaseObject[MessageKeys.reacts] as Map<String, dynamic>) : MessageReacts();
+    previousMessageId = firebaseObject.containsKey(MessageKeys.previousMessageId) ? firebaseObject[MessageKeys.previousMessageId].toString() : '';
+    images = firebaseObject.containsKey(MessageKeys.images) ? List<String>.from(firebaseObject[MessageKeys.images] as Iterable<dynamic>) : <String>[];
+    chatid = firebaseObject.containsKey(MessageKeys.chatid) ? firebaseObject[MessageKeys.chatid].toString() : '';
+  }
 
-    firebaseObject[MessageKeys.id] = this.id;
-    firebaseObject[MessageKeys.date] = this.date;
-    firebaseObject[MessageKeys.text] = this.text;
-    firebaseObject[MessageKeys.userid] = this.userid;
-    firebaseObject[MessageKeys.reacts] = this.reacts.toFirebaseObject();
-    firebaseObject[MessageKeys.previousMessageId] = this.previousMessageId;
-    firebaseObject[MessageKeys.images] = this.images;
-    firebaseObject[MessageKeys.chatid] = this.chatid;
+  String id; // Id of the message
+  final Timestamp date; // When the message has been sent
+  String text; // The text of the message
+  String userid; // The user who sent the message
+  MessageReacts reacts;
+  String previousMessageId;
+  List<String> images = <String>[];
+  String chatid;
+
+  Message _previousMessage;
+
+
+  @override
+  List<Object> get props => <Object>[id, date, text, userid, reacts, previousMessageId, images, chatid];
+
+  Map<String, Object> toFirebaseObject() {
+    final Map<String, Object> firebaseObject = <String, Object>{};
+
+    firebaseObject[MessageKeys.id] = id;
+    firebaseObject[MessageKeys.date] = date;
+    firebaseObject[MessageKeys.text] = text;
+    firebaseObject[MessageKeys.userid] = userid;
+    firebaseObject[MessageKeys.reacts] = reacts.toFirebaseObject();
+    firebaseObject[MessageKeys.previousMessageId] = previousMessageId;
+    firebaseObject[MessageKeys.images] = images;
+    firebaseObject[MessageKeys.chatid] = chatid;
 
     return firebaseObject;
   }
 
-  Message.fromFirebaseObject(String id, Map firebaseObject)
-      : id = id,
-        date = firebaseObject[MessageKeys.date] {
-    this.text = firebaseObject.containsKey(MessageKeys.text) ? firebaseObject[MessageKeys.text] : '';
-    this.userid = firebaseObject.containsKey(MessageKeys.userid) ? firebaseObject[MessageKeys.userid] : '';
-    this.reacts = firebaseObject.containsKey(MessageKeys.reacts) ? MessageReacts.fromFirebaseObject(firebaseObject[MessageKeys.reacts]) : MessageReacts();
-    this.previousMessageId = firebaseObject.containsKey(MessageKeys.previousMessageId) ? firebaseObject[MessageKeys.previousMessageId].toString() : '';
-    this.images = firebaseObject.containsKey(MessageKeys.images) ? List.from(firebaseObject[MessageKeys.images]) : [];
-    this.chatid = firebaseObject.containsKey(MessageKeys.chatid) ? firebaseObject[MessageKeys.chatid] : '';
-  }
 
   Future<Message> answersToMessage(String chatId) async {
-    if (this.previousMessageId.isEmpty) {
+    if (previousMessageId.isEmpty) {
       return null;
     } else {
-      return await DatabaseMessage(chatId: chatId).getMessageFuture(this.previousMessageId);
+      print('Previous message ${_previousMessage == null} - $text');
+      _previousMessage ??= await DatabaseMessage(chatId: chatId).getMessageFuture(previousMessageId);
+      return _previousMessage;
     }
   }
 
   void setNumImages(int numImages, {String chatId}) {
-    print('this chat id ${this.chatid}');
-    assert(!((this.chatid == null || this.chatid.isEmpty) && (chatId == null || chatId.isEmpty)), 'message.chatid and chatId can t be both null or empty');
-    chatId ??= this.chatid;
-    this.images = [];
-    for (var i=0; i < numImages; i++) {
-      this.images.add('chats/$chatId/messages/${this.id}/image_$i');
+    print('this chat id $chatid');
+    assert(!((chatid == null || chatid.isEmpty) && (chatId == null || chatId.isEmpty)), 'message.chatid and chatId can t be both null or empty');
+    chatId ??= chatid;
+    images = <String>[];
+    for (int i=0; i < numImages; i++) {
+      images.add('chats/$chatId/messages/$id/image_$i');
     }
   }
 
   Future<String> get imageUrl async {
-    if (this.images.isEmpty) {
+    if (images.isEmpty) {
       return '';
     } else {
-      return await DatabaseFiles(path: this.images[0]).url;
+      return await DatabaseFiles(path: images[0]).url;
     }
   }
 }
 
-class MessageReacts {
-  Map<String, String> reactMap;
+class MessageReacts with EquatableMixin{
 
   MessageReacts({
     this.reactMap,
   }) {
-    if (this.reactMap == null) {
-      this.reactMap = Map<String, String>();
-    }
+    reactMap ??= <String, String>{};
   }
+
+  MessageReacts.fromFirebaseObject(Map<String, dynamic> firebaseObject) {
+    reactMap = firebaseObject == null ? <String, String>{} : Map<String, String>.from(firebaseObject);
+  }
+
+  Map<String, String> reactMap;
+
+
+  @override
+  List<Object> get props => <Map<String, String>>[reactMap];
 
   Map<String, Object> toFirebaseObject() {
     return reactMap;
   }
 
-  MessageReacts.fromFirebaseObject(Map firebaseObject) {
-    this.reactMap = firebaseObject == null ? Map<String, String>() : Map.from(firebaseObject);
-  }
 
   bool containsKey(String key) {
-    return this.reactMap.containsKey(key);
+    return reactMap.containsKey(key);
   }
 
   String operator [](String key) {
-    return this.reactMap[key];
+    return reactMap[key];
   }
 
   void operator []=(String key, String value) {
-    this.reactMap[key] = value;
+    reactMap[key] = value;
   }
 
   String remove(String key) {
-    return this.reactMap.remove(key);
+    return reactMap.remove(key);
   }
 
   int get length {
-    return this.reactMap.length;
+    return reactMap.length;
   }
 
   bool get isEmpty {
-    return this.reactMap.isEmpty;
+    return reactMap.isEmpty;
   }
 
   bool get isNotEmpty {
-    return this.reactMap.isNotEmpty;
+    return reactMap.isNotEmpty;
   }
 
   List<String> get keys {
-    return this.reactMap.keys.toList();
+    return reactMap.keys.toList();
   }
 
   List<String> reactList({bool unique=true}) {
-    List<String> reacts = this.reactMap.values.toList();
+    List<String> reacts = reactMap.values.toList();
     if (unique) {
-      final Map<String, int> map = Map<String, int>();
+      final Map<String, int> map = <String, int>{};
       for (final String react in reacts) {
         map[react] = map.containsKey(react) ? map[react] + 1 : 1;
       }
@@ -153,4 +166,5 @@ class MessageReacts {
     }
     return reacts;
   }
+
 }

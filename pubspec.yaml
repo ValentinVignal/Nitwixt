@@ -53,12 +53,15 @@ dependencies:
   html: ^0.14.0+3
   badges: ^1.1.1
   custom_navigator: ^0.3.0
+  equatable: ^1.2.3
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.7.5
+  pedantic: ^1.9.2
+  effective_dart: ^1.2.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
