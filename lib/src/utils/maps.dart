@@ -1,8 +1,4 @@
 bool mapEquals(Map<dynamic, dynamic> map1, Map<dynamic, dynamic> map2) {
-  print('map1');
-  print(map1);
-  print('map2');
-  print(map2);
   if (identical(map1, map2)) {
     return true;
   }

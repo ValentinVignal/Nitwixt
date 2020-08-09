@@ -102,13 +102,13 @@ class Message with EquatableMixin {
     return message is Message &&
         message != null &&
         message.id == id &&
-//        message.date == date &&
+        message.date == date &&
         message.text == text &&
         message.userid == userid &&
-        message.reacts.isEqual(reacts);
-//        message.previousMessageId == previousMessageId &&
-//        message.images == images &&
-//        message.chatid == chatid;
+        message.reacts.isEqual(reacts) &&
+        message.previousMessageId == previousMessageId &&
+        src.listEquals(message.images, images) &&
+        message.chatid == chatid;
   }
 
   bool isNotEqual(Message message) {

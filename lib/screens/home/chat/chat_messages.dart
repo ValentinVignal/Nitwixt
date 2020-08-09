@@ -24,7 +24,6 @@ class ChatMessagesCache {
   bool get isNotEmpty => messages.isNotEmpty;
 
   void addMessage(models.Message message, Widget widget) {
-    print('text ${message.text} != : ${messages.containsKey(message.id) && messages[message.id].isNotEqual(message)}');
     if (!messages.containsKey(message.id) || messages[message.id].isNotEqual(message)) {
       messages[message.id] = message.copy();
       widgets[message.id] = widget;

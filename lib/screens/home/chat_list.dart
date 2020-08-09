@@ -1,12 +1,45 @@
-import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+
 import 'package:nitwixt/services/database/database.dart';
 import 'package:nitwixt/widgets/widgets.dart';
-import 'package:provider/provider.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/screens/home/chat_tile.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+
+class ChatsCache {
+  ChatsCache();
+
+  final Map<String, models.Chat> chats = <String, models.Chat>{};
+  final Map<String, Widget> widgets = <String, Widget>{};
+
+  bool get isEmpty => chats.isEmpty;
+
+  bool get isNotEmpty => chats.isNotEmpty;
+
+  void addChat(models.Chat chat, Widget widget) {
+    if (!chats.containsKey(chat.id) || chats[chat.id] != chat) {
+      print('is different for ${chat.name}');
+      chats[chat.id] = chat;
+      widgets[chat.id] = widget;
+    }
+  }
+
+  void addChatList(List<models.Chat> chatList, List<Widget> widgetList) {
+    for (int i = 0; i < chatList.length; i++) {
+      addChat(chatList[i], widgetList[i]);
+    }
+  }
+
+  List<models.Chat> get chatList {
+    final List<models.Chat> list = chats.values.toList();
+    list.sort((models.Chat chat1, models.Chat chat2) {
+      return chat1.id.compareTo(chat2.id);
+    });
+    return list;
+  }
+}
 
 class ChatList extends StatefulWidget {
   @override
@@ -15,25 +48,27 @@ class ChatList extends StatefulWidget {
 
 class _ChatListState extends State<ChatList> {
   int _nbChats = 8;
-  RefreshController _refreshController = RefreshController(initialRefresh: false);
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
   List<GlobalKey<ChatTileState>> chatTileStateList;
+  final ChatsCache _chatsCache = ChatsCache();
 
   @override
   void dispose() {
     _refreshController.dispose();
+    super.dispose();
   }
 
-  void _onRefresh() async {
+  void _onRefresh() {
     setState(() {});
-    if (chatTileStateList != null) {
-      chatTileStateList.forEach((chatTileState){
-        chatTileState.currentState.refresh();
-      });
-    }
+//    if (chatTileStateList != null) {
+//      for (final GlobalKey<ChatTileState> chatTileState in chatTileStateList) {
+//        chatTileState.currentState.refresh();
+//      }
+//    }
     _refreshController.refreshCompleted();
   }
 
-  void _onLoading() async {
+  void _onLoading() {
     setState(() {
       _nbChats += 4;
     });
@@ -42,21 +77,28 @@ class _ChatListState extends State<ChatList> {
 
   @override
   Widget build(BuildContext context) {
-    final models.User user = Provider.of<models.User>(context) ?? [];
+    final models.User user = Provider.of<models.User>(context);
 
     return StreamBuilder<List<models.Chat>>(
       stream: DatabaseChat.getChatList(userid: user.id, limit: _nbChats),
-      builder: (context, snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<List<models.Chat>> snapshot) {
+        if (snapshot.hasData) {
+          _chatsCache.addChatList(snapshot.data, snapshot.data.map((models.Chat chat) {
+            return ChatTile(
+              chat: chat,
+            );
+          }).toList());
+        }
         if (!snapshot.hasData) {
           return LoadingCircle();
         } else {
-          List<models.Chat> chatList = snapshot.data;
-          chatTileStateList = chatList.map((element) {
+          final List<models.Chat> chatList = snapshot.data;
+          chatTileStateList = chatList.map((models.Chat element) {
             return GlobalKey<ChatTileState>();
           }).toList();
           if (chatList.isEmpty) {
             // User doesn't have chats yet
-            TextStyle textStyle = TextStyle(color: Colors.white, fontSize: 15.0);
+            const TextStyle textStyle = TextStyle(color: Colors.white, fontSize: 15.0);
             return Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -64,17 +106,17 @@ class _ChatListState extends State<ChatList> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     RichText(
-                      text: TextSpan(
+                      text: const TextSpan(
                         children: [
                           TextSpan(text: 'You don\'t have any chat yet...', style: textStyle),
                         ],
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: 15.0),
+                    const SizedBox(height: 15.0),
                     RichText(
-                      text: TextSpan(
-                        children: [
+                      text: const TextSpan(
+                        children: <InlineSpan>[
                           TextSpan(text: 'Press the ', style: textStyle),
                           WidgetSpan(
                             child: Icon(
@@ -93,21 +135,21 @@ class _ChatListState extends State<ChatList> {
             );
           } else {
             // User have chats
-            double height = MediaQuery.of(context).size.height;
             return SmartRefresher(
               enablePullDown: true,
               enablePullUp: true,
-              header: ClassicHeader(
-              ),
+              header: const ClassicHeader(),
               controller: _refreshController,
 //              scrollController: _scrollController,
               onRefresh: _onRefresh,
               onLoading: _onLoading,
               child: ListView.builder(
-                physics: AlwaysScrollableScrollPhysics(),
+                physics: const AlwaysScrollableScrollPhysics(),
                 itemCount: chatList.length,
-                itemBuilder: (context, index) {
-                  return ChatTile(chat: chatList[index], key: chatTileStateList[index]);
+                itemBuilder: (BuildContext context, int index) {
+                  final models.Chat chat = _chatsCache.chatList[index];
+                  return _chatsCache.widgets[chat.id];
+//                  return ChatTile(chat: chatList[index], key: chatTileStateList[index]);
 //                  return ChatTile(chat: chatList[index]);
                 },
               ),
