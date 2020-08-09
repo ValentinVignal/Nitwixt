@@ -9,7 +9,6 @@ class DatabaseMessage extends DatabaseChat {
   DatabaseMessage({String chatId}) : super(chatId: chatId);
 
   static models.Message messageFromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
-    print('before from firebase');
     return models.Message.fromFirebaseObject(documentSnapshot.documentID, documentSnapshot.data);
   }
 

@@ -16,20 +16,25 @@ import 'message/message_to_answer_to.dart';
 class ChatMessagesCache {
   ChatMessagesCache();
 
-  Map<String, models.Message> messages = <String, models.Message>{};
+  final Map<String, models.Message> messages = <String, models.Message>{};
+  final Map<String, Widget> widgets = <String, Widget>{};
 
   bool get isEmpty => messages.isEmpty;
 
   bool get isNotEmpty => messages.isNotEmpty;
 
-  void addMessage(models.Message message) {
-    if (!messages.containsKey(message.id) || messages[message.id] != message) {
-      messages[message.id] = message;
+  void addMessage(models.Message message, Widget widget) {
+    print('text ${message.text} != : ${messages.containsKey(message.id) && messages[message.id].isNotEqual(message)}');
+    if (!messages.containsKey(message.id) || messages[message.id].isNotEqual(message)) {
+      messages[message.id] = message.copy();
+      widgets[message.id] = widget;
     }
   }
 
-  void addMessageList(List<models.Message> messageList) {
-    messageList.forEach(addMessage);
+  void addMessageList(List<models.Message> messageList, List<Widget> widgetList) {
+    for (int i = 0; i < messageList.length; i++) {
+      addMessage(messageList[i], widgetList[i]);
+    }
   }
 
   List<models.Message> get messageList {
@@ -124,7 +129,18 @@ class _ChatMessagesState extends State<ChatMessages> {
       stream: _databaseMessage.getMessageList(limit: _nbMessages),
       builder: (BuildContext context, AsyncSnapshot<List<models.Message>> snapshot) {
         if (snapshot.hasData) {
-          _chatMessagesCache.addMessageList(snapshot.data);
+          _chatMessagesCache.addMessageList(snapshot.data, snapshot.data.map((models.Message message) {
+            return MessageTile(
+              message: message,
+              reactButtonOnTap: (models.Message message) {
+                _popupController.show();
+                _popupController.object = message;
+              },
+              onAnswerDrag: (models.Message message) {
+                setMessageToAnswer(message);
+              },
+            );
+          }).toList());
         }
         if (_chatMessagesCache.isEmpty) {
           return LoadingCircle();
@@ -152,6 +168,7 @@ class _ChatMessagesState extends State<ChatMessages> {
                         reverse: true,
                         itemBuilder: (BuildContext context, int index) {
                           final models.Message message = _chatMessagesCache.messageList[index];
+                          return _chatMessagesCache.widgets[message.id];
                           return MessageTile(
                             message: message,
                             reactButtonOnTap: (models.Message message) {
