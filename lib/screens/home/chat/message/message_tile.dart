@@ -123,14 +123,13 @@ class _MessageTileState extends State<MessageTile> {
               ),
             ),
           );
-    /*
 
-    Widget imageWidget = widget.message.images.isNotEmpty
+    final Widget imageWidget = widget.message.images.isNotEmpty
         ? ClipRRect(
             borderRadius: BorderRadius.circular(20.0),
             child: FutureBuilder<String>(
-              future: widget.message.imageUrl,
-              builder: (BuildContext buildContext, AsyncSnapshot asyncSnapshot) {
+              future: widget.message.imageUrl(),
+              builder: (BuildContext buildContext, AsyncSnapshot<String> asyncSnapshot) {
                 if (asyncSnapshot.connectionState == ConnectionState.done &&
                     !asyncSnapshot.hasError &&
                     asyncSnapshot.hasData &&
@@ -140,14 +139,13 @@ class _MessageTileState extends State<MessageTile> {
                     width: 200.0,
                   );
                 } else {
-                  return SizedBox.shrink();
+                  return const SizedBox.shrink();
                 }
               },
             ),
           )
-        : SizedBox.shrink();
+        : const SizedBox.shrink();
 
-    */
     Color colorContainerText = const Color(0x00000000);
     if (widget.message.text.isNotEmpty) {
       colorContainerText = isMyMessage ? Colors.grey[800] : Colors.black;
@@ -297,7 +295,6 @@ class _MessageTileState extends State<MessageTile> {
       behavior: HitTestBehavior.translucent,
       child: Container(
         margin: const EdgeInsets.all(2.0),
-        // ignore: lines_longer_than_80_chars
         child: Column(
           crossAxisAlignment: isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -332,6 +329,7 @@ class _MessageTileState extends State<MessageTile> {
                                 messageAnswered,
                                 textWidget,
                                 preview,
+                                imageWidget,
                                 reacts,
                               ],
                             ),
@@ -344,15 +342,6 @@ class _MessageTileState extends State<MessageTile> {
                 ),
               ),
             ),
-//            Row(
-//              mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
-//              mainAxisSize: MainAxisSize.min,
-//              children: <Widget>[
-//                SizedBox(width: isMyMessage ? 40.0 : 0.0),
-////                preview,
-//                SizedBox(width: isMyMessage ? 0.0 : 40.0),
-//              ],
-//            ),
             if (_showInfo) dateContainer,
           ],
         ),

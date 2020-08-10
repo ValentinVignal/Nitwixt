@@ -54,6 +54,7 @@ class Message with EquatableMixin {
 
   Message _previousMessage;
   Preview _preview;
+  Map<String, String> _imagesUrl = <String, String>{};
 
   @override
   List<Object> get props => <Object>[id, date, text, userid, previousMessageId, chatid];
@@ -91,13 +92,13 @@ class Message with EquatableMixin {
     }
   }
 
-  Future<String> get imageUrl async {
-    if (images.isEmpty) {
-      return '';
-    } else {
-      return await DatabaseFiles(path: images[0]).url;
-    }
-  }
+//  Future<String> get imageUrl async {
+//    if (images.isEmpty) {
+//      return '';
+//    } else {
+//      return await DatabaseFiles(path: images[0]).url;
+//    }
+//  }
 
   bool equals(Message message) {
     return message is Message &&
@@ -132,6 +133,14 @@ class Message with EquatableMixin {
       _preview = await Preview.fetchPreview(Preview.getFirstLink(text));
     }
     return _preview;
+  }
+
+  Future<String> imageUrl({String path, int index=0}) async {
+    path ??= images[index];
+    if (!_imagesUrl.containsKey(path)) {
+      _imagesUrl[path] = await DatabaseFiles(path: path).url;
+    }
+    return _imagesUrl[path];
   }
 
 }
