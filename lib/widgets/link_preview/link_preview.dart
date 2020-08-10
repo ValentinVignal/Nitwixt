@@ -1,19 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:nitwixt/services/database/database.dart';
-import 'fetch_preview.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class LinkPreview extends StatelessWidget {
-  String link;
-  int maxLineDescription;
-  double maxHeight;
+import 'package:nitwixt/services/database/database.dart';
 
+import 'fetch_preview.dart';
+
+class LinkPreview extends StatefulWidget {
   LinkPreview({
-    @required this.link,
+    this.link,
+    this.preview,
     this.maxLineDescription = 3,
-    this.maxHeight=100.0,
-  }) : super();
+    this.maxHeight = 100.0,
+  })  : assert((link == null) != (preview == null)),
+        super() {
+    preview ??= Preview.fetchPreview(link);
+  }
+
+  final String link;
+  Future<Preview> preview;
+  final int maxLineDescription;
+  final double maxHeight;
 
   static void launchUrl({BuildContext context, String url}) {
     showDialog<void>(
@@ -21,17 +29,23 @@ class LinkPreview extends StatelessWidget {
       barrierDismissible: true, // false = user must tap button, true = tap outside dialog
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: Text('Do you want to launch this url ?'),
+          title: const Text('Do you want to launch this url ?'),
           content: Text(url),
           actions: <Widget>[
             FlatButton(
-              child: Text('Cancel'),
+              child: const Text('Copy'),
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: url));
+              },
+            ),
+            FlatButton(
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(dialogContext).pop(); // Dismiss alert dialog
               },
             ),
             FlatButton(
-              child: Text('Launch'),
+              child: const Text('Launch'),
               onPressed: () async {
                 Navigator.of(dialogContext).pop(); // Dismiss alert dialog
                 if (await canLaunch(url)) {
@@ -48,19 +62,31 @@ class LinkPreview extends StatelessWidget {
   }
 
   @override
+  _LinkPreviewState createState() => _LinkPreviewState();
+}
+
+class _LinkPreviewState extends State<LinkPreview> {
+
+  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => launchUrl(context: context, url: this.link),
-      child: FutureBuilder<Preview>(
-        future: Preview.fetchPreview(this.link),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done && !snapshot.hasError && snapshot.hasData && snapshot.data.isNotEmpty) {
-            Preview preview = snapshot.data;
-            return Container(
-              constraints: preview.hasImageUrl ? BoxConstraints(
-                maxHeight: 100.0,
-              ) : null,
-              decoration: BoxDecoration(
+    return FutureBuilder<Preview>(
+      future: widget.preview,
+      builder: (BuildContext context, AsyncSnapshot<Preview> snapshot) {
+        if (
+            snapshot.connectionState == ConnectionState.done &&
+            !snapshot.hasError &&
+            snapshot.hasData &&
+            snapshot.data.isNotEmpty) {
+          final Preview preview = snapshot.data;
+          return GestureDetector(
+            onTap: () => LinkPreview.launchUrl(context: context, url: preview.link),
+            child: Container(
+              constraints: preview.hasImageUrl
+                  ? const BoxConstraints(
+                      maxHeight: 100.0,
+                    )
+                  : null,
+              decoration: const BoxDecoration(
                 color: Colors.black,
                 borderRadius: BorderRadius.all(
                   Radius.circular(
@@ -73,10 +99,11 @@ class LinkPreview extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  preview.hasImageUrl ? Container(
-                    child: DatabaseFiles.imageFromUrl(preview.imageUrl),
-                  ) : SizedBox.shrink(),
-                  SizedBox(width: 5.0),
+                  if (preview.hasImageUrl)
+                    Container(
+                      child: DatabaseFiles.imageFromUrl(preview.imageUrl),
+                    ),
+                  const SizedBox(width: 5.0),
                   Flexible(
                     child: Container(
                       alignment: Alignment.topLeft,
@@ -85,37 +112,35 @@ class LinkPreview extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          preview.hasTitle
-                              ? Text(
-                                  preview.title,
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                )
-                              : SizedBox.shrink(),
+                          if (preview.hasTitle)
+                            Text(
+                              preview.title,
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
                           Text(
-                            link,
-                            style: TextStyle(color: Colors.grey),
+                            preview.link,
+                            style: const TextStyle(color: Colors.grey),
                             overflow: TextOverflow.ellipsis,
                           ),
-                          preview.hasDescription
-                              ? Text(
-                                  preview.description,
-                                  style: TextStyle(color: Colors.grey),
-                                  maxLines: this.maxLineDescription,
-                                  overflow: TextOverflow.ellipsis,
-                                )
-                              : SizedBox.shrink(),
+                          if (preview.hasDescription)
+                            Text(
+                              preview.description,
+                              style: const TextStyle(color: Colors.grey),
+                              maxLines: widget.maxLineDescription,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                         ],
                       ),
                     ),
                   )
                 ],
               ),
-            );
-          } else {
-            return SizedBox.shrink();
-          }
-        },
-      ),
+            ),
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
     );
   }
 }

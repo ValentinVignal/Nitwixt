@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nitwixt/services/database/database.dart';
 import 'package:equatable/equatable.dart';
 import 'package:nitwixt/src/src.dart' as src;
+import 'package:nitwixt/widgets/link_preview/fetch_preview.dart';
 
 
 class MessageKeys {
@@ -52,6 +53,7 @@ class Message with EquatableMixin {
   String chatid;
 
   Message _previousMessage;
+  Preview _preview;
 
   @override
   List<Object> get props => <Object>[id, date, text, userid, previousMessageId, chatid];
@@ -71,12 +73,11 @@ class Message with EquatableMixin {
     return firebaseObject;
   }
 
-  Future<Message> answersToMessage(String chatId) async {
-    if (previousMessageId.isEmpty) {
+  Future<Message> get previousMessage async {
+    if (previousMessageId.isEmpty || chatid ==null || chatid.isEmpty) {
       return null;
     } else {
-      print('Previous message ${_previousMessage == null} - $text');
-      _previousMessage ??= await DatabaseMessage(chatId: chatId).getMessageFuture(previousMessageId);
+      _previousMessage ??= await DatabaseMessage(chatId: chatid).getMessageFuture(previousMessageId);
       return _previousMessage;
     }
   }
@@ -123,6 +124,16 @@ class Message with EquatableMixin {
       chatid: chatid
     );
   }
+
+  bool get hasLink => Preview.getFirstLink(text).isNotEmpty;
+
+  Future<Preview> get preview async {
+    if (_preview == null && hasLink) {
+      _preview = await Preview.fetchPreview(Preview.getFirstLink(text));
+    }
+    return _preview;
+  }
+
 }
 
 class MessageReacts with EquatableMixin {

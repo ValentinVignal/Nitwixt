@@ -1,14 +1,8 @@
+import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart';
 
 class Preview {
-  String title;
-  String description;
-  String imageUrl;
-  String appleIcon;
-  String favIcon;
-  String link;
-
   Preview({
     this.title = '',
     this.description = '',
@@ -18,49 +12,59 @@ class Preview {
     this.link = '',
   });
 
+  String title;
+  String description;
+  String imageUrl;
+  String appleIcon;
+  String favIcon;
+  String link;
+
+  static final RegExp regExpLink = RegExp(r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+');
+
+
   static bool _isEmpty(String str) {
     return str == null || str.isEmpty;
   }
 
   bool get hasTitle {
-    return !_isEmpty(this.title);
+    return !_isEmpty(title);
   }
 
   bool get hasDescription {
-    return !_isEmpty(this.description);
+    return !_isEmpty(description);
   }
 
   bool get hasImageUrl {
-    return !_isEmpty(this.imageUrl);
+    return !_isEmpty(imageUrl);
   }
 
   bool get hasAppleIcon {
-    return !_isEmpty(this.appleIcon);
+    return !_isEmpty(appleIcon);
   }
 
   bool get hasFavIcon {
-    return !_isEmpty(this.favIcon);
+    return !_isEmpty(favIcon);
   }
 
   bool get isEmpty {
-    return !this.hasTitle && !this.hasDescription && !this.hasImageUrl && !this.hasAppleIcon && !this.hasFavIcon;
+    return !hasTitle && !hasDescription && !hasImageUrl && !hasAppleIcon && !hasFavIcon;
   }
 
   bool get isNotEmpty {
-    return !(this.isEmpty);
+    return !isEmpty;
   }
 
   static Future<Preview> fetchPreview(String url) async {
-    final client = Client();
-    final response = await client.get(_validateUrl(url));
-    final document = parse(response.body);
+    final Client client = Client();
+    final Response response = await client.get(_validateUrl(url));
+    final Document document = parse(response.body);
 
     String description, title, image, appleIcon, favIcon;
 
-    var elements = document.getElementsByTagName('meta');
-    final linkElements = document.getElementsByTagName('link');
+    final List<Element> elements = document.getElementsByTagName('meta');
+    final List<Element> linkElements = document.getElementsByTagName('link');
 
-    elements.forEach((tmp) {
+    elements.forEach((Element tmp) {
       if (tmp.attributes['property'] == 'og:title') {
         //fetch seo title
         title = tmp.attributes['content'];
@@ -107,11 +111,25 @@ class Preview {
     );
   }
 
-  static _validateUrl(String url) {
+  static String _validateUrl(String url) {
     if (url?.startsWith('http://') == true || url?.startsWith('https://') == true) {
       return url;
     } else {
       return 'http://$url';
     }
   }
+
+  static String getFirstLink(String str) {
+    final List<RegExpMatch> matches = regExpLink.allMatches(str).toList();
+    String linkToPreview;
+    if (matches.isNotEmpty) {
+      return str.substring(matches[0].start, matches[0].end);
+    } else {
+      return '';
+    }
+  }
+
+
+
+
 }

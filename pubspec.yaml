@@ -60,7 +60,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.7.5
-  pedantic: ^1.9.2
+#  pedantic: ^1.9.2
   effective_dart: ^1.2.4
 
 # For information on the generic Dart part of this file, see the

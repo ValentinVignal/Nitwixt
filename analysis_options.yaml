@@ -17,6 +17,7 @@
 #
 # This file contains the analysis options used by Flutter tools, such as IntelliJ,
 # Android Studio, and the `flutter analyze` command.
+#include: package:effective_dart/analysis_options.yaml
 
 analyzer:
   strong-mode:
@@ -208,3 +209,4 @@ linter:
     # - use_to_and_as_if_applicable # has false positives, so we prefer to catch this by code-review
     - valid_regexps
     - void_checks
+

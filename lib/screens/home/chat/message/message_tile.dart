@@ -1,14 +1,16 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:nitwixt/screens/home/chat/message/react_dialog.dart';
 import 'package:provider/provider.dart';
-import 'package:nitwixt/models/models.dart' as models;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:nitwixt/widgets/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+
+import 'package:nitwixt/widgets/widgets.dart';
+import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/src/shortcuts/shortcuts.dart' as shortcuts;
+import 'package:nitwixt/screens/home/chat/message/react_dialog.dart';
 
 class MessageTile extends StatefulWidget {
   MessageTile({
@@ -17,18 +19,15 @@ class MessageTile extends StatefulWidget {
     this.reactButtonOnTap,
     this.onAnswerDrag,
   }) {
-    _date = message.date.toDate();
+    date = message.date.toDate();
   }
 
   final models.Message message;
   final DateFormat format = DateFormat('HH:mm - d MMM');
-  DateTime _date;
+  DateTime date;
   final void Function(models.Message message) onLongPress;
   final void Function(models.Message message) reactButtonOnTap;
   final void Function(models.Message message) onAnswerDrag;
-
-  DateTime get date => _date;
-
 
   @override
   _MessageTileState createState() => _MessageTileState();
@@ -36,7 +35,7 @@ class MessageTile extends StatefulWidget {
 
 class _MessageTileState extends State<MessageTile> {
   bool _showInfo = false;
-  RefreshController _refreshController = RefreshController(initialRefresh: false);
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   @override
   void dispose() {
@@ -46,19 +45,19 @@ class _MessageTileState extends State<MessageTile> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<models.User>(context);
-    final membersMap = Provider.of<Map<String, models.User>>(context);
-    final chat = Provider.of<models.Chat>(context);
+    final models.User user = Provider.of<models.User>(context);
+    final Map<String, models.User> membersMap = Provider.of<Map<String, models.User>>(context);
+    final models.Chat chat = Provider.of<models.Chat>(context);
     final bool isOnlyEmojis = shortcuts.TextParser.hasOnlyEmoji(widget.message.text.trim().trimLeft());
 
-    bool isMyMessage = user.id == widget.message.userid;
+    final bool isMyMessage = user.id == widget.message.userid;
 
-    Widget nameContainer = isMyMessage || membersMap.length <= 2
+    final Widget nameContainer = isMyMessage || membersMap.length <= 2
         ? Container(
             height: 0.0,
           )
         : Container(
-            padding: EdgeInsets.only(left: 5.0),
+            padding: const EdgeInsets.only(left: 5.0),
             alignment: Alignment.bottomLeft,
             height: 15.0,
             child: Text(
@@ -70,8 +69,8 @@ class _MessageTileState extends State<MessageTile> {
             ),
           );
 
-    Widget dateContainer = Container(
-      padding: EdgeInsets.only(
+    final Widget dateContainer = Container(
+      padding: const EdgeInsets.only(
         left: 5.0,
         right: 5.0,
         top: 0.0,
@@ -87,8 +86,8 @@ class _MessageTileState extends State<MessageTile> {
       ),
     );
 
-    Widget addReactButton = Container(
-      alignment: Alignment.topCenter,
+    final Widget addReactButton = Container(
+      alignment: Alignment.center,
       padding: EdgeInsets.only(left: isMyMessage ? 15.0 : 0.0, right: isMyMessage ? 0.0 : 15.0),
       child: IconButton(
         icon: Icon(
@@ -100,20 +99,16 @@ class _MessageTileState extends State<MessageTile> {
             widget.reactButtonOnTap(widget.message);
           }
         },
-        padding: EdgeInsets.all(2.0),
-        constraints: BoxConstraints(
+        padding: const EdgeInsets.all(2.0),
+        constraints: const BoxConstraints(
           maxHeight: 24.0,
         ),
 //        alignment: isMyMessage ? Alignment.centerRight : Alignment.centerLeft,
       ),
     );
 
-
-    Widget reacts = widget.message.reacts.isEmpty
-        ? SizedBox(
-            height: 0.0,
-            width: 0.0,
-          )
+    final Widget reacts = widget.message.reacts.isEmpty
+        ? const SizedBox.shrink()
         : GestureDetector(
             onTap: () => ReactsDialog.showReactsDialog(
               context: context,
@@ -121,9 +116,10 @@ class _MessageTileState extends State<MessageTile> {
               membersMap: membersMap,
             ),
             child: Container(
+              alignment: Alignment.centerRight,
               child: Text(
                 '${widget.message.reacts.reactList().join()} ${widget.message.reacts.length}',
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           );
@@ -152,12 +148,12 @@ class _MessageTileState extends State<MessageTile> {
         : SizedBox.shrink();
 
     */
-    Color colorContainerText = Color(0x00000000);
+    Color colorContainerText = const Color(0x00000000);
     if (widget.message.text.isNotEmpty) {
       colorContainerText = isMyMessage ? Colors.grey[800] : Colors.black;
     }
 
-    Widget textWidget = Flexible(
+    final Widget textWidget = Flexible(
       child: GestureDetector(
         onLongPress: () {
           if (widget.onLongPress != null) {
@@ -173,14 +169,14 @@ class _MessageTileState extends State<MessageTile> {
             ? Container(
                 child: Text(
                   widget.message.text,
-                  style: TextStyle(color: Colors.white, fontSize: 50.0),
+                  style: const TextStyle(color: Colors.white, fontSize: 50.0),
                 ),
               )
             : Container(
-                padding: EdgeInsets.only(top: 7.0, bottom: 7.0, right: 8.0, left: 8.0),
+                padding: const EdgeInsets.only(top: 7.0, bottom: 7.0, right: 8.0, left: 8.0),
                 decoration: BoxDecoration(
                   color: colorContainerText,
-                  borderRadius: BorderRadius.all(
+                  borderRadius: const BorderRadius.all(
                     Radius.circular(
                       20.0,
                     ),
@@ -203,25 +199,24 @@ class _MessageTileState extends State<MessageTile> {
       ),
     );
 
-    Widget messageAnswered = widget.message.previousMessageId.isNotEmpty
-        ? FutureBuilder<models.Message>(
-            future: widget.message.answersToMessage(chat.id),
+    final Widget messageAnswered = widget.message.previousMessageId.isEmpty
+        ? const SizedBox.shrink()
+        : FutureBuilder<models.Message>(
+            future: widget.message.previousMessage,
             builder: (BuildContext context, AsyncSnapshot<models.Message> snapshot) {
               Widget content;
-
               if (snapshot.connectionState == ConnectionState.waiting) {
                 content = LoadingDots(
                   color: Colors.grey,
                   fontSize: 13.0,
                 );
               } else {
-                if (snapshot.hasError) {
-                  print('could not find the message ${widget.message.previousMessageId} in chat ${chat.id}');
-                  content = SizedBox.shrink();
+                if (snapshot.hasError || snapshot.data == null) {
+                  return const SizedBox.shrink();
                 } else {
                   content = Text(
                     snapshot.data.text.replaceAll('\n', ' '),
-                    style: TextStyle(color: Colors.grey),
+                    style: const TextStyle(color: Colors.grey),
                     textAlign: TextAlign.left,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
@@ -229,81 +224,70 @@ class _MessageTileState extends State<MessageTile> {
                   );
                 }
               }
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(
-                    width: isMyMessage ? 40.0 : 0,
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 3.0),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF151515),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10.0),
+                    topRight: Radius.circular(10.0),
                   ),
-                  Flexible(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 3.0),
-                      decoration: BoxDecoration(
-                        color: Color(0xFF151515),
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10.0),
-                          topRight: Radius.circular(10.0),
-                        ),
-                      ),
-                      child: content,
-                    ),
-                  ),
-                ],
+                ),
+                child: content,
               );
             },
-          )
-        : SizedBox.shrink();
+          );
 
-    /*
-    List<Widget> messageActions = [
+    final List<Widget> messageActions = <Widget>[
       IconSlideAction(
         caption: 'Reply',
-        color: Color(0x00000000),
+        color: const Color(0x00000000),
         icon: Icons.reply,
         foregroundColor: Colors.grey,
         onTap: () => widget.onAnswerDrag(widget.message),
       ),
+      if (widget.message.text != null && widget.message.text.isNotEmpty)
+        IconSlideAction(
+          caption: 'Copy',
+          color: const Color(0x00000000),
+          icon: Icons.content_copy,
+          foregroundColor: Colors.grey,
+          onTap: () => Clipboard.setData(ClipboardData(text: widget.message.text)),
+        ),
     ];
 
-    */
-
-    Widget profilePicture = isMyMessage || membersMap.length <= 2
-        ? SizedBox.shrink()
+    final Widget profilePicture = isMyMessage || membersMap.length <= 2
+        ? const SizedBox.shrink()
         : Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4.0),
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: UserPicture(
               user: membersMap[widget.message.userid],
             ),
           );
 
-    RegExp regExpLink = new RegExp(r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+');
-    List<RegExpMatch> matches = regExpLink.allMatches(widget.message.text).toList();
+    final RegExp regExpLink = RegExp(r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+');
+    final List<RegExpMatch> matches = regExpLink.allMatches(widget.message.text).toList();
     String linkToPreview;
     if (matches.isNotEmpty) {
       linkToPreview = widget.message.text.substring(matches[0].start, matches[0].end);
     }
-    /*
 
-    Widget preview = linkToPreview == null
-        ? SizedBox.shrink()
-        : Flexible(
-            fit: FlexFit.tight,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(
-                    20.0,
-                  ),
-                ),
-              ),
-              child: LinkPreview(
-                link: linkToPreview,
+    final Widget preview = linkToPreview == null
+        ? const SizedBox.shrink()
+        : Container(
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(
+              Radius.circular(
+                20.0,
               ),
             ),
-          );
+          ),
+          child: LinkPreview(
+//            link: linkToPreview,
+            preview: widget.message.preview,
+          ),
+        );
 
-     */
 
     // * --------------------------------------------------
     // * --------------------------------------------------
@@ -312,79 +296,64 @@ class _MessageTileState extends State<MessageTile> {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       child: Container(
-        margin: EdgeInsets.all(2.0),
+        margin: const EdgeInsets.all(2.0),
+        // ignore: lines_longer_than_80_chars
         child: Column(
           crossAxisAlignment: isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             nameContainer,
-            messageAnswered,
             Slidable(
-              actionPane: SlidableStrechActionPane(),
-//              actions: messageActions,
-//              secondaryActions: messageActions,
+              actionPane: const SlidableStrechActionPane(),
+              actions: messageActions.reversed.toList(),
+              secondaryActions: messageActions,
               actionExtentRatio: 0.1,
               child: SizedBox(
                 width: double.maxFinite,
                 child: Align(
                   alignment: isMyMessage ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          profilePicture,
-                          Flexible(
-                            child: Row(
+                  child: Container(
+                    // TODO(Valentin): Replace with IntrinsicHeight when it works (solution to center add react button vertically)
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        profilePicture,
+                        if (isMyMessage) addReactButton,
+                        Flexible(
+                          child: IntrinsicWidth(
+                            child: Column(
+                              crossAxisAlignment: isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                isMyMessage
-                                    ? addReactButton
-                                    : SizedBox.shrink(),
+                                messageAnswered,
                                 textWidget,
-                                isMyMessage
-                                    ? SizedBox.shrink()
-                                    : addReactButton,
+                                preview,
+                                reacts,
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(
-                            width: isMyMessage ? 40.0 : 0.0,
-                          ),
-                          reacts,
-                          SizedBox(
-                            width: isMyMessage ? 0.0 : 40.0,
-                          ),
-                        ],
-                      )
-                    ],
+                        ),
+                        if (!isMyMessage) addReactButton,
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-            Row(
-              mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                SizedBox(width: isMyMessage ? 40.0 : 0.0),
-//                preview,
-                SizedBox(width: isMyMessage ? 0.0 : 40.0),
-              ],
-            ),
-            _showInfo ? dateContainer : SizedBox.shrink(),
+//            Row(
+//              mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+//              mainAxisSize: MainAxisSize.min,
+//              children: <Widget>[
+//                SizedBox(width: isMyMessage ? 40.0 : 0.0),
+////                preview,
+//                SizedBox(width: isMyMessage ? 0.0 : 40.0),
+//              ],
+//            ),
+            if (_showInfo) dateContainer,
           ],
         ),
       ),
