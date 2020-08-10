@@ -24,7 +24,7 @@ class ChatMessagesCache {
   bool get isNotEmpty => messages.isNotEmpty;
 
   void addMessage(models.Message message, Widget widget) {
-    if (!messages.containsKey(message.id) || messages[message.id].isNotEqual(message)) {
+    if (!messages.containsKey(message.id) || !messages[message.id].equals(message)) {
       messages[message.id] = message.copy();
       widgets[message.id] = widget;
     }
@@ -141,73 +141,60 @@ class _ChatMessagesState extends State<ChatMessages> {
             );
           }).toList());
         }
-        if (_chatMessagesCache.isEmpty) {
+        if (!snapshot.hasData &&_chatMessagesCache.isEmpty) {
           return LoadingCircle();
-        } else {
-//          final List<models.Message> messageList = snapshot.data;
-          return Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Expanded(
-                child: Popup(
-                  controller: _popupController,
-                  childBack: SizedBox(
-                    child: SmartRefresher(
-                      enablePullUp: true,
+        }
+        return Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Expanded(
+              child: Popup(
+                controller: _popupController,
+                childBack: SizedBox(
+                  child: SmartRefresher(
+                    enablePullUp: true,
+                    reverse: true,
+                    enablePullDown: false,
+                    scrollController: _scrollController,
+                    controller: _refreshController,
+                    primary: false,
+                    onLoading: _onLoading,
+                    child: ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: _chatMessagesCache.messageList.length,
                       reverse: true,
-                      enablePullDown: false,
-                      scrollController: _scrollController,
-                      controller: _refreshController,
-                      primary: false,
-                      onLoading: _onLoading,
-                      child: ListView.builder(
-                        scrollDirection: Axis.vertical,
-                        itemCount: _chatMessagesCache.messageList.length,
-                        reverse: true,
-                        itemBuilder: (BuildContext context, int index) {
-                          final models.Message message = _chatMessagesCache.messageList[index];
-                          return _chatMessagesCache.widgets[message.id];
-                          return MessageTile(
-                            message: message,
-                            reactButtonOnTap: (models.Message message) {
-                              _popupController.show();
-                              _popupController.object = message;
-                            },
-                            onAnswerDrag: (models.Message message) {
-                              setMessageToAnswer(message);
-                            },
-                          );
-                        },
-                        shrinkWrap: true,
-                      ),
+                      itemBuilder: (BuildContext context, int index) {
+                        final models.Message message = _chatMessagesCache.messageList[index];
+                        return _chatMessagesCache.widgets[message.id];
+                      },
+                      shrinkWrap: true,
                     ),
                   ),
-                  childFront: Builder(
-                    builder: (BuildContext context) {
-                      return ReactPopup(
-                        message: _popupController.object as models.Message,
-                        onReactSelected: _reactToMessage,
-                      );
-                    },
-                  ),
+                ),
+                childFront: Builder(
+                  builder: (BuildContext context) {
+                    return ReactPopup(
+                      message: _popupController.object as models.Message,
+                      onReactSelected: _reactToMessage,
+                    );
+                  },
                 ),
               ),
-              if (messageToAnswer != null)
-                MessageToAnswerTo(
-                  message: messageToAnswer,
-                  onCancel: () {
-                    setMessageToAnswer(null);
-                  },
-                )
-              else
-                const SizedBox.shrink(),
-              InputTextMessage(
-                sendMessage: _sendMessage,
-              )
-            ],
-          );
-        }
+            ),
+            if (messageToAnswer != null)
+              MessageToAnswerTo(
+                message: messageToAnswer,
+                onCancel: () {
+                  setMessageToAnswer(null);
+                },
+              ),
+            InputTextMessage(
+              sendMessage: _sendMessage,
+            )
+          ],
+        );
+
       },
     );
   }

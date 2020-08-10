@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:nitwixt/models/models.dart' as models;
-import 'chat/chat_home.dart';
+import 'package:provider/provider.dart';
+
+import 'package:nitwixt/services/database/database.dart' as database;
 import 'package:nitwixt/services/providers/providers.dart';
 import 'package:nitwixt/widgets/widgets.dart';
-import 'package:provider/provider.dart';
-import 'package:nitwixt/services/database/database.dart' as database;
+import 'package:nitwixt/models/models.dart' as models;
+
+import 'chat/chat_home.dart';
 
 class ChatTile extends StatefulWidget {
-  final models.Chat chat;
+  const ChatTile({this.chat, Key key}) : super(key: key);
 
-  ChatTile({this.chat, Key key}) : super(key: key);
+  final models.Chat chat;
 
   @override
   ChatTileState createState() => ChatTileState();
@@ -30,7 +32,7 @@ class ChatTileState extends State<ChatTile> {
 
   @override
   Widget build(BuildContext context) {
-    models.User user = Provider.of<models.User>(context);
+    final models.User user = Provider.of<models.User>(context);
 
     return GestureDetector(
       child: Container(
@@ -43,7 +45,7 @@ class ChatTileState extends State<ChatTile> {
               user: user,
               size: 25.0,
             ),
-            SizedBox(width: 20.0),
+            const SizedBox(width: 20.0),
             Flexible(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +60,7 @@ class ChatTileState extends State<ChatTile> {
                         );
                       } else {
                         if (snapshot.hasError) {
-                          return Text(
+                          return const Text(
                             'Could not display name',
                             style: TextStyle(color: Colors.red, fontSize: 18.0),
                             textAlign: TextAlign.left,
@@ -66,7 +68,7 @@ class ChatTileState extends State<ChatTile> {
                         } else {
                           return Text(
                             snapshot.data,
-                            style: TextStyle(fontSize: 18.0),
+                            style: const TextStyle(fontSize: 18.0),
                             textAlign: TextAlign.left,
                             overflow: TextOverflow.ellipsis,
                           );
@@ -76,7 +78,7 @@ class ChatTileState extends State<ChatTile> {
                   ),
                   StreamBuilder<List<models.Message>>(
                     stream: _databaseMessage.getMessageList(limit: 1),
-                    builder: (contextStreamBuilder, snapshot) {
+                    builder: (BuildContext contextStreamBuilder, AsyncSnapshot<List<models.Message>> snapshot) {
                       String text;
                       if (!snapshot.hasData) {
                         return LoadingDots(
@@ -84,7 +86,7 @@ class ChatTileState extends State<ChatTile> {
                           fontSize: 14.0,
                         );
                       } else {
-                        List<models.Message> messageList = snapshot.data;
+                        final List<models.Message> messageList = snapshot.data;
                         if (messageList.isEmpty) {
                           text = 'No message yet';
                         } else {
@@ -106,7 +108,7 @@ class ChatTileState extends State<ChatTile> {
             ),
           ],
         ),
-        margin: EdgeInsets.symmetric(vertical: 6.0, horizontal: 20.0),
+        margin: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 20.0),
         decoration: BoxDecoration(
             border: Border(
           bottom: BorderSide(color: Colors.blueGrey[800]),
@@ -115,8 +117,8 @@ class ChatTileState extends State<ChatTile> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-              builder: (context) => ChatProvider(
+          MaterialPageRoute<Widget>(
+              builder: (BuildContext context) => ChatProvider(
                     id: widget.chat.id,
                     child: ChatHome(),
                   )),

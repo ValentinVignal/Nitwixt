@@ -11,21 +11,24 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:nitwixt/src/shortcuts/shortcuts.dart' as shortcuts;
 
 class MessageTile extends StatefulWidget {
-  models.Message message;
-  DateFormat format = DateFormat('HH:mm - d MMM');
-  DateTime date;
-  void Function(models.Message message) onLongPress;
-  void Function(models.Message message) reactButtonOnTap;
-  void Function(models.Message message) onAnswerDrag;
-
   MessageTile({
     @required this.message,
     this.onLongPress,
     this.reactButtonOnTap,
     this.onAnswerDrag,
   }) {
-    date = message.date.toDate();
+    _date = message.date.toDate();
   }
+
+  final models.Message message;
+  final DateFormat format = DateFormat('HH:mm - d MMM');
+  DateTime _date;
+  final void Function(models.Message message) onLongPress;
+  final void Function(models.Message message) reactButtonOnTap;
+  final void Function(models.Message message) onAnswerDrag;
+
+  DateTime get date => _date;
+
 
   @override
   _MessageTileState createState() => _MessageTileState();

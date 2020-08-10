@@ -54,7 +54,7 @@ class Message with EquatableMixin {
   Message _previousMessage;
 
   @override
-  List<Object> get props => <Object>[id, date, text, userid, reacts, previousMessageId, images, chatid];
+  List<Object> get props => <Object>[id, date, text, userid, previousMessageId, chatid];
 
   Map<String, Object> toFirebaseObject() {
     final Map<String, Object> firebaseObject = <String, Object>{};
@@ -98,21 +98,17 @@ class Message with EquatableMixin {
     }
   }
 
-  bool isEqual(Message message) {
+  bool equals(Message message) {
     return message is Message &&
         message != null &&
         message.id == id &&
         message.date == date &&
         message.text == text &&
         message.userid == userid &&
-        message.reacts.isEqual(reacts) &&
+        message.reacts.equals(reacts) &&
         message.previousMessageId == previousMessageId &&
         src.listEquals(message.images, images) &&
         message.chatid == chatid;
-  }
-
-  bool isNotEqual(Message message) {
-    return !isEqual(message);
   }
 
   Message copy() {
@@ -123,7 +119,7 @@ class Message with EquatableMixin {
       userid: userid,
       reacts: reacts.copy(),
       previousMessageId: previousMessageId,
-      images: images,
+      images: List<String>.of(images),
       chatid: chatid
     );
   }
@@ -194,12 +190,8 @@ class MessageReacts with EquatableMixin {
     return reacts;
   }
 
-  bool isEqual(MessageReacts messageReacts) {
+  bool equals(MessageReacts messageReacts) {
     return messageReacts is MessageReacts && messageReacts != null && src.mapEquals(messageReacts.reactMap, reactMap);
-  }
-
-  bool isNotEqual(MessageReacts messageReacts) {
-    return !isEqual(messageReacts);
   }
 
   MessageReacts copy() {
