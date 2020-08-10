@@ -13,7 +13,7 @@
 *.iml
 *.ipr
 *.iws
-.idea/
+*.idea/
 
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
@@ -83,3 +83,25 @@ deploy/
 help/
 
 !.idea/
+/.idea/codeStyles/Project.xml
+/.idea/dictionaries/Valentin.xml
+/.idea/libraries/Dart_Packages.xml
+/.idea/libraries/Dart_SDK.xml
+/.idea/libraries/Flutter_for_Android.xml
+/.idea/libraries/Flutter_Plugins.xml
+/.idea/libraries/KotlinJavaRuntime.xml
+/.idea/runConfigurations/main_dart.xml
+/.idea/markdown-navigator.xml
+/.idea/markdown-navigator-enh.xml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/vcs.xml
+/.idea/workspace.xml
+/android/.idea/codeStyles/Project.xml
+/android/.idea/gradle.xml
+/android/.idea/markdown-navigator.xml
+/android/.idea/markdown-navigator-enh.xml
+/android/.idea/misc.xml
+/android/.idea/modules.xml
+/android/.idea/vcs.xml
+/android/.idea/workspace.xml
