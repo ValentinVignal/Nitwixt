@@ -37,7 +37,10 @@ export const newMessage = functions.firestore.document('chats/{chatId}/messages/
 
 
     const userid: string = doc.userid;
-    let text: string = doc.text;
+    let text: string = doc.text ? doc.text : '';
+    if (doc.images && doc.images.length) {
+        text = '📷'.repeat(doc.images.length) + ' ' + text;
+    }
 
     if (chat !== undefined) {
         // Get all the users

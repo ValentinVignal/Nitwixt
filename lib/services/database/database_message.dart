@@ -17,7 +17,12 @@ class DatabaseMessage extends DatabaseChat {
   }
 
   Stream<List<models.Message>> get messageList {
-    return chatCollection.document(chatId).collection(CollectionNames.messages).orderBy(models.MessageKeys.date, descending: true).snapshots().map(messagesFromQuerySnapshot);
+    return chatCollection
+        .document(chatId)
+        .collection(CollectionNames.messages)
+        .orderBy(models.MessageKeys.date, descending: true)
+        .snapshots()
+        .map(messagesFromQuerySnapshot);
   }
 
   Stream<List<models.Message>> getMessageList({DocumentSnapshot startAfter, int limit = 10}) {
@@ -29,26 +34,31 @@ class DatabaseMessage extends DatabaseChat {
     return query.snapshots().map(messagesFromQuerySnapshot);
   }
 
-  Future sendMessage({String text, String userid, String previousMessageId='', File image}) async {
-    models.Message message = models.Message(
+  Future sendMessage({String text, String userid, String previousMessageId = '', File image}) async {
+    final models.Message message = models.Message(
       id: '',
       date: Timestamp.now(),
       text: text,
       userid: userid,
       previousMessageId: previousMessageId ?? '',
-      chatid: this.chatId,
+      chatid: chatId,
+      images: image != null ? <String>[''] : <String>[],
     );
-    DocumentReference documentReference = await chatCollection.document(chatId).collection(CollectionNames.messages).add(message.toFirebaseObject());
+    final DocumentReference documentReference =
+        await chatCollection.document(chatId).collection(CollectionNames.messages).add(message.toFirebaseObject());
     message.id = documentReference.documentID;
     message.setNumImages(image == null ? 0 : 1);
     if (image != null) {
       DatabaseFiles(path: message.images[0]).uploadFile(image);
     }
-    return await chatCollection.document(chatId).collection(CollectionNames.messages).document(documentReference.documentID).updateData({
+    return await chatCollection
+        .document(chatId)
+        .collection(CollectionNames.messages)
+        .document(documentReference.documentID)
+        .updateData(<String, dynamic>{
       models.MessageKeys.id: message.toFirebaseObject()[models.MessageKeys.id],
       models.MessageKeys.images: message.toFirebaseObject()[models.MessageKeys.images],
     });
-
   }
 
   Future updateMessage({String messageId, Object obj}) async {

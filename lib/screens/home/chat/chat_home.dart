@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:nitwixt/services/providers/providers.dart';
-import 'package:nitwixt/widgets/widgets.dart';
 import 'package:provider/provider.dart';
-import 'chat_messages.dart';
-import 'package:nitwixt/models/models.dart' as models;
-import 'chat_info.dart';
 import 'package:custom_navigator/custom_navigation.dart';
+
+import 'package:nitwixt/widgets/widgets.dart';
+import 'package:nitwixt/models/models.dart' as models;
+
+import 'chat_info.dart';
+import 'chat_messages.dart';
 
 class ChatHome extends StatefulWidget {
   @override
@@ -14,7 +15,7 @@ class ChatHome extends StatefulWidget {
 }
 
 class _ChatHomeState extends State<ChatHome> {
-  GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,7 @@ class _ChatHomeState extends State<ChatHome> {
 
     return WillPopScope(
       onWillPop: () async {
-        bool canPop = _navigatorKey.currentState.canPop();
+        final bool canPop = _navigatorKey.currentState.canPop();
         if (canPop) {
           _navigatorKey.currentState.pop();
         }
@@ -45,7 +46,7 @@ class _ChatHomeState extends State<ChatHome> {
                   user: user,
                   size: 20.0,
                 ),
-                SizedBox(width: 5.0),
+                const SizedBox(width: 5.0),
                 FutureBuilder<String>(
                   future: chat.nameToDisplay(user),
                   builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -56,12 +57,12 @@ class _ChatHomeState extends State<ChatHome> {
                       );
                     } else {
                       if (snapshot.hasError) {
-                        return Text(
+                        return const Text(
                           'Could not display name',
                           style: TextStyle(color: Colors.red, fontSize: 18.0),
                         );
                       } else {
-                        return Text(snapshot.data, style: TextStyle(color: Colors.white, fontSize: 18.0));
+                        return Text(snapshot.data, style: const TextStyle(color: Colors.white, fontSize: 18.0));
                       }
                     }
                   },
@@ -69,14 +70,14 @@ class _ChatHomeState extends State<ChatHome> {
               ],
             ),
             backgroundColor: Colors.black,
-            leading: new IconButton(
-                icon: Icon(Icons.arrow_back_ios),
+            leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios),
                 onPressed: () {
                   Navigator.pop(context);
                 }),
             actions: <Widget>[
               IconButton(
-                icon: Icon(Icons.info_outline),
+                icon: const Icon(Icons.info_outline),
                 onPressed: () {
                   _navigatorKey.currentState.push(
                     MaterialPageRoute(
