@@ -92,14 +92,6 @@ class Message with EquatableMixin {
     }
   }
 
-//  Future<String> get imageUrl async {
-//    if (images.isEmpty) {
-//      return '';
-//    } else {
-//      return await DatabaseFiles(path: images[0]).url;
-//    }
-//  }
-
   bool equals(Message message) {
     return message is Message &&
         message != null &&
@@ -141,6 +133,10 @@ class Message with EquatableMixin {
       _imagesUrl[path] = await DatabaseFiles(path: path).url;
     }
     return _imagesUrl[path];
+  }
+
+  bool get hasImages {
+    return images.isNotEmpty;
   }
 
 }

@@ -9,24 +9,16 @@ class LoadingScreen extends StatelessWidget {
           Container(
             height: double.infinity,
             width: double.infinity,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
+                colors: <Color>[
                   Color(0xFF000000),
-                  Color(0xFF080808),
-                  Color(0xFF101010),
-                  Color(0xFF181818),
-                  Color(0xFF202020),
                   Color(0xFF282828),
-                  Color(0xFF202020),
-                  Color(0xFF181818),
-                  Color(0xFF101010),
-                  Color(0xFF080808),
                   Color(0xFF000000),
                 ],
-                stops: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+                stops: <double>[0.0, 0.5, 1.0],
               ),
             ),
           ),
@@ -36,7 +28,7 @@ class LoadingScreen extends StatelessWidget {
             ),
             child: Container(
               alignment: Alignment.bottomCenter,
-              child: Text(
+              child: const Text(
                 'Nitwixt',
                 style: TextStyle(
                   color: Colors.blueAccent,

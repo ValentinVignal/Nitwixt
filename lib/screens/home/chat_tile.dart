@@ -79,7 +79,7 @@ class ChatTileState extends State<ChatTile> {
                   StreamBuilder<List<models.Message>>(
                     stream: _databaseMessage.getMessageList(limit: 1),
                     builder: (BuildContext contextStreamBuilder, AsyncSnapshot<List<models.Message>> snapshot) {
-                      String text;
+                      String text = '';
                       if (!snapshot.hasData) {
                         return LoadingDots(
                           color: Colors.grey,
@@ -90,7 +90,11 @@ class ChatTileState extends State<ChatTile> {
                         if (messageList.isEmpty) {
                           text = 'No message yet';
                         } else {
-                          text = messageList[0].text.replaceAll('\n', ' ');
+                          final models.Message message = messageList[0];
+                          if (message.hasImages) {
+                            text += '📷' * message.images.length + ' ';
+                          }
+                          text += message.text.replaceAll('\n', ' ');
                         }
                       }
                       return Text(
