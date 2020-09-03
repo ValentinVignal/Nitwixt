@@ -14,9 +14,9 @@ class UserProvider extends StatelessWidget {
   Widget build(BuildContext context) {
     final models.UserAuth userAuth = Provider.of<models.UserAuth>(context);
 
-    database.DatabaseUser databaseUser = database.DatabaseUser(id: userAuth.id);
+    final database.DatabaseUser databaseUser = database.DatabaseUser(id: userAuth.id);
 
-    GlobalKey<NavigatorState> _mainNavigatorKey = GlobalKey<NavigatorState>();
+    final GlobalKey<NavigatorState> _mainNavigatorKey = GlobalKey<NavigatorState>();
 
 
     return StreamProvider<models.User>.value(
