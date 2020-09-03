@@ -54,7 +54,7 @@ class Message with EquatableMixin {
 
   Message _previousMessage;
   Preview _preview;
-  Map<String, String> _imagesUrl = <String, String>{};
+  final Map<String, String> _imagesUrl = <String, String>{};
 
   @override
   List<Object> get props => <Object>[id, date, text, userid, previousMessageId, chatid];

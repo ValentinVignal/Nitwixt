@@ -1,11 +1,13 @@
+import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'account/account.dart';
+
 import 'package:nitwixt/screens/home/chat_list.dart';
 import 'package:nitwixt/services/auth/auth.dart' as auth;
-import 'package:provider/provider.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/widgets/widgets.dart';
+
+import 'account/account.dart';
 import 'new_chat_dialog.dart';
 
 // Different options in the popup menu
@@ -39,7 +41,7 @@ PopupMenuItem<PopupMenuOptions> menuItemFromOption(PopupMenuOptions option) {
     value: option,
     child: FlatButton.icon(
       icon: Icon(icon, color: Colors.grey),
-      label: Text(text, style: TextStyle(color: Colors.grey)),
+      label: Text(text, style: const TextStyle(color: Colors.grey)),
       onPressed: null,
     ),
   );
@@ -53,14 +55,14 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final auth.AuthService _auth = auth.AuthService();
   ScaffoldState scaffoldState;
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void showDisclaimerSnackBar() {
     scaffoldState.showSnackBar(
       SnackBar(
 //        backgroundColor: Colors.black,
         duration: const Duration(minutes: 5),
-        content: Text(
+        content: const Text(
             '/!\\ Warning /!\\\nNitwixt is still a young project and I didn\'t spend much time on security and privacy of data.\nPlease don\'t put any sensitive information in this app. :)\nAlso, because of incoming data structure changes, all the data might be deleted soon O:)'),
         action: SnackBarAction(
           label: 'Ok',
@@ -85,7 +87,7 @@ class _HomeState extends State<Home> {
     final models.PushToken pushToken = Provider.of<models.PushToken>(context);
 
     void _showCreateNewChatPanel() {
-      showDialog(
+      showDialog<Widget>(
         context: context,
         builder: (BuildContext context) {
           return NewChatDialog();
@@ -97,32 +99,32 @@ class _HomeState extends State<Home> {
         key: _scaffoldKey,
 //        backgroundColor: Colors.grey[900],
         appBar: AppBar(
-          title: Text('Nitwixt'),
+          title: const Text('Nitwixt'),
 //          backgroundColor: Colors.grey[900],
 //          backgroundColor: Colors.black,
           elevation: 0.0,
           leading: Padding(
-            padding: EdgeInsets.all(5.0),
+            padding: const EdgeInsets.all(5.0),
             child: UserPicture(
               user: user,
             ),
           ),
           actions: <Widget>[
             Builder(
-              builder: (context) {
+              builder: (BuildContext context) {
                 return PopupMenuButton<PopupMenuOptions>(
                   color: Colors.black,
-                  onSelected: (selected) async {
+                  onSelected: (PopupMenuOptions selected) async {
                     switch (selected) {
                       case PopupMenuOptions.account:
                         {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => Account()));
+                          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Account()));
                           break;
                         }
                       case PopupMenuOptions.settings:
                         {
 //                        Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
-                          final SnackBar snackbar = SnackBar(
+                          const SnackBar snackbar = SnackBar(
                             content: Text('No setting available for now'),
                           );
                           Scaffold.of(context).showSnackBar(snackbar);
@@ -136,7 +138,7 @@ class _HomeState extends State<Home> {
                     }
                   },
                   itemBuilder: (BuildContext context) {
-                    return PopupMenuOptions.values.map((option) {
+                    return PopupMenuOptions.values.map((PopupMenuOptions option) {
                       return menuItemFromOption(option);
                     }).toList();
                   },
@@ -157,7 +159,7 @@ class _HomeState extends State<Home> {
           onPressed: () {
             _showCreateNewChatPanel();
           },
-          child: Icon(Icons.add),
+          child: const Icon(Icons.add),
         ));
   }
 }

@@ -25,7 +25,7 @@ class DatabaseMessage extends DatabaseChat {
         .map(messagesFromQuerySnapshot);
   }
 
-  Stream<List<models.Message>> getMessageList({DocumentSnapshot startAfter, int limit = 10}) {
+  Stream<List<models.Message>> getList({DocumentSnapshot startAfter, int limit = 10}) {
     Query query = chatCollection.document(chatId).collection(CollectionNames.messages).orderBy(models.MessageKeys.date, descending: true);
     if (startAfter != null) {
       query = query.startAt(<dynamic>[startAfter.data]);
@@ -34,7 +34,8 @@ class DatabaseMessage extends DatabaseChat {
     return query.snapshots().map(messagesFromQuerySnapshot);
   }
 
-  Future sendMessage({String text, String userid, String previousMessageId = '', File image}) async {
+  /// Send a message
+  Future<void> send({String text, String userid, String previousMessageId = '', File image}) async {
     final models.Message message = models.Message(
       id: '',
       date: Timestamp.now(),
@@ -61,12 +62,18 @@ class DatabaseMessage extends DatabaseChat {
     });
   }
 
-  Future updateMessage({String messageId, Object obj}) async {
+
+  Future<void> updateMessage({String messageId, Map<String, dynamic> obj}) async {
     return await chatCollection.document(chatId).collection(CollectionNames.messages).document(messageId).updateData(obj);
   }
 
   Future<models.Message> getMessageFuture(String messageId) async {
-    DocumentSnapshot documentSnapshot = await chatCollection.document(this.chatId).collection(CollectionNames.messages).document(messageId).get();
+    final DocumentSnapshot documentSnapshot = await chatCollection.document(chatId).collection(CollectionNames.messages).document(messageId).get();
     return messageFromDocumentSnapshot(documentSnapshot);
   }
+
+  Future<void> deleteMessage(String messageId) async {
+    return chatCollection.document(chatId).collection(CollectionNames.messages).document(messageId).delete();
+  }
+
 }

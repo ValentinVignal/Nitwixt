@@ -31,7 +31,7 @@ class LinkPreview extends StatefulWidget {
         return AlertDialog(
           title: const Text('Do you want to launch this url ?'),
           content: Text(url),
-          actions: <Widget>[
+          actions: <FlatButton>[
             FlatButton(
               child: const Text('Copy'),
               onPressed: () {

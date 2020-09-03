@@ -34,6 +34,7 @@ class ChatMessagesCache {
     for (int i = 0; i < messageList.length; i++) {
       addMessage(messageList[i], widgetList[i]);
     }
+    _removeOthers(messageList);
   }
 
   List<models.Message> get messageList {
@@ -42,6 +43,13 @@ class ChatMessagesCache {
       return message2.date.compareTo(message1.date);
     });
     return list;
+  }
+
+  void _removeOthers(List<models.Message> messageList) {
+    final List<String> existingIds = messageList.map<String>((models.Message message) {
+      return message.id;
+    }).toList();
+    messages.removeWhere((String key, models.Message value) => !existingIds.contains(key));
   }
 }
 
@@ -95,9 +103,10 @@ class _ChatMessagesState extends State<ChatMessages> {
     final models.User user = Provider.of<models.User>(context);
     final models.Chat chat = Provider.of<models.Chat>(context);
     final database.DatabaseMessage _databaseMessage = database.DatabaseMessage(chatId: chat.id);
+
     void _sendMessage({String text, File image}) {
       if (text.trim().isNotEmpty || image != null) {
-        _databaseMessage.sendMessage(
+        _databaseMessage.send(
           text: text.trim(),
           userid: user.id,
           previousMessageId: messageToAnswer != null ? messageToAnswer.id : null,
@@ -125,7 +134,7 @@ class _ChatMessagesState extends State<ChatMessages> {
     }
 
     return StreamBuilder<List<models.Message>>(
-      stream: _databaseMessage.getMessageList(limit: _nbMessages),
+      stream: _databaseMessage.getList(limit: _nbMessages),
       builder: (BuildContext context, AsyncSnapshot<List<models.Message>> snapshot) {
         if (snapshot.hasData) {
           _chatMessagesCache.addMessageList(snapshot.data, snapshot.data.map((models.Message message) {

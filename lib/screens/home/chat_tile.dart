@@ -77,7 +77,7 @@ class ChatTileState extends State<ChatTile> {
                     },
                   ),
                   StreamBuilder<List<models.Message>>(
-                    stream: _databaseMessage.getMessageList(limit: 1),
+                    stream: _databaseMessage.getList(limit: 1),
                     builder: (BuildContext contextStreamBuilder, AsyncSnapshot<List<models.Message>> snapshot) {
                       String text = '';
                       if (!snapshot.hasData) {

@@ -1,13 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'collections.dart' as collections;
 import 'package:nitwixt/models/models.dart' as models;
+
+import 'collections.dart' as collections;
 import 'database_user.dart';
 
 class DatabaseChat {
-  final String chatId;
 
   DatabaseChat({this.chatId});
+
+  final String chatId;
 
   final CollectionReference chatCollection = collections.chatCollection;
 
@@ -24,13 +26,13 @@ class DatabaseChat {
   }
 
   Future<models.Chat> get chatFuture async {
-    DocumentSnapshot documentSnapshot = await chatCollection.document(chatId).get();
+    final DocumentSnapshot documentSnapshot = await chatCollection.document(chatId).get();
     return chatFromDocumentSnapshot(documentSnapshot);
   }
 
 
   static Stream<List<models.Chat>> getChatList({String userid, int limit = 10}) {
-    Query query = collections.chatCollection.where(models.ChatKeys.members, arrayContains: userid).limit(limit);
+    final Query query = collections.chatCollection.where(models.ChatKeys.members, arrayContains: userid).limit(limit);
     return query.snapshots().map(chatFromQuerySnapshot);
   }
 
@@ -38,18 +40,18 @@ class DatabaseChat {
   static Future<String> createNewChat(List<String> usernames) async {
     /// Creates a new chat from the usernames and a user
 
-    List<models.User> allUserList = await DatabaseUser.usersFromField(usernames);
+    final List<models.User> allUserList = await DatabaseUser.usersFromField(usernames);
 
     // members field of the new chat
-    List<String> members = allUserList.map<String>((models.User user) {
+    final List<String> members = allUserList.map<String>((models.User user) {
       return user.id;
     }).toList();
     members.sort();
     // Test the chat doesn't exists already
-    QuerySnapshot querySnapshot = await collections.chatCollection.where(models.ChatKeys.members, isEqualTo: members).getDocuments();
+    final QuerySnapshot querySnapshot = await collections.chatCollection.where(models.ChatKeys.members, isEqualTo: members).getDocuments();
     if (querySnapshot.documents.isNotEmpty) {
       // The chat already exists
-      return Future.error('A chat already exists with these users');
+      return Future<String>.error('A chat already exists with these users');
     }
 
     // * ----- Create the chat -----
@@ -58,17 +60,17 @@ class DatabaseChat {
       name: '',
       members: members,
     );
-    DocumentReference documentReference = await collections.chatCollection.add(newChat.toFirebaseObject());
-    String chatid = documentReference.documentID;
+    final DocumentReference documentReference = await collections.chatCollection.add(newChat.toFirebaseObject());
+    final String chatid = documentReference.documentID;
     newChat.id = chatid;
 
     if (chatid == null) {
-      return Future.error('Could not create the new chat');
+      return Future<String>.error('Could not create the new chat');
     }
 //    await collections.chatCollection.document(chatid).updateData({
 //      'id': chatid,
 //    });
-    await DatabaseChat(chatId: chatid).update({
+    await DatabaseChat(chatId: chatid).update(<String, String>{
       models.ChatKeys.id: chatid,
     });
     // * ----- Update the users -----
@@ -81,34 +83,34 @@ class DatabaseChat {
 //        'chats': user.toFirebaseObject()['chats'], // Only update the chats to prevent bugs
 //      });
     });
-    return Future.value(chatid);
+    return Future<String>.value(chatid);
   }
 
-  Future update(obj) async {
+  Future<void> update(Map<String, dynamic> obj) async {
     return await chatCollection.document(chatId).updateData(obj);
   }
 
 
   Future updateMembers(List<String> usernames) async {
 
-    List<models.User> allUserList = await DatabaseUser.usersFromField(usernames);
-    DocumentSnapshot documentSnapshot = await chatCollection.document(chatId).get();
+    final List<models.User> allUserList = await DatabaseUser.usersFromField(usernames);
+    final DocumentSnapshot documentSnapshot = await chatCollection.document(chatId).get();
     models.Chat chat = chatFromDocumentSnapshot(documentSnapshot);
 
     // members field of the new chat
-    List<String> members = allUserList.map<String>((models.User user) {
+    final List<String> members = allUserList.map<String>((models.User user) {
       return user.id;
     }).toList();
     members.sort();
 
-    List<models.User> membersToUpdate = allUserList.where((models.User user) {
+    final List<models.User> membersToUpdate = allUserList.where((models.User user) {
       return !user.chats.contains(chatId);
     }).toList();
 
     if (chat.members == members || membersToUpdate.isEmpty) {
-      return Future.value('No changes of members');
+      return Future<String>.value('No changes of members');
     }
-    await update({
+    await update(<String, List<String>>{
       models.ChatKeys.members: members
     });
     membersToUpdate.forEach((models.User user) {
@@ -117,14 +119,14 @@ class DatabaseChat {
         models.UserKeys.chats: user.toFirebaseObject()[models.UserKeys.chats], // Only update the chats to prevent bugs
       });
     });
-    return Future.value(null);
+    return Future<void>.value(null);
   }
 
   /// Delete the chat
   Future delete({List<models.User> members}) async {
     // Reconstruct members if not provided
     if (members == null) {
-      models.Chat chat = await this.chatFuture;
+      final models.Chat chat = await chatFuture;
       members = await DatabaseUser.usersFromField(chat.members, fieldName: 'id');
     }
 
