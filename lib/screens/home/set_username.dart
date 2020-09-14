@@ -14,7 +14,7 @@ class SetUsername extends StatefulWidget {
 }
 
 class _SetUsernameState extends State<SetUsername> {
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final RegExp usernameRegExp = RegExp(r'^[a-zA-Z0-9_-]*$');
   bool loading = false;
   String username = '';
@@ -22,15 +22,15 @@ class _SetUsernameState extends State<SetUsername> {
 
   @override
   Widget build(BuildContext context) {
-    User user = Provider.of<User>(context);
-    double height = MediaQuery.of(context).size.height;
+    final User user = Provider.of<User>(context);
+    final double height = MediaQuery.of(context).size.height;
 
-    void _validate() async {
+    Future<void> _validate() async {
       if (_formKey.currentState.validate()) {
         setState(() {
           loading = true;
         });
-        QuerySnapshot documents = await userCollection.where(UserKeys.username, isEqualTo: username).getDocuments();
+        final QuerySnapshot documents = await userCollection.where(UserKeys.username, isEqualTo: username).getDocuments();
         if (documents.documents.isNotEmpty) {
           // There is already a user with this username
           setState(() {
@@ -41,7 +41,7 @@ class _SetUsernameState extends State<SetUsername> {
           // Username doesn't exist -> update the user record
           user.username = username;
           user.name = username;
-          await DatabaseUser.createUser(user: user).catchError((errorMessage) {
+          await DatabaseUser.createUser(user: user).catchError((String errorMessage) {
             setState(() {
               errorMessage = 'Could not set the username $username';
               loading = false;
@@ -49,35 +49,34 @@ class _SetUsernameState extends State<SetUsername> {
           });
         }
       }
-
     }
 
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
         backgroundColor: Colors.blueGrey[800],
-        title: Text('Nitwixt'),
+        title: const Text('Nitwixt'),
         leading: IconButton(
           onPressed: () => AuthService().signOut(),
-          icon: Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios),
         ),
       ),
       body: SingleChildScrollView(
         child: SizedBox(
           height: height,
           child: Container(
-            padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+            padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
             child: Form(
               key: _formKey,
               child: Column(
                 children: <Widget>[
-                  SizedBox(height: 50.0),
+                  const SizedBox(height: 50.0),
                   Text('Choose a username',
                       style: TextStyle(
                         color: Colors.grey[300],
                         fontSize: 20.0,
                       )),
-                  SizedBox(
+                  const SizedBox(
                     height: 10.0,
                   ),
                   TextFormField(
@@ -86,8 +85,8 @@ class _SetUsernameState extends State<SetUsername> {
                       hintText: 'Username',
                       labelText: 'Username',
                     ),
-                    style: TextStyle(color: Colors.white),
-                    validator: (val) {
+                    style: const TextStyle(color: Colors.white),
+                    validator: (String val) {
                       if (val.isEmpty) {
                         return 'Enter a username';
                       } else if (!usernameRegExp.hasMatch(val)) {
@@ -99,7 +98,7 @@ class _SetUsernameState extends State<SetUsername> {
                       setState(() => username = val);
                     },
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10.0,
                   ),
                   ButtonSimple(
@@ -110,16 +109,12 @@ class _SetUsernameState extends State<SetUsername> {
                   ),
                   Text(
                     errorMessage,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.red,
                       fontSize: 15.0,
                     ),
                   ),
-                  loading
-                      ? LoadingCircle()
-                      : Container(
-                          height: 0.0,
-                        ),
+                  if (loading) LoadingCircle(),
                 ],
               ),
             ),

@@ -19,10 +19,10 @@ class _NewChatDialogState extends State<NewChatDialog> {
   String error = '';
   bool isLoading = false;
 
-  ListInputController listInputController = ListInputController(values: List<String>.from(['']));
+  ListInputController listInputController = ListInputController(values: List<String>.from(<String>['']));
 
   List<String> duplicatedUsernames() {
-    List<String> _duplicatedUsernames = new List<String>();
+    final List<String> _duplicatedUsernames = <String>[];
     listInputController.values.forEach((String username) {
       if (listInputController.values.indexOf(username) != listInputController.values.lastIndexOf(username) &&
           !_duplicatedUsernames.contains(username)) {
@@ -40,7 +40,7 @@ class _NewChatDialogState extends State<NewChatDialog> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(40.0),
       ),
-      backgroundColor: Color(0xFF202020),
+      backgroundColor: const Color(0xFF202020),
       content: Container(
         width: double.maxFinite,
         child: SingleChildScrollView(
@@ -49,17 +49,17 @@ class _NewChatDialogState extends State<NewChatDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text(
+                const Text(
                   'Select the usernames of the members',
                   style: TextStyle(color: Colors.grey, fontSize: 18.0),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 10.0),
+                const SizedBox(height: 10.0),
                 ListInput(
                   controller: listInputController,
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   hintText: 'Username',
-                  validator: (val) {
+                  validator: (String val) {
                     if (val.trim().isEmpty) {
                       return 'Enter username';
                     } else if (val == user.username) {
@@ -68,15 +68,16 @@ class _NewChatDialogState extends State<NewChatDialog> {
                     return null;
                   },
                 ),
-                SizedBox(height: 10.0),
-                isLoading
-                    ? LoadingCircle()
-                    : Text(
-                        error,
-                        style: TextStyle(color: Colors.red),
-                        textAlign: TextAlign.center,
-                      ),
-                SizedBox(height: 10.0),
+                const SizedBox(height: 10.0),
+                if (isLoading)
+                  LoadingCircle()
+                else
+                  Text(
+                    error,
+                    style: const TextStyle(color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
+                const SizedBox(height: 10.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
@@ -88,12 +89,12 @@ class _NewChatDialogState extends State<NewChatDialog> {
                       text: 'Cancel',
                       fontSize: 15.0,
                     ),
-                    SizedBox(width: 5.0),
+                    const SizedBox(width: 5.0),
                     ButtonSimple(
                       onTap: () async {
                         if (_formKey.currentState.validate()) {
                           // Test if a username is entered twice
-                          List<String> duplicatedEnterredUsernames = duplicatedUsernames();
+                          final List<String> duplicatedEnterredUsernames = duplicatedUsernames();
                           if (duplicatedEnterredUsernames.isNotEmpty) {
                             // Duplicates
                             setState(() {
@@ -106,12 +107,12 @@ class _NewChatDialogState extends State<NewChatDialog> {
                               isLoading = true;
                             });
                             try {
-                              String chatId = await database.DatabaseChat.createNewChat(listInputController.values + [user.username]);
+                              final String chatId = await database.DatabaseChat.createNewChat(listInputController.values + [user.username]);
                               setState(() {
                                 isLoading = false;
                                 error = '';
                               });
-                              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (contextMaterialRoute) {
+                              Navigator.of(context).pushReplacement(MaterialPageRoute<ChatProvider>(builder: (BuildContext contextMaterialRoute) {
                                 return ChatProvider(
                                   id: chatId,
                                   child: ChatHome(),
@@ -120,7 +121,7 @@ class _NewChatDialogState extends State<NewChatDialog> {
                             } catch (err) {
                               setState(() {
                                 isLoading = false;
-                                error = err;
+                                error = err.toString();
                               });
                             }
                           }
