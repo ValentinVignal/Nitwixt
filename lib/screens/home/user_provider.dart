@@ -52,7 +52,7 @@ class UserReceiver extends StatelessWidget {
     } else {
       if (userAuth.hasPhoto && (userAuth.photoUrl != user.defaultPictureUrl)) {
 //        user.defaultPhotoUrl = userAuth.photoUrl;
-        database.DatabaseUser(id: user.id).update({
+        database.DatabaseUser(id: user.id).update(<String, dynamic>{
           models.UserKeys.defaultPictureUrl: user.toFirebaseObject()[models.UserKeys.defaultPictureUrl],
         });
       }

@@ -94,7 +94,7 @@ class _NotificationsWrapperState extends State<NotificationsWrapper> {
         pushToken = models.PushToken(current: token);
         await database.DatabasePushToken(id: user.id).newToken(token);
         return pushToken;
-      }).catchError((String err) {
+      }).catchError((dynamic err) {
         print('err $err');
         Fluttertoast.showToast(msg: err.toString());
       }),
