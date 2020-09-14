@@ -47,14 +47,14 @@ class _ChatInfo extends State<ChatInfo> {
     final database.DatabaseChat _databaseChat = database.DatabaseChat(chatId: chat.id);
 
     void _showDeleteChatPanel() {
-      showDialog(
+      showDialog<DeleteChatDialog>(
         context: context,
-        builder: ((BuildContext contextDialog) {
+        builder: (BuildContext contextDialog) {
           return DeleteChatDialog(
             chat: chat,
             members: members,
           );
-        }),
+        },
       );
     }
 
@@ -62,7 +62,7 @@ class _ChatInfo extends State<ChatInfo> {
       return _isEditing && (user.name != _textControllerName.text.trim() || _listInputController.isNotEmpty || image != null);
     }
 
-    void _applyChanges() async {
+    Future<void> _applyChanges() async {
       if (_hasChanges()) {
         if (_formKey.currentState.validate()) {
           setState(() {
@@ -71,7 +71,7 @@ class _ChatInfo extends State<ChatInfo> {
           try {
             // * ----- Name -----
             if (user.name != _textControllerName.text.trim()) {
-              await _databaseChat.update({
+              await _databaseChat.update(<String, String>{
                 models.ChatKeys.name: _textControllerName.text.trim(),
               });
               setState(() {
@@ -80,7 +80,7 @@ class _ChatInfo extends State<ChatInfo> {
             }
             // * ----- Members -----
             if (_listInputController.isNotEmpty) {
-              List<String> allUsernames = _listInputController.values +
+              final List<String> allUsernames = _listInputController.values +
                   members.values.map<String>((models.User user) {
                     return user.username;
                   }).toList();
@@ -119,36 +119,36 @@ class _ChatInfo extends State<ChatInfo> {
       });
     }
 
-    Future getImage() async {
-      PickedFile tempImage = await _imagePicker.getImage(source: ImageSource.gallery);
+    Future<void> getImage() async {
+      final PickedFile tempImage = await _imagePicker.getImage(source: ImageSource.gallery);
       setState(() {
         image = File(tempImage.path);
       });
     }
 
-    Widget imageWidget = Center(
+    final Widget imageWidget = Center(
       child: Stack(
         children: <Widget>[
-          image != null
-              ? CircleAvatar(
-                  backgroundImage: Image.file(image).image,
-                  radius: 40,
-                )
-              : ChatPicture(
-                  chat: chat,
-                  user: user,
-                  size: 40.0,
-                ),
-          _isEditing
-              ? IconButton(
-                  enableFeedback: _isEditing,
-                  icon: Icon(
-                    Icons.edit,
-                    color: Colors.grey,
-                  ),
-                  onPressed: _isEditing ? getImage : null,
-                )
-              : SizedBox.shrink(),
+          if (image != null)
+            CircleAvatar(
+              backgroundImage: Image.file(image).image,
+              radius: 40,
+            )
+          else
+            ChatPicture(
+              chat: chat,
+              user: user,
+              size: 40.0,
+            ),
+          if (_isEditing)
+            IconButton(
+              enableFeedback: _isEditing,
+              icon: const Icon(
+                Icons.edit,
+                color: Colors.grey,
+              ),
+              onPressed: _isEditing ? getImage : null,
+            )
         ],
       ),
     );
@@ -166,19 +166,25 @@ class _ChatInfo extends State<ChatInfo> {
               );
             } else {
               if (snapshot.hasError) {
-                return Text(
+                return const Text(
                   'Could not display name',
                   style: TextStyle(color: Colors.red, fontSize: 18.0),
                 );
               } else {
-                return Text(snapshot.data, style: TextStyle(color: Colors.white, fontSize: 18.0));
+                return Text(
+                  snapshot.data,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18.0,
+                  ),
+                );
               }
             }
           },
         ),
         backgroundColor: Colors.black,
-        leading: new IconButton(
-          icon: Icon(Icons.arrow_back_ios),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -188,14 +194,11 @@ class _ChatInfo extends State<ChatInfo> {
             icon: Icon(_isEditing ? Icons.done : Icons.edit),
             onPressed: _applyChanges,
           ),
-          _isEditing
-              ? IconButton(
-                  icon: Icon(Icons.close),
-                  onPressed: _cancelChanges,
-                )
-              : SizedBox(
-                  width: 0.0,
-                ),
+          if (_isEditing)
+            IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: _cancelChanges,
+            ),
         ],
       ),
 //      body: isEditing ? AccountEdit() : AccountInfo(),
@@ -207,30 +210,27 @@ class _ChatInfo extends State<ChatInfo> {
               child: ListView(
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
-                padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+                padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
                 children: <Widget>[
-                  error.isEmpty
-                      ? SizedBox(
-                          height: 0.0,
-                        )
-                      : Text(
-                          error,
-                          style: TextStyle(color: Colors.red),
-                        ),
+                  if (error.isNotEmpty)
+                    Text(
+                      error,
+                      style: const TextStyle(color: Colors.red),
+                    ),
                   // Name
                   SizedBox(height: error.isEmpty ? 0.0 : 10.0),
                   imageWidget,
-                  SizedBox(height: 10.0),
+                  const SizedBox(height: 10.0),
                   TextInfo(
                     title: 'Name',
                     mode: _isEditing ? TextInfoMode.edit : TextInfoMode.show,
                     controller: _textControllerName,
                     scrollDirection: Axis.horizontal,
                   ),
-                  Divider(
+                  const Divider(
                     color: Colors.blueGrey,
                   ),
-                  Text(
+                  const Text(
                     'Members',
                     style: TextStyle(
                       color: Colors.lightBlue,
@@ -240,11 +240,11 @@ class _ChatInfo extends State<ChatInfo> {
                   ),
                   ListView.builder(
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: members.length,
-                    itemBuilder: (contextList, index) {
-                      models.User member = members.values.toList()[index];
-                      String username_ = member.id == user.id ? '(@You) ${member.username}' : member.username;
+                    itemBuilder: (BuildContext contextList, int index) {
+                      final models.User member = members.values.toList()[index];
+                      final String username_ = member.id == user.id ? '(@You) ${member.username}' : member.username;
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
@@ -255,7 +255,7 @@ class _ChatInfo extends State<ChatInfo> {
                               user: member,
                               size: 20.0,
                             ),
-                            padding: EdgeInsets.all(5.0),
+                            padding: const EdgeInsets.all(5.0),
                           ),
                           Flexible(
                             child: TextInfoSubtitle(
@@ -269,96 +269,95 @@ class _ChatInfo extends State<ChatInfo> {
                       );
                     },
                   ),
-                  _isEditing
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            ListInput(
-                              controller: _listInputController,
-                              physics: NeverScrollableScrollPhysics(),
-                              hintText: 'Username',
-                              validator: (val) {
-                                if (val.trim().isEmpty) {
-                                  return 'Enter username';
-                                } else if (val == user.username) {
-                                  return 'Enter another username than yours';
-                                } else if (members.values
-                                    .map((models.User member) {
-                                      return member.username;
-                                    })
-                                    .toList()
-                                    .contains(val)) {
-                                  return '"$val" is already in the chat';
-                                }
-                                return null;
-                              },
-                            ),
-                            SizedBox(height: 100.0),
-                            Divider(
-                              color: Colors.red[900],
-                            ),
-                            Container(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: <Widget>[
-                                  RichText(
-                                    text: TextSpan(
-                                      children: [
-                                        WidgetSpan(
-                                          child: Icon(
-                                            Icons.warning,
-                                            color: Colors.red[900],
-                                            size: 20.0,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: '   Danger Zone   ',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.red[900],
-                                            fontSize: 20.0,
-                                          ),
-                                        ),
-                                        WidgetSpan(
-                                          child: Icon(
-                                            Icons.warning,
-                                            color: Colors.red[900],
-                                            size: 20.0,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  SizedBox(height: 20.0),
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      ButtonSimple(
+                  if (_isEditing)
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        ListInput(
+                          controller: _listInputController,
+                          physics: const NeverScrollableScrollPhysics(),
+                          hintText: 'Username',
+                          validator: (String val) {
+                            if (val.trim().isEmpty) {
+                              return 'Enter username';
+                            } else if (val == user.username) {
+                              return 'Enter another username than yours';
+                            } else if (members.values
+                                .map((models.User member) {
+                                  return member.username;
+                                })
+                                .toList()
+                                .contains(val)) {
+                              return '"$val" is already in the chat';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 100.0),
+                        Divider(
+                          color: Colors.red[900],
+                        ),
+                        Container(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              RichText(
+                                text: TextSpan(
+                                  children: <InlineSpan>[
+                                    WidgetSpan(
+                                      child: Icon(
+                                        Icons.warning,
                                         color: Colors.red[900],
-                                        text: 'Delete Chat',
-                                        icon: Icons.delete,
-                                        onTap: () {
-                                          _showDeleteChatPanel();
-                                        },
+                                        size: 20.0,
                                       ),
-                                    ],
-                                  )
-                                ],
+                                    ),
+                                    TextSpan(
+                                      text: '   Danger Zone   ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red[900],
+                                        fontSize: 20.0,
+                                      ),
+                                    ),
+                                    WidgetSpan(
+                                      child: Icon(
+                                        Icons.warning,
+                                        color: Colors.red[900],
+                                        size: 20.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                textAlign: TextAlign.center,
                               ),
-                            )
-                          ],
+                              const SizedBox(height: 20.0),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  ButtonSimple(
+                                    color: Colors.red[900],
+                                    text: 'Delete Chat',
+                                    icon: Icons.delete,
+                                    onTap: () {
+                                      _showDeleteChatPanel();
+                                    },
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
                         )
-                      : SizedBox(height: 0.0),
+                      ],
+                    )
                 ],
               ),
             ),
           ),
-          loading ? LoadingCircle() : SizedBox(width: 0.0, height: 0.0),
+          if (loading) LoadingCircle(),
         ],
       ),
     );

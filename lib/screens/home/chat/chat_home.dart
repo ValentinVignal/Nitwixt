@@ -79,9 +79,9 @@ class _ChatHomeState extends State<ChatHome> {
               IconButton(
                 icon: const Icon(Icons.info_outline),
                 onPressed: () {
-                  _navigatorKey.currentState.push(
-                    MaterialPageRoute(
-                      builder: (context) => ChatInfo(),
+                  _navigatorKey.currentState.push<ChatInfo>(
+                    MaterialPageRoute<ChatInfo>(
+                      builder: (BuildContext context) => ChatInfo(),
                     ),
                   );
                 },

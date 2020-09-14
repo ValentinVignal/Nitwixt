@@ -13,20 +13,6 @@ class UserKeys {
 
 // Public user
 class User {
-  // * -------------------- Attributes --------------------
-
-  String id = ''; // The id of the user
-  String username = ''; // The username of the user
-  String name = 'New User'; // The name to display
-  List<String> chats = [];
-  List<String> pushToken = [];
-  String defaultPictureUrl;
-
-  // ----------------------------------------
-
-  PictureUrl _pictureUrl = PictureUrl();
-
-
   // * -------------------- Constructor --------------------
 
   User({
@@ -38,63 +24,78 @@ class User {
     this.defaultPictureUrl='',
   });
 
+  User.fromFirebaseObject(this.id, Map<String, dynamic> firebaseObject) {
+    if (firebaseObject != null) {
+      username = firebaseObject.containsKey(UserKeys.username) ? firebaseObject[UserKeys.username] as String : '';
+      name = firebaseObject.containsKey(UserKeys.name) ? firebaseObject[UserKeys.name] as String : '';
+      chats = firebaseObject.containsKey(UserKeys.chats) ? List<String>.from(firebaseObject[UserKeys.chats] as Iterable<dynamic>) : <String>[];
+      pushToken = firebaseObject.containsKey(UserKeys.pushToken) ? List<String>.from(firebaseObject[UserKeys.pushToken] as Iterable<dynamic>) : <String>[];
+      defaultPictureUrl = firebaseObject.containsKey(UserKeys.defaultPictureUrl) ? firebaseObject[UserKeys.defaultPictureUrl] as String : '';
+    }
+  }
+
+
+  // * -------------------- Attributes --------------------
+
+  String id = ''; // The id of the user
+  String username = ''; // The username of the user
+  String name = 'New User'; // The name to display
+  List<String> chats = <String>[];
+  List<String> pushToken = <String>[];
+  String defaultPictureUrl;
+
+  // ----------------------------------------
+
+  final PictureUrl _pictureUrl = PictureUrl();
+
+
   // * -------------------- To Public --------------------
 
   // * -------------------- Link with firebase database  --------------------
 
   Map<String, Object> toFirebaseObject() {
-    this.chats.sort();
-    return {
-      UserKeys.id: this.id,
-      UserKeys.username: this.username,
-      UserKeys.name: this.name,
-      UserKeys.chats: this.chats,
-      UserKeys.pushToken: this.pushToken,
-      UserKeys.defaultPictureUrl: this.defaultPictureUrl,
+    chats.sort();
+    return <String, dynamic>{
+      UserKeys.id: id,
+      UserKeys.username: username,
+      UserKeys.name: name,
+      UserKeys.chats: chats,
+      UserKeys.pushToken: pushToken,
+      UserKeys.defaultPictureUrl: defaultPictureUrl,
     };
   }
 
-  User.fromFirebaseObject(String id, Map firebaseObject) : id = id {
-    if (firebaseObject != null) {
-      this.username = firebaseObject.containsKey(UserKeys.username) ? firebaseObject[UserKeys.username] : '';
-      this.name = firebaseObject.containsKey(UserKeys.name) ? firebaseObject[UserKeys.name] : '';
-      this.chats = firebaseObject.containsKey(UserKeys.chats) ? List.from(firebaseObject[UserKeys.chats]) : [];
-      this.pushToken = firebaseObject.containsKey(UserKeys.pushToken) ? List.from(firebaseObject[UserKeys.pushToken]) : [];
-      this.defaultPictureUrl = firebaseObject.containsKey(UserKeys.defaultPictureUrl) ? firebaseObject[UserKeys.defaultPictureUrl] : '';
-    }
-  }
-
   bool get hasUsername {
-    return this.username != null && this.username.isNotEmpty;
+    return username != null && username.isNotEmpty;
   }
 
   bool get hasNoUsername {
-    return !this.hasUsername;
+    return !hasUsername;
   }
 
   // * -------------------- Profile Picture --------------------
 
   String get picturePath {
-    return 'users/${this.id}/picture';
+    return 'users/$id/picture';
   }
 
   Future<String> get pictureUrl async {
-    if (this._pictureUrl.isEmpty && this._pictureUrl.hasUrl) {
-      String url = await DatabaseFiles(path: this.picturePath).url;
-      this._pictureUrl.url = url.isNotEmpty ? url: this.defaultPictureUrl;
-      if (this._pictureUrl.isEmpty) {
-        this._pictureUrl.hasUrl = false;
+    if (_pictureUrl.isEmpty && _pictureUrl.hasUrl) {
+      final String url = await DatabaseFiles(path: picturePath).url;
+      _pictureUrl.url = url.isNotEmpty ? url: defaultPictureUrl;
+      if (_pictureUrl.isEmpty) {
+        _pictureUrl.hasUrl = false;
       }
     }
-    return this._pictureUrl.getUrl(defaultAdorableAvatar: this.username ?? this.id);
+    return _pictureUrl.getUrl(defaultAdorableAvatar: username ?? id);
   }
 
   Future<String> emptyPictureUrl ({bool reload=false}) async {
-    this._pictureUrl.empty();
+    _pictureUrl.empty();
     if (reload) {
-      return this.pictureUrl;
+      return pictureUrl;
     }
-    return this._pictureUrl.url;
+    return _pictureUrl.url;
   }
 }
 

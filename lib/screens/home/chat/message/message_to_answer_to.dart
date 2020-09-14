@@ -20,6 +20,10 @@ class MessageToAnswerTo extends StatelessWidget {
         color: backgroundColor,
         child: Row(
           children: <Widget>[
+            Icon(
+              Icons.reply,
+              color: color,
+            ),
             Expanded(
               child: Text(
                 message.text.replaceAll('\n', ' '),

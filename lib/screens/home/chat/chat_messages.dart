@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:nitwixt/screens/home/chat/message/edited_message.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -10,48 +11,9 @@ import 'package:nitwixt/widgets/widgets.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/services/database/database.dart' as database;
 
+import 'chat_messages_cache.dart';
 import 'message/message_tile.dart';
 import 'message/message_to_answer_to.dart';
-
-class ChatMessagesCache {
-  ChatMessagesCache();
-
-  final Map<String, models.Message> messages = <String, models.Message>{};
-  final Map<String, Widget> widgets = <String, Widget>{};
-
-  bool get isEmpty => messages.isEmpty;
-
-  bool get isNotEmpty => messages.isNotEmpty;
-
-  void addMessage(models.Message message, Widget widget) {
-    if (!messages.containsKey(message.id) || !messages[message.id].equals(message)) {
-      messages[message.id] = message.copy();
-      widgets[message.id] = widget;
-    }
-  }
-
-  void addMessageList(List<models.Message> messageList, List<Widget> widgetList) {
-    for (int i = 0; i < messageList.length; i++) {
-      addMessage(messageList[i], widgetList[i]);
-    }
-    _removeOthers(messageList);
-  }
-
-  List<models.Message> get messageList {
-    final List<models.Message> list = messages.values.toList();
-    list.sort((models.Message message1, models.Message message2) {
-      return message2.date.compareTo(message1.date);
-    });
-    return list;
-  }
-
-  void _removeOthers(List<models.Message> messageList) {
-    final List<String> existingIds = messageList.map<String>((models.Message message) {
-      return message.id;
-    }).toList();
-    messages.removeWhere((String key, models.Message value) => !existingIds.contains(key));
-  }
-}
 
 class ChatMessages extends StatefulWidget {
   @override
@@ -68,6 +30,7 @@ class _ChatMessagesState extends State<ChatMessages> {
   final PopupController _popupController = PopupController();
 
   models.Message messageToAnswer;
+  models.Message messageToEdit;
 
   final ChatMessagesCache _chatMessagesCache = ChatMessagesCache();
 
@@ -98,21 +61,48 @@ class _ChatMessagesState extends State<ChatMessages> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     final models.User user = Provider.of<models.User>(context);
     final models.Chat chat = Provider.of<models.Chat>(context);
     final database.DatabaseMessage _databaseMessage = database.DatabaseMessage(chatId: chat.id);
 
+    Future<void> setMessageToEdit(models.Message message) async {
+      models.Message previousMessage;
+      if (message != null && message.previousMessageId != null) {
+        try {
+          previousMessage = await _databaseMessage.getMessageFuture(message.previousMessageId);
+        } catch (e) {
+          print('error setting previous message: $e');
+        }
+      }
+      setState(() {
+        messageToAnswer = previousMessage;
+        messageToEdit = message;
+      });
+    }
+
     void _sendMessage({String text, File image}) {
       if (text.trim().isNotEmpty || image != null) {
-        _databaseMessage.send(
-          text: text.trim(),
-          userid: user.id,
-          previousMessageId: messageToAnswer != null ? messageToAnswer.id : null,
-          image: image,
-        );
+        if (messageToEdit == null) {
+          _databaseMessage.send(
+            text: text.trim(),
+            userid: user.id,
+            previousMessageId: messageToAnswer != null ? messageToAnswer.id : null,
+            image: image,
+          );
+        } else {
+          _databaseMessage.updateMessage(
+            messageId: messageToEdit.id,
+            obj: <String, String>{
+              models.MessageKeys.text: text.trim(),
+              models.MessageKeys.previousMessageId: messageToAnswer != null ? messageToAnswer.id : null,
+            }
+          );
+        }
         setMessageToAnswer(null);
+        setMessageToEdit(null);
       }
     }
 
@@ -137,20 +127,22 @@ class _ChatMessagesState extends State<ChatMessages> {
       stream: _databaseMessage.getList(limit: _nbMessages),
       builder: (BuildContext context, AsyncSnapshot<List<models.Message>> snapshot) {
         if (snapshot.hasData) {
-          _chatMessagesCache.addMessageList(snapshot.data, snapshot.data.map((models.Message message) {
-            return MessageTile(
-              message: message,
-              reactButtonOnTap: (models.Message message) {
-                _popupController.show();
-                _popupController.object = message;
-              },
-              onAnswerDrag: (models.Message message) {
-                setMessageToAnswer(message);
-              },
-            );
-          }).toList());
+          _chatMessagesCache.addMessageList(
+            snapshot.data,
+            snapshot.data.map((models.Message message) {
+              return MessageTile(
+                message: message,
+                reactButtonOnTap: (models.Message message) {
+                  _popupController.show();
+                  _popupController.object = message;
+                },
+                onAnswer: setMessageToAnswer,
+                onEdit: setMessageToEdit,
+              );
+            }).toList(),
+          );
         }
-        if (!snapshot.hasData &&_chatMessagesCache.isEmpty) {
+        if (!snapshot.hasData && _chatMessagesCache.isEmpty) {
           return LoadingCircle();
         }
         return Column(
@@ -198,12 +190,21 @@ class _ChatMessagesState extends State<ChatMessages> {
                   setMessageToAnswer(null);
                 },
               ),
+            if (messageToEdit != null)
+              EditedMessage(
+                message: messageToEdit,
+                onCancel: () {
+                  setMessageToEdit(null);
+                },
+              ),
             InputTextMessage(
               sendMessage: _sendMessage,
+              sendIcon: messageToEdit == null ? Icons.send : Icons.check,
+              initialText: messageToEdit != null ? messageToEdit.text : null,
+              allowImages: messageToEdit == null,
             )
           ],
         );
-
       },
     );
   }
