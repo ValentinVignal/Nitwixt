@@ -1,3 +1,4 @@
+import 'package:nitwixt/screens/home/settings/settings.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -97,11 +98,8 @@ class _HomeState extends State<Home> {
 
     return Scaffold(
         key: _scaffoldKey,
-//        backgroundColor: Colors.grey[900],
         appBar: AppBar(
           title: const Text('Nitwixt'),
-//          backgroundColor: Colors.grey[900],
-//          backgroundColor: Colors.black,
           elevation: 0.0,
           leading: Padding(
             padding: const EdgeInsets.all(5.0),
@@ -123,11 +121,7 @@ class _HomeState extends State<Home> {
                         }
                       case PopupMenuOptions.settings:
                         {
-//                        Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
-                          const SnackBar snackbar = SnackBar(
-                            content: Text('No setting available for now'),
-                          );
-                          Scaffold.of(context).showSnackBar(snackbar);
+                          Navigator.of(context).push<Settings>(MaterialPageRoute<Settings>(builder: (BuildContext context) => Settings()));
                           break;
                         }
                       case PopupMenuOptions.logout:

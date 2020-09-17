@@ -14,7 +14,7 @@ class Account extends StatefulWidget {
 }
 
 class _AccountState extends State<Account> {
-  // * -------------------- Attributs -----------------------------
+  // * -------------------- Attributes -----------------------------
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -33,8 +33,8 @@ class _AccountState extends State<Account> {
     super.dispose();
   }
 
-  Future getImage() async {
-    PickedFile tempImage = await _imagePicker.getImage(source: ImageSource.gallery);
+  Future<void> getImage() async {
+    final PickedFile tempImage = await _imagePicker.getImage(source: ImageSource.gallery);
     setState(() {
       image = File(tempImage.path);
     });
@@ -42,10 +42,10 @@ class _AccountState extends State<Account> {
 
   @override
   Widget build(BuildContext context) {
-    // * -------------------- Attributs -----------------------------
+    // * -------------------- Attributes -----------------------------
 
-    final userAuth = Provider.of<UserAuth>(context);
-    final user = Provider.of<User>(context);
+    final UserAuth userAuth = Provider.of<UserAuth>(context);
+    final User user = Provider.of<User>(context);
     if (!_isEditing) {
       _textControllerName.text = user.name;
     }
@@ -57,7 +57,7 @@ class _AccountState extends State<Account> {
       return (user.name != _textControllerName.text.trim()) || (image != null);
     }
 
-    void confirmChanges() async {
+    Future<void> confirmChanges() async {
       if (_isEditing && hasAChange()) {
         try {
           if (_formKey.currentState.validate()) {
@@ -104,30 +104,30 @@ class _AccountState extends State<Account> {
       });
     }
 
-    // * -------------------- Widget -----------------------------
+    // * -------------------- Widgets -----------------------------
 
-    Widget imageWidget = Center(
+    final Widget imageWidget = Center(
       child: Stack(
         children: <Widget>[
-          image != null
-              ? CircleAvatar(
-                  backgroundImage: Image.file(image, height: 200, width: 200.0).image,
-                  radius: 50,
-                )
-              : UserPicture(
-                  user: user,
-                  size: 40.0,
-                ),
-          _isEditing
-              ? IconButton(
-                  enableFeedback: _isEditing,
-                  icon: Icon(
-                    Icons.edit,
-                    color: Colors.grey,
-                  ),
-                  onPressed: _isEditing ? getImage : null,
-                )
-              : SizedBox.shrink(),
+          if (image != null)
+            CircleAvatar(
+              backgroundImage: Image.file(image, height: 200, width: 200.0).image,
+              radius: 50,
+            )
+          else
+            UserPicture(
+              user: user,
+              size: 40.0,
+            ),
+          if (_isEditing)
+            IconButton(
+              enableFeedback: _isEditing,
+              icon: const Icon(
+                Icons.edit,
+                color: Colors.grey,
+              ),
+              onPressed: _isEditing ? getImage : null,
+            ),
         ],
       ),
     );
@@ -135,11 +135,11 @@ class _AccountState extends State<Account> {
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
-        title: Text('Account'),
+        title: const Text('Account'),
 //        backgroundColor: Colors.blueGrey[800],
         backgroundColor: Colors.black,
-        leading: new IconButton(
-          icon: Icon(Icons.arrow_back_ios),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -149,34 +149,27 @@ class _AccountState extends State<Account> {
             icon: Icon(_isEditing ? Icons.done : Icons.edit),
             onPressed: confirmChanges,
           ),
-          _isEditing
-              ? IconButton(
-                  icon: Icon(Icons.close),
-                  onPressed: cancelChanges,
-                )
-              : SizedBox(
-                  width: 0.0,
-                ),
+          if (_isEditing)
+            IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: cancelChanges,
+            ),
         ],
       ),
-//      body: isEditing ? AccountEdit() : AccountInfo(),
       body: Stack(
         children: <Widget>[
-          loading ? LoadingCircle() : SizedBox(width: 0.0, height: 0.0),
+          if (loading) LoadingCircle(),
           Container(
             child: Form(
               key: _formKey,
               child: ListView(
-                padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+                padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
                 children: <Widget>[
-                  error.isEmpty
-                      ? SizedBox(
-                          height: 0.0,
-                        )
-                      : Text(
-                          error,
-                          style: TextStyle(color: Colors.red),
-                        ),
+                  if (error.isNotEmpty)
+                    Text(
+                      error,
+                      style: const TextStyle(color: Colors.red),
+                    ),
                   imageWidget,
                   // Username
                   TextInfo(
@@ -185,12 +178,11 @@ class _AccountState extends State<Account> {
                     mode: _isEditing ? TextInfoMode.blocked : TextInfoMode.show,
                   ),
                   // Name
-                  SizedBox(height: 10.0),
+                  const SizedBox(height: 10.0),
                   TextInfo(
                     title: 'Name',
-//                    value: user.name,
                     mode: _isEditing ? TextInfoMode.edit : TextInfoMode.show,
-                    validator: (val) {
+                    validator: (String val) {
                       if (val.trim().isEmpty) {
                         return 'Enter your name';
                       }
@@ -199,7 +191,7 @@ class _AccountState extends State<Account> {
                     controller: _textControllerName,
                     scrollDirection: Axis.horizontal,
                   ),
-                  SizedBox(height: 10.0),
+                  const SizedBox(height: 10.0),
                   TextInfo(
                     title: 'Email',
                     value: userAuth.email,
