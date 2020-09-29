@@ -1,15 +1,6 @@
 import 'package:flutter/material.dart';
 
 class ButtonSimple extends StatelessWidget {
-  final Function onTap;
-  final String text;
-  final Color color;
-  final double fontSize;
-  final IconData icon;
-  final double horizontalPadding;
-  final bool withBorder;
-  Color backgroundcolor;
-
   ButtonSimple({
     this.onTap,
     this.text = '',
@@ -20,35 +11,52 @@ class ButtonSimple extends StatelessWidget {
     this.withBorder = true,
     this.backgroundcolor,
   }) {
-    this.backgroundcolor ??= Color(0x00000000);
-}
+    backgroundcolor ??= Color(0x00000000);
+  }
+
+  final void Function() onTap;
+  final String text;
+  final Color color;
+  final double fontSize;
+  final IconData icon;
+  final double horizontalPadding;
+  final bool withBorder;
+  Color backgroundcolor;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: this.onTap,
+      onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(
           vertical: 5.0,
-          horizontal: this.horizontalPadding,
+          horizontal: horizontalPadding,
         ),
-        decoration: this.withBorder ? BoxDecoration(
-          borderRadius: BorderRadius.circular(20.0),
-          border: Border.all(
-            color: this.color,
-            width: 2.0,
-          ),
-          color: this.backgroundcolor,
-        ) : null,
+        decoration: withBorder
+            ? BoxDecoration(
+                borderRadius: BorderRadius.circular(20.0),
+                border: Border.all(
+                  color: color,
+                  width: 2.0,
+                ),
+                color: backgroundcolor,
+              )
+            : null,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            (this.icon == null) ? Container() : Icon(this.icon, color: this.color,),
-            SizedBox(width: (this.icon == null || this.text == null || this.text.isEmpty) ? 0.0 : 5.0),
+            if (icon == null)
+              Container()
+            else
+              Icon(
+                icon,
+                color: color,
+              ),
+            SizedBox(width: (icon == null || text == null || text.isEmpty) ? 0.0 : 5.0),
             Text(
-              this.text,
-              style: TextStyle(color: this.color, fontSize: this.fontSize),
+              text,
+              style: TextStyle(color: color, fontSize: fontSize),
             ),
           ],
         ),

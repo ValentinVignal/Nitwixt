@@ -4,74 +4,77 @@ import 'package:nitwixt/shared/constants.dart';
 import '../button_simple.dart';
 
 class ListInputController {
-  List<TextEditingController> textEditingControllerList;
 
   ListInputController({
     List<String> values,
   }) {
-    values = values ?? List<String>.from([]);
-    this.textEditingControllerList = List<TextEditingController>();
+    values = values ?? <String>[];
+    textEditingControllerList = <TextEditingController>[];
     values.forEach((String value) {
-      this.textEditingControllerList.add(_createTextEditingController(value));
+      textEditingControllerList.add(_createTextEditingController(value));
     });
   }
 
+  List<TextEditingController> textEditingControllerList;
+
   TextEditingController _createTextEditingController(String value) {
-    TextEditingController textEditingController = TextEditingController();
+    final TextEditingController textEditingController = TextEditingController();
     if (value != null) {
       textEditingController.text = value;
     }
     return textEditingController;
   }
 
-  void add(value) {
-    this.textEditingControllerList.add(_createTextEditingController(value));
+  void add(String value) {
+    textEditingControllerList.add(_createTextEditingController(value));
   }
 
-  void removeAt(index) {
-    TextEditingController textEditingController = this.textEditingControllerList.removeAt(index);
+  void removeAt(int index) {
+    TextEditingController textEditingController = textEditingControllerList.removeAt(index);
 //    textEditingController.dispose();
   }
 
   int get length {
-    return this.textEditingControllerList.length;
+    return textEditingControllerList.length;
   }
 
   List<String> get values {
-    return this.textEditingControllerList.map((TextEditingController textEditingController) {
+    return textEditingControllerList.map((TextEditingController textEditingController) {
       return textEditingController.text;
     }).toList();
   }
 
   void dispose() {
-    for (var value in textEditingControllerList) {
+    for (final TextEditingController value in textEditingControllerList) {
       value.dispose();
     }
   }
 
   bool get isEmpty {
-    return this.textEditingControllerList.isEmpty;
+    return textEditingControllerList.isEmpty;
   }
 
   bool get isNotEmpty {
-    return this.textEditingControllerList.isNotEmpty;
+    return textEditingControllerList.isNotEmpty;
   }
 }
 
 class ListInput extends StatefulWidget {
-  ListInputController controller;
-  ScrollPhysics physics;
-  bool shrinkWrap;
-  String hintText;
-  Function validator;
 
-  ListInput({
+  const ListInput({
     @required this.controller,
     this.physics,
     this.shrinkWrap = true,
     this.hintText,
     this.validator,
   }) : super();
+
+  final ListInputController controller;
+  final ScrollPhysics physics;
+  final bool shrinkWrap;
+  final String hintText;
+  final String Function(String) validator;
+
 
   @override
   _ListInputState createState() => _ListInputState();
@@ -98,7 +101,7 @@ class _ListInputState extends State<ListInput> {
               children: <Widget>[
                 Expanded(
                   child: TextFormField(
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                     decoration: textInputDecoration.copyWith(
                       hintText: widget.hintText,
                     ),
@@ -107,7 +110,7 @@ class _ListInputState extends State<ListInput> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.delete,
                     size: 30.0,
                     color: Colors.red,

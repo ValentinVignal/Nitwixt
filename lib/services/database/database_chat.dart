@@ -76,7 +76,7 @@ class DatabaseChat {
     // * ----- Update the users -----
     allUserList.forEach((models.User user) {
       user.chats.add(chatid);
-      DatabaseUser(id: user.id).update({
+      DatabaseUser(id: user.id).update(<String, dynamic>{
         models.UserKeys.chats: user.toFirebaseObject()[models.UserKeys.chats], // Only update the chats to prevent bugs
       });
 //      collections.userCollection.document(user.id).updateData({
@@ -115,7 +115,7 @@ class DatabaseChat {
     });
     membersToUpdate.forEach((models.User user) {
       user.chats.add(chatId);
-      DatabaseUser(id: user.id).update({
+      DatabaseUser(id: user.id).update(<String, dynamic>{
         models.UserKeys.chats: user.toFirebaseObject()[models.UserKeys.chats], // Only update the chats to prevent bugs
       });
     });
@@ -133,7 +133,7 @@ class DatabaseChat {
     // Delete the chat in the user documents
     members.forEach((models.User member) async {
       member.chats.remove(chatId);
-      await DatabaseUser(id: member.id).update({
+      await DatabaseUser(id: member.id).update(<String, dynamic>{
         models.UserKeys.chats: member.toFirebaseObject()[models.UserKeys.chats],
       });
     });

@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class DatabaseFiles {
-  String path;
-
   DatabaseFiles({
     this.path,
   });
 
+  String path;
+
   Future<bool> get exists async {
     bool _exists = true;
-    StorageReference storageReference = FirebaseStorage.instance.ref().child(this.path);
+    final StorageReference storageReference = FirebaseStorage.instance.ref().child(path);
     try {
       await storageReference.getDownloadURL();
     } on Exception catch (exc) {
@@ -25,8 +25,8 @@ class DatabaseFiles {
   Future<String> get url async {
     String downloadURL;
     try {
-      StorageReference storageReference = FirebaseStorage.instance.ref().child(this.path);
-      downloadURL = await storageReference.getDownloadURL();
+      final StorageReference storageReference = FirebaseStorage.instance.ref().child(path);
+      downloadURL = await storageReference.getDownloadURL() as String;
     } on Exception catch (exc) {
       downloadURL = '';
     }
@@ -39,23 +39,26 @@ class DatabaseFiles {
         return defaultImage;
       } else {
 //        return Image.asset('assets/images/defaultProfilePicture.png');
-      return null;
+        return null;
       }
     } else {
-      return Image.network(url, errorBuilder: (BuildContext context, Object object, StackTrace stackTrace) {
-        return SizedBox.shrink();
-      },);
+      return Image.network(
+        url,
+        errorBuilder: (BuildContext context, Object object, StackTrace stackTrace) {
+          return const SizedBox.shrink();
+        },
+      );
     }
   }
 
   Future<Image> get image async {
-    return imageFromUrl(await this.url);
+    return imageFromUrl(await url);
   }
 
   ///
   Future uploadImage({Image image, String url, bool replace = true}) async {
     assert((image == null) != (url == null));
-    if (replace || !(await this.exists)) {
+    if (replace || !(await exists)) {
       if (url != null) {
         image = imageFromUrl(url);
       }
@@ -63,13 +66,13 @@ class DatabaseFiles {
   }
 
   /// replace: if false : won't upload the file if it already exists
-  Future uploadFile(File file, {bool replace = true}) async {
-    if (replace || !(await this.exists)) {
-      final StorageReference storageReference = FirebaseStorage.instance.ref().child(this.path);
+  Future<String> uploadFile(File file, {bool replace = true}) async {
+    if (replace || !(await exists)) {
+      final StorageReference storageReference = FirebaseStorage.instance.ref().child(path);
       final StorageUploadTask storageUploadTask = storageReference.putFile(file);
-      return new Future.value('Uploaded');
+      return Future<String>.value('Uploaded');
     } else {
-      return new Future.value('No upload');
+      return Future<String>.value('No upload');
     }
   }
 }

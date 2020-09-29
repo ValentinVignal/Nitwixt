@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const textInputDecoration = InputDecoration(
+const InputDecoration textInputDecoration = InputDecoration(
 //  fillColor: Color(0x05FFFFFF),
 //  filled: true,
   enabledBorder: UnderlineInputBorder(
@@ -20,7 +20,7 @@ const textInputDecoration = InputDecoration(
   errorMaxLines: 2,
 );
 
-const textInputDecorationMessage = InputDecoration(
+const InputDecoration textInputDecorationMessage = InputDecoration(
   fillColor: Colors.black,
   filled: true,
   hintStyle: TextStyle(color: Colors.grey),
@@ -33,9 +33,13 @@ const textInputDecorationMessage = InputDecoration(
 
 
 bool validateEmail(String value) {
-  Pattern pattern =
+  const Pattern pattern =
       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-  RegExp regex = new RegExp(pattern);
-  return (!regex.hasMatch(value)) ? false : true;
+  final RegExp regex = RegExp(pattern.toString());
+  if (!regex.hasMatch(value)) {
+    return false;
+  } else {
+    return true;
+  }
 }
 

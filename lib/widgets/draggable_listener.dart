@@ -2,13 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 
 class DraggableListener extends StatefulWidget {
-  final Widget child;
-  final Alignment alignment;
-  final bool dragHorizontal;
-  final bool dragVertical;
-  final double triggeredDistance = 15.0;
-  Function onDragEnd;
-
   DraggableListener({
     this.child,
     this.alignment = Alignment.center,
@@ -16,6 +9,14 @@ class DraggableListener extends StatefulWidget {
     this.dragVertical = true,
     this.onDragEnd,
   }) : super();
+
+  final Widget child;
+  final Alignment alignment;
+  final bool dragHorizontal;
+  final bool dragVertical;
+  final double triggeredDistance = 15.0;
+  final Function onDragEnd;
+
 
   @override
   _DraggableListenerState createState() => _DraggableListenerState();
@@ -84,7 +85,7 @@ class _DraggableListenerState extends State<DraggableListener> with SingleTicker
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final Size size = MediaQuery.of(context).size;
     return GestureDetector(
       onPanDown: (details) {
         _controller.stop();
@@ -131,7 +132,7 @@ class Dg extends StatefulWidget {
 class _DgState extends State<Dg> {
   @override
   Widget build(BuildContext context) {
-    return Draggable(
+    return Draggable<Widget>(
       onDragCompleted: () {
         print('dragged');
       },
@@ -140,9 +141,9 @@ class _DgState extends State<Dg> {
       },
       child: widget.child,
       feedback: Container(
-        child: Text('feedback', style: TextStyle(color: Colors.white)),
+        child: const Text('feedback', style: TextStyle(color: Colors.white)),
       ),
-      childWhenDragging: Text('ChildWhenDragging', style: TextStyle(color: Colors.white),),
+      childWhenDragging: const Text('ChildWhenDragging', style: TextStyle(color: Colors.white),),
     );
   }
 }

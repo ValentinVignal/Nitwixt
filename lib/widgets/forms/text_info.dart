@@ -4,20 +4,6 @@ import 'package:flutter/rendering.dart';
 import 'text_info_mode.dart';
 
 class TextInfo extends StatelessWidget {
-  final String title;
-  final String value;
-  final TextInfoMode mode;
-  final double fontSize;
-  final Function onChanged;
-  final Function validator;
-  final TextEditingController controller;
-  int maxLines;
-  final Axis scrollDirection;
-
-  TextStyle textStyleInfo;
-  TextStyle textStyleTitle;
-  TextStyle textStyleValue;
-
   TextInfo({
     this.title,
     this.value,
@@ -44,6 +30,20 @@ class TextInfo extends StatelessWidget {
     }
   }
 
+  final String title;
+  final String value;
+  final TextInfoMode mode;
+  final double fontSize;
+  final void Function(String) onChanged;
+  final String Function(String) validator;
+  final TextEditingController controller;
+  int maxLines;
+  final Axis scrollDirection;
+
+  TextStyle textStyleInfo;
+  TextStyle textStyleTitle;
+  TextStyle textStyleValue;
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -64,7 +64,7 @@ class TextInfo extends StatelessWidget {
                   // Not scrollable
                   return textWidget;
                 } else {
-                  final Widget scrollableWidget =  SingleChildScrollView(
+                  final Widget scrollableWidget = SingleChildScrollView(
                     scrollDirection: scrollDirection,
                     child: textWidget,
                   );
@@ -102,7 +102,6 @@ class TextInfo extends StatelessWidget {
                   validator: validator,
                   controller: controller,
                 );
-
               }
             },
           ),

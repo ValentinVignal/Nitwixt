@@ -66,7 +66,7 @@ class _AccountState extends State<Account> {
             });
             // * ----- Name -----
             if (user.name != _textControllerName.text.trim()) {
-              await _databaseUser.update({
+              await _databaseUser.update(<String, dynamic>{
                 UserKeys.name: _textControllerName.text.trim(),
               });
             }

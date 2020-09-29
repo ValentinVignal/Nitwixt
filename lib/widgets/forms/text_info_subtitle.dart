@@ -4,20 +4,6 @@ import 'package:flutter/rendering.dart';
 import 'text_info_mode.dart';
 
 class TextInfoSubtitle extends StatelessWidget {
-  final String title;
-  final String value;
-  final TextInfoMode mode;
-  final double fontSize;
-  final Function onChanged;
-  final Function validator;
-  final TextEditingController controller;
-  int maxLines;
-  final Axis scrollDirection;
-
-  TextStyle textStyleInfo;
-  TextStyle textStyleTitle;
-  TextStyle textStyleValue;
-
   TextInfoSubtitle({
     this.title,
     this.value,
@@ -32,18 +18,32 @@ class TextInfoSubtitle extends StatelessWidget {
     assert(value == null || controller == null);
     assert(!((maxLines == null) && (scrollDirection == Axis.vertical)));
     textStyleInfo = TextStyle(
-      fontSize: this.fontSize,
+      fontSize: fontSize,
       color: Colors.white,
     );
     textStyleTitle = textStyleInfo;
     textStyleValue = textStyleInfo.copyWith(
       color: Colors.grey,
-      fontSize: this.fontSize - 1,
+      fontSize: fontSize - 1,
     );
     if (scrollDirection == Axis.horizontal) {
-      this.maxLines = 1;
+      maxLines = 1;
     }
   }
+
+  final String title;
+  final String value;
+  final TextInfoMode mode;
+  final double fontSize;
+  final void Function(String) onChanged;
+  final String Function(String) validator;
+  final TextEditingController controller;
+  int maxLines;
+  final Axis scrollDirection;
+
+  TextStyle textStyleInfo;
+  TextStyle textStyleTitle;
+  TextStyle textStyleValue;
 
   @override
   Widget build(BuildContext context) {
@@ -51,38 +51,38 @@ class TextInfoSubtitle extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(this.title, style: textStyleTitle),
+        Text(title, style: textStyleTitle),
         Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            SizedBox(width: 30.0),
+            const SizedBox(width: 30.0),
             Expanded(
               child: Builder(
                 builder: (BuildContext buildContext) {
-                  bool enable = this.mode == TextInfoMode.edit;
-                  bool formFieldStyle = this.mode != TextInfoMode.show;
-                  if (this.mode == TextInfoMode.show) {
-                    Text textWidget = Text(
-                      this.value ?? this.controller.text,
-                      style: this.textStyleValue,
+                  final bool enable = mode == TextInfoMode.edit;
+                  bool formFieldStyle = mode != TextInfoMode.show;
+                  if (mode == TextInfoMode.show) {
+                    final Text textWidget = Text(
+                      value ?? controller.text,
+                      style: textStyleValue,
                       textAlign: TextAlign.left,
-                      maxLines: this.scrollDirection != null ? null : this.maxLines,
+                      maxLines: scrollDirection != null ? null : maxLines,
                     );
-                    if (this.scrollDirection == null) {
+                    if (scrollDirection == null) {
                       // Not scrollable
                       return textWidget;
                     } else {
-                      Widget scrollableWidget =  SingleChildScrollView(
-                        scrollDirection: this.scrollDirection,
+                      final Widget scrollableWidget = SingleChildScrollView(
+                        scrollDirection: scrollDirection,
                         child: textWidget,
                       );
-                      if (this.scrollDirection == Axis.horizontal) {
+                      if (scrollDirection == Axis.horizontal) {
                         return scrollableWidget;
                       } else {
                         return Container(
                           constraints: BoxConstraints(
-                            maxHeight: 1.1 * this.fontSize * this.maxLines,
+                            maxHeight: 1.1 * fontSize * maxLines,
                           ),
                           child: scrollableWidget,
                         );
@@ -91,27 +91,26 @@ class TextInfoSubtitle extends StatelessWidget {
                   } else {
                     return TextFormField(
                       minLines: 1,
-                      maxLines: this.maxLines,
+                      maxLines: maxLines,
                       enabled: enable,
-                      initialValue: this.value,
+                      initialValue: value,
                       style: enable ? textStyleTitle : textStyleValue,
-                      keyboardType: this.maxLines == 1 ? TextInputType.text : TextInputType.multiline,
+                      keyboardType: maxLines == 1 ? TextInputType.text : TextInputType.multiline,
                       textCapitalization: TextCapitalization.sentences,
                       decoration: InputDecoration.collapsed(
-                        hintText: this.value,
+                        hintText: value,
                         hintStyle: TextStyle(color: Colors.grey[800]),
                       ).copyWith(
                         isDense: true,
-                        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
-                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.blueGrey)),
-                        errorBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
-                        focusedErrorBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+                        focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
+                        enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.blueGrey)),
+                        errorBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+                        focusedErrorBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
                       ),
-                      onChanged: this.onChanged,
-                      validator: this.validator,
+                      onChanged: onChanged,
+                      validator: validator,
                       controller: controller,
                     );
-
                   }
                 },
               ),
