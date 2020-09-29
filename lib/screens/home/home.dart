@@ -148,7 +148,6 @@ class _HomeState extends State<Home> {
           },
         ),
 
-//        body: user == null ? Loading() : ChatList(),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             _showCreateNewChatPanel();
