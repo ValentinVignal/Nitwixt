@@ -1,101 +1,39 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:nitwixt/models/models.dart' as models;
 
 import 'collections.dart' as collections;
+import 'database_chat_mixin.dart';
 import 'database_user.dart';
+import 'database_user_mixin.dart';
 
-class DatabaseChat {
+class DatabaseChat with DatabaseChatMixin{
+  DatabaseChat({
+    this.id,
+  });
 
-  DatabaseChat({this.chatId});
+  /// The id of the chat
+  final String id;
 
-  final String chatId;
-
-  final CollectionReference chatCollection = collections.chatCollection;
-
-  static models.Chat chatFromDocumentSnapshot(DocumentSnapshot snapshot) {
-    return models.Chat.fromFirebaseObject(snapshot.documentID, snapshot.data);
+  /// The stream of a chat
+  Stream<models.Chat> get stream {
+    return DatabaseChatMixin.chatCollection.document(id).snapshots().map(chatFromDocumentSnapshot);
   }
 
-  static List<models.Chat> chatFromQuerySnapshot(QuerySnapshot querySnapshot) {
-    return querySnapshot.documents.map(chatFromDocumentSnapshot).toList();
+  /// Value of the chat
+  Future<models.Chat> get future async {
+    final DocumentSnapshot documentSnapshot = await DatabaseChatMixin.chatCollection.document(id).get();
+    return DatabaseChatMixin.chatFromDocumentSnapshot(documentSnapshot);
   }
 
-  Stream<models.Chat> get chatStream {
-    return chatCollection.document(chatId).snapshots().map(chatFromDocumentSnapshot);
-  }
-
-  Future<models.Chat> get chatFuture async {
-    final DocumentSnapshot documentSnapshot = await chatCollection.document(chatId).get();
-    return chatFromDocumentSnapshot(documentSnapshot);
-  }
-
-
-  static Stream<List<models.Chat>> getChatList({String userid, int limit = 10}) {
-    final Query query = collections.chatCollection.where(models.ChatKeys.members, arrayContains: userid).limit(limit);
-    return query.snapshots().map(chatFromQuerySnapshot);
-  }
-
-
-  static Future<String> createNewChat(List<String> usernames) async {
-    /// Creates a new chat from the usernames and a user
-
-    final List<models.User> allUserList = await DatabaseUser.usersFromField(usernames);
-
-    // members field of the new chat
-    final List<String> members = allUserList.map<String>((models.User user) {
-      return user.id;
-    }).toList();
-    members.sort();
-    // Test the chat doesn't exists already
-    final QuerySnapshot querySnapshot = await collections.chatCollection.where(models.ChatKeys.members, isEqualTo: members).getDocuments();
-    if (querySnapshot.documents.isNotEmpty) {
-      // The chat already exists
-      return Future<String>.error('A chat already exists with these users');
-    }
-
-    // * ----- Create the chat -----
-    models.Chat newChat = models.Chat(
-      id: '',
-      name: '',
-      members: members,
-    );
-    final DocumentReference documentReference = await collections.chatCollection.add(newChat.toFirebaseObject());
-    final String chatid = documentReference.documentID;
-    newChat.id = chatid;
-
-    if (chatid == null) {
-      return Future<String>.error('Could not create the new chat');
-    }
-//    await collections.chatCollection.document(chatid).updateData({
-//      'id': chatid,
-//    });
-    await DatabaseChat(chatId: chatid).update(<String, String>{
-      models.ChatKeys.id: chatid,
-    });
-    // * ----- Update the users -----
-    allUserList.forEach((models.User user) {
-      user.chats.add(chatid);
-      DatabaseUser(id: user.id).update(<String, dynamic>{
-        models.UserKeys.chats: user.toFirebaseObject()[models.UserKeys.chats], // Only update the chats to prevent bugs
-      });
-//      collections.userCollection.document(user.id).updateData({
-//        'chats': user.toFirebaseObject()['chats'], // Only update the chats to prevent bugs
-//      });
-    });
-    return Future<String>.value(chatid);
-  }
 
   Future<void> update(Map<String, dynamic> obj) async {
-    return await chatCollection.document(chatId).updateData(obj);
+    return await DatabaseChatMixin.chatCollection.document(id).updateData(obj);
   }
 
-
   Future updateMembers(List<String> usernames) async {
-
-    final List<models.User> allUserList = await DatabaseUser.usersFromField(usernames);
-    final DocumentSnapshot documentSnapshot = await chatCollection.document(chatId).get();
-    models.Chat chat = chatFromDocumentSnapshot(documentSnapshot);
+    final List<models.User> allUserList = await DatabaseUserMixin.usersFromField(usernames);
+    final DocumentSnapshot documentSnapshot = await DatabaseChatMixin.chatCollection.document(id).get();
+    models.Chat chat = DatabaseChatMixin.chatFromDocumentSnapshot(documentSnapshot);
 
     // members field of the new chat
     final List<String> members = allUserList.map<String>((models.User user) {
@@ -104,17 +42,15 @@ class DatabaseChat {
     members.sort();
 
     final List<models.User> membersToUpdate = allUserList.where((models.User user) {
-      return !user.chats.contains(chatId);
+      return !user.chats.contains(id);
     }).toList();
 
     if (chat.members == members || membersToUpdate.isEmpty) {
       return Future<String>.value('No changes of members');
     }
-    await update(<String, List<String>>{
-      models.ChatKeys.members: members
-    });
+    await update(<String, List<String>>{models.ChatKeys.members: members});
     membersToUpdate.forEach((models.User user) {
-      user.chats.add(chatId);
+      user.chats.add(id);
       DatabaseUser(id: user.id).update(<String, dynamic>{
         models.UserKeys.chats: user.toFirebaseObject()[models.UserKeys.chats], // Only update the chats to prevent bugs
       });
@@ -126,20 +62,19 @@ class DatabaseChat {
   Future delete({List<models.User> members}) async {
     // Reconstruct members if not provided
     if (members == null) {
-      final models.Chat chat = await chatFuture;
-      members = await DatabaseUser.usersFromField(chat.members, fieldName: 'id');
+      final models.Chat chat = await future;
+      members = await DatabaseUserMixin.usersFromField(chat.members, fieldName: 'id');
     }
 
     // Delete the chat in the user documents
     members.forEach((models.User member) async {
-      member.chats.remove(chatId);
+      member.chats.remove(id);
       await DatabaseUser(id: member.id).update(<String, dynamic>{
         models.UserKeys.chats: member.toFirebaseObject()[models.UserKeys.chats],
       });
     });
 
     // Remove the chat
-    return chatCollection.document(chatId).delete();
+    return DatabaseChatMixin.chatCollection.document(id).delete();
   }
-
 }

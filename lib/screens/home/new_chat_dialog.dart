@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:nitwixt/models/models.dart' as models;
-import 'chat/chat_home.dart';
+import 'package:nitwixt/services/database/database.dart' as database;
 import 'package:nitwixt/services/providers/providers.dart';
-import 'package:nitwixt/widgets/widgets.dart';
 import 'package:nitwixt/widgets/button_simple.dart';
 import 'package:nitwixt/widgets/forms/forms.dart';
-import 'package:provider/provider.dart';
-import 'package:nitwixt/services/database/database.dart' as database;
+import 'package:nitwixt/widgets/widgets.dart';
+
+import 'chat/chat_home.dart';
 
 class NewChatDialog extends StatefulWidget {
   @override
@@ -94,11 +96,11 @@ class _NewChatDialogState extends State<NewChatDialog> {
                       onTap: () async {
                         if (_formKey.currentState.validate()) {
                           // Test if a username is entered twice
-                          final List<String> duplicatedEnterredUsernames = duplicatedUsernames();
-                          if (duplicatedEnterredUsernames.isNotEmpty) {
+                          final List<String> duplicatedEnteredUsernames = duplicatedUsernames();
+                          if (duplicatedEnteredUsernames.isNotEmpty) {
                             // Duplicates
                             setState(() {
-                              error = 'Username(s) ${duplicatedEnterredUsernames.join(', ')} entered several times';
+                              error = 'Username(s) ${duplicatedEnteredUsernames.join(', ')} entered several times';
                             });
                           } else {
                             // No duplicates
@@ -107,7 +109,8 @@ class _NewChatDialogState extends State<NewChatDialog> {
                               isLoading = true;
                             });
                             try {
-                              final String chatId = await database.DatabaseChat.createNewChat(listInputController.values + [user.username]);
+                              final String chatId =
+                                  await database.DatabaseChatMixin.createNewChat(listInputController.values + <String>[user.username]);
                               setState(() {
                                 isLoading = false;
                                 error = '';

@@ -17,7 +17,7 @@ class MembersProvider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<Map<String, models.User>>.value(
-      value: DatabaseUser.getUserMap(chatid: chat.id),
+      value: DatabaseUserMixin.getUserMap(chatid: chat.id),
       child: MembersMapReceiver(
         child: child,
       ),

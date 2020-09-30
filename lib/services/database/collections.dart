@@ -1,11 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class CollectionNames {
-  static final String users = 'users';
-  static final String chats = 'chats';
-  static final String messages = 'messages';
+mixin CollectionNames {
+  static const String users = 'users';
+  static const String chats = 'chats';
+  static const String messages = 'messages';
+
+  // * ---------- Group collection ----------
+  static const String userPrivate = 'user.private';
 }
 
-CollectionReference userCollection = Firestore.instance.collection(CollectionNames.users);
-CollectionReference chatCollection = Firestore.instance.collection(CollectionNames.chats);
+CollectionReference userCollection = FirebaseFirestore.instance.collection(CollectionNames.users);
+CollectionReference chatCollection = FirebaseFirestore.instance.collection(CollectionNames.chats);
+Query userPrivateCollection = FirebaseFirestore.instance.collectionGroup(CollectionNames.userPrivate);
 

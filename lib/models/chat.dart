@@ -60,7 +60,7 @@ class Chat with EquatableMixin {
 
   Future<User> _otherUser(User user) async {
     final String otherUserId = _otherUserId(user);
-    return await DatabaseUser(id: otherUserId).userFuture;
+    return await DatabaseUser(id: otherUserId).future;
   }
 
   Future<String> nameToDisplay(User user) async {

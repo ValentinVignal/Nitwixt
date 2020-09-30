@@ -44,7 +44,7 @@ class _ChatInfo extends State<ChatInfo> {
     if (!_isEditing) {
       _textControllerName.text = chat.name;
     }
-    final database.DatabaseChat _databaseChat = database.DatabaseChat(chatId: chat.id);
+    final database.DatabaseChat _databaseChat = database.DatabaseChat(id: chat.id);
 
     void _showDeleteChatPanel() {
       showDialog<DeleteChatDialog>(
@@ -84,7 +84,7 @@ class _ChatInfo extends State<ChatInfo> {
                   members.values.map<String>((models.User user) {
                     return user.username;
                   }).toList();
-              await database.DatabaseChat(chatId: chat.id).updateMembers(allUsernames);
+              await database.DatabaseChat(id: chat.id).updateMembers(allUsernames);
             }
             // * ----- Image -----
             if (image != null) {

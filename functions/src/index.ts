@@ -4,6 +4,8 @@ import { _deleteChat } from './functions/chat/deleteChat';
 import { _newMessage } from './functions/message/newMessage';
 import { _deleteMessage } from './functions/message/deleteMessage';
 
+import { _migrateChatsToPrivate } from './migrations/migrateChatsToPrivate';
+
 admin.initializeApp();
 
 // // Start writing Firebase Functions
@@ -26,4 +28,6 @@ export const newMessage = _newMessage;
 export const deleteMessage = _deleteMessage;
 
 // ----------------------------------------------------------------------------------------------------
+
+export const migrateChatsToPrivate = _migrateChatsToPrivate;
 

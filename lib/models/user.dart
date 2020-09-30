@@ -1,13 +1,12 @@
 import 'package:nitwixt/services/database/database.dart';
 import 'utils/picture_url.dart';
 
-class UserKeys {
-  static final String id = 'id';
-  static final String username = 'username';
-  static final String name = 'name';
-  static final String pushToken = 'pushToken';
-  static final String chats = 'chats';
-  static final String defaultPictureUrl = 'defaultPictureUrl';
+mixin UserKeys {
+  static const String id = 'id';
+  static const String username = 'username';
+  static const String name = 'name';
+  static const String pushToken = 'pushToken';
+  static const String defaultPictureUrl = 'defaultPictureUrl';
 
 }
 
@@ -19,7 +18,6 @@ class User {
     this.id,
     this.username,
     this.name,
-    this.chats,
     this.pushToken,
     this.defaultPictureUrl='',
   });
@@ -28,7 +26,6 @@ class User {
     if (firebaseObject != null) {
       username = firebaseObject.containsKey(UserKeys.username) ? firebaseObject[UserKeys.username] as String : '';
       name = firebaseObject.containsKey(UserKeys.name) ? firebaseObject[UserKeys.name] as String : '';
-      chats = firebaseObject.containsKey(UserKeys.chats) ? List<String>.from(firebaseObject[UserKeys.chats] as Iterable<dynamic>) : <String>[];
       pushToken = firebaseObject.containsKey(UserKeys.pushToken) ? List<String>.from(firebaseObject[UserKeys.pushToken] as Iterable<dynamic>) : <String>[];
       defaultPictureUrl = firebaseObject.containsKey(UserKeys.defaultPictureUrl) ? firebaseObject[UserKeys.defaultPictureUrl] as String : '';
     }
@@ -59,7 +56,6 @@ class User {
       UserKeys.id: id,
       UserKeys.username: username,
       UserKeys.name: name,
-      UserKeys.chats: chats,
       UserKeys.pushToken: pushToken,
       UserKeys.defaultPictureUrl: defaultPictureUrl,
     };

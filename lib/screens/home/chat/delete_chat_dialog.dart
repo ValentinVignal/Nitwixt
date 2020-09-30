@@ -30,7 +30,7 @@ class _DeleteChatDialogState extends State<DeleteChatDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final DatabaseChat _databaseChat = DatabaseChat(chatId: widget.chat.id);
+    final DatabaseChat _databaseChat = DatabaseChat(id: widget.chat.id);
     final models.User user = Provider.of<models.User>(context);
 
     return AlertDialog(

@@ -21,7 +21,7 @@ class ChatProvider extends StatelessWidget {
   Widget build(BuildContext context) {
     if (id != null) {
       return StreamProvider<models.Chat>.value(
-        value: DatabaseChat(chatId: id).chatStream,
+        value: DatabaseChat(id: id).stream,
         child: ChatReceiver(
           child: child,
         ),

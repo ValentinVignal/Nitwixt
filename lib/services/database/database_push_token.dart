@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nitwixt/models/models.dart';
+import 'collections.dart';
 import 'database_user.dart';
 
 class DatabasePushToken extends DatabaseUser {

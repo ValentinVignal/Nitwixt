@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:nitwixt/services/database/database_user_mixin.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/models/models.dart';
 import 'package:nitwixt/services/auth/auth_service.dart';
@@ -41,7 +42,7 @@ class _SetUsernameState extends State<SetUsername> {
           // Username doesn't exist -> update the user record
           user.username = username;
           user.name = username;
-          await DatabaseUser.createUser(user: user).catchError((String errorMessage) {
+          await DatabaseUserMixin.createUser(user: user).catchError((String errorMessage) {
             setState(() {
               errorMessage = 'Could not set the username $username';
               loading = false;

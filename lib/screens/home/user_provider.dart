@@ -21,7 +21,7 @@ class UserProvider extends StatelessWidget {
 
     return StreamProvider<models.User>.value(
       // * Provides the User to all the app
-      value: databaseUser.userStream,
+      value: databaseUser.stream,
       child: MaterialApp(
         navigatorKey: _mainNavigatorKey,
         themeMode: ThemeMode.dark,
