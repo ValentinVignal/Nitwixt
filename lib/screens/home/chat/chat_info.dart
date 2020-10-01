@@ -63,6 +63,8 @@ class _ChatInfo extends State<ChatInfo> {
     }
 
     Future<void> _applyChanges() async {
+      /*
+      TODO(Valentin): Put bakb function
       if (_hasChanges()) {
         if (_formKey.currentState.validate()) {
           setState(() {
@@ -111,6 +113,8 @@ class _ChatInfo extends State<ChatInfo> {
           _isEditing = !_isEditing;
         });
       }
+
+       */
     }
 
     void _cancelChanges() {

@@ -4,7 +4,6 @@ import 'collections.dart';
 import 'database_user.dart';
 
 class DatabasePushToken extends DatabaseUser {
-
   DatabasePushToken({
     String id,
   }) : super(id: id);
@@ -12,8 +11,10 @@ class DatabasePushToken extends DatabaseUser {
   int maxTokens = 3;
 
   Future<List<String>> get tokens async {
-    return await userCollection.document(id).get().then((DocumentSnapshot documentSnapshot) {
-      final List<String> tokens = documentSnapshot.data.containsKey(UserKeys.pushToken) ? List<String>.from(documentSnapshot.data[UserKeys.pushToken] as Iterable<String>) : <String>[];
+    return await userCollection.doc(id).get().then((DocumentSnapshot documentSnapshot) {
+      final List<String> tokens = documentSnapshot.data().containsKey(UserKeys.pushToken)
+          ? List<String>.from(documentSnapshot.data()[UserKeys.pushToken] as List<dynamic>)
+          : <String>[];
       // Make it maximum 3
       if (tokens.length > maxTokens) {
         return tokens.sublist(tokens.length - maxTokens);
@@ -27,7 +28,7 @@ class DatabasePushToken extends DatabaseUser {
     if (tokens_.length > maxTokens) {
       tokens_.sublist(tokens_.length - maxTokens);
     }
-    return await userCollection.document(id).updateData(<String, dynamic>{UserKeys.pushToken: tokens_});
+    return await userCollection.doc(id).update(<String, dynamic>{UserKeys.pushToken: tokens_});
   }
 
   Future<void> newToken(String token) async {

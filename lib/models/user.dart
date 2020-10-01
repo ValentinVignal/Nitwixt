@@ -26,7 +26,7 @@ class User {
     if (firebaseObject != null) {
       username = firebaseObject.containsKey(UserKeys.username) ? firebaseObject[UserKeys.username] as String : '';
       name = firebaseObject.containsKey(UserKeys.name) ? firebaseObject[UserKeys.name] as String : '';
-      pushToken = firebaseObject.containsKey(UserKeys.pushToken) ? List<String>.from(firebaseObject[UserKeys.pushToken] as Iterable<dynamic>) : <String>[];
+      pushToken = firebaseObject.containsKey(UserKeys.pushToken) ? List<String>.from(firebaseObject[UserKeys.pushToken] as List<dynamic>) : <String>[];
       defaultPictureUrl = firebaseObject.containsKey(UserKeys.defaultPictureUrl) ? firebaseObject[UserKeys.defaultPictureUrl] as String : '';
     }
   }
@@ -37,7 +37,7 @@ class User {
   String id = ''; // The id of the user
   String username = ''; // The username of the user
   String name = 'New User'; // The name to display
-  List<String> chats = <String>[];
+//  List<String> chats = <String>[];
   List<String> pushToken = <String>[];
   String defaultPictureUrl;
 
@@ -51,7 +51,7 @@ class User {
   // * -------------------- Link with firebase database  --------------------
 
   Map<String, Object> toFirebaseObject() {
-    chats.sort();
+//    chats.sort();
     return <String, dynamic>{
       UserKeys.id: id,
       UserKeys.username: username,

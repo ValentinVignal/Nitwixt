@@ -15,12 +15,12 @@ class DatabaseUser with DatabaseUserMixin {
 
   /// Get the stream
   Stream<models.User> get stream {
-    return DatabaseUserMixin.userCollection.document(id).snapshots().map(userFromDocumentSnapshot);
+    return DatabaseUserMixin.userCollection.doc(id).snapshots().map<models.User>(DatabaseUserMixin.userFromDocumentSnapshot);
   }
 
   /// Get the value
   Future<models.User> get future async {
-    final DocumentSnapshot documentSnapshot = await DatabaseUserMixin.userCollection.document(id).get();
+    final DocumentSnapshot documentSnapshot = await DatabaseUserMixin.userCollection.doc(id).get();
     return DatabaseUserMixin.userFromDocumentSnapshot(documentSnapshot);
   }
 
@@ -30,7 +30,7 @@ class DatabaseUser with DatabaseUserMixin {
   }
 
   Future<void> update(Map<String, dynamic> obj) async {
-    return await DatabaseUserMixin.userCollection.document(id).updateData(obj);
+    return await DatabaseUserMixin.userCollection.doc(id).update(obj);
   }
 
 }

@@ -11,7 +11,7 @@ class VerifyEmail extends StatefulWidget {
 }
 
 class _VerifyEmailState extends State<VerifyEmail> {
-  TextStyle textStyle = TextStyle(
+  TextStyle textStyle = const TextStyle(
     fontSize: 20.0,
   );
 
@@ -20,7 +20,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
   bool isProcessing = false;
   bool isEmailSent = false;
 
-  auth.AuthService _auth = auth.AuthService();
+  final auth.AuthService _auth = auth.AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -31,25 +31,25 @@ class _VerifyEmailState extends State<VerifyEmail> {
       appBar: AppBar(
         backgroundColor: Colors.blueGrey[800],
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios,
             color: Colors.white,
           ),
           onPressed: () => _auth.signOut(),
         ),
-        title: Text('Verify your email'),
+        title: const Text('Verify your email'),
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50),
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50),
         child: Column(
           children: <Widget>[
-            SizedBox(height: 50.0),
+            const SizedBox(height: 50.0),
             Text(
               'To use Nitwixt, you must verify you email address.\n\nPress the button to send a confirmation email to:\n\n${userAuth.email}',
               style: textStyle.copyWith(color: Colors.grey[300]),
               textAlign: TextAlign.center,
             ),
-            SizedBox(
+            const SizedBox(
               height: 30.0,
             ),
             widgets.ButtonSimple(
@@ -58,11 +58,11 @@ class _VerifyEmailState extends State<VerifyEmail> {
                   isProcessing = true;
                   result = null;
                 });
-                Object res = await auth.AuthEmailPassword().sendConfirmationEmail();
+                final bool res =await auth.AuthEmailPassword().sendConfirmationEmail();
                 setState(() {
                   isProcessing = false;
                 });
-                if (res == null) {
+                if (res) {
                   // Everything is fine
                   setState(() {
                     buttonMessage = 'Send email again';
@@ -80,60 +80,36 @@ class _VerifyEmailState extends State<VerifyEmail> {
               color: Colors.cyan[200],
               icon: Icons.email,
             ),
-            SizedBox(
+            const SizedBox(
               height: 20.0,
             ),
-            result == true
-                ? Text(
+            if (result) Text(
                     'An email has been sent',
                     style: textStyle.copyWith(color: Colors.green),
                     textAlign: TextAlign.center,
-                  )
-                : Container(
-                    height: 0.0,
-                  ),
-            result == true
-                ? Icon(
+                  ) ,
+            if (result) const Icon(
                     Icons.check,
                     color: Colors.green,
-                  )
-                : Container(
-                    height: 0.0,
                   ),
-            result == false
-                ? Text('We couldn\'t send an email...', style: textStyle.copyWith(color: Colors.red))
-                : Container(
-                    height: 0.0,
-                  ),
-            result == false
-                ? Icon(
+            if (!result) Text('We couldn\'t send an email...', style: textStyle.copyWith(color: Colors.red)),
+            if (!result) const Icon(
                     Icons.clear,
                     color: Colors.red,
-                  )
-                : Container(
-                    height: 0.0,
                   ),
-            SizedBox(
+            const SizedBox(
               height: 20.0,
             ),
-            isEmailSent
-                ? widgets.ButtonSimple(
+            if (isEmailSent) widgets.ButtonSimple(
                     onTap: () => _auth.signOut(),
                     color: Colors.green,
                     text: 'I have verified my email',
                     icon: Icons.done,
-                  )
-                : Container(
-                    height: 0.0,
                   ),
             SizedBox(
               height: isEmailSent ? 20.0 : 0.0,
             ),
-            isProcessing
-                ? LoadingCircle()
-                : Container(
-                    height: 0.0,
-                  ),
+            if (isProcessing) LoadingCircle(),
           ],
         ),
       ),

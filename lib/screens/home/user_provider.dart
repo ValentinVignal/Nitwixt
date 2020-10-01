@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nitwixt/screens/home/loading_screen.dart';
+import 'file:///D:/Valentin/Code/Nitwixt/Nitwixt/lib/screens/loading_screen.dart';
 import 'package:nitwixt/screens/home/notifications_wrapper.dart';
 import 'package:provider/provider.dart';
 

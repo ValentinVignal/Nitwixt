@@ -94,6 +94,8 @@ class _NewChatDialogState extends State<NewChatDialog> {
                     const SizedBox(width: 5.0),
                     ButtonSimple(
                       onTap: () async {
+                        /*
+                        TODO(Valentin): Put back function
                         if (_formKey.currentState.validate()) {
                           // Test if a username is entered twice
                           final List<String> duplicatedEnteredUsernames = duplicatedUsernames();
@@ -129,6 +131,8 @@ class _NewChatDialogState extends State<NewChatDialog> {
                             }
                           }
                         }
+
+                         */
                       },
                       text: 'Create',
                       icon: Icons.done,

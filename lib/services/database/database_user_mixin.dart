@@ -23,7 +23,7 @@ mixin DatabaseUserMixin {
   }
 
   static Future<Stream<List<models.User>>> getUserList({String chatid}) async {
-    final Query queryUserChats = collections.userPrivateCollection.where('__name__', isEqualTo: 'chats').where('chats', arrayContains: chatid);
+    final Query queryUserChats = collections.userPrivateCollection.where('id', isEqualTo: 'chats').where('chats', arrayContains: chatid);
     final QuerySnapshot querySnapshotUserChats = await queryUserChats.get();
     final List<Stream<models.User>> listStream =  querySnapshotUserChats.docs.map((QueryDocumentSnapshot queryDocumentSnapshot) {
       return queryDocumentSnapshot.reference.parent.parent.snapshots().map<models.User>(userFromDocumentSnapshot);
@@ -32,7 +32,7 @@ mixin DatabaseUserMixin {
   }
 
   static Stream<Map<String, models.User>> getUserMap({String chatid}) {
-    final Query query = collections.userPrivateCollection.where('__name__', isEqualTo: 'chats').where('chats', arrayContains: chatid);
+    final Query query = collections.userPrivateCollection.where('id', isEqualTo: 'chats').where('chats', arrayContains: chatid);
     return query.snapshots().map((QuerySnapshot querySnapshot) {
       return userFromQuerySnapshot(querySnapshot).asMap().map<String, models.User>((int index, models.User user) {
         return MapEntry<String, models.User>(user.id, user);

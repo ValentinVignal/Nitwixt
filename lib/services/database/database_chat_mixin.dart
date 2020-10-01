@@ -14,12 +14,12 @@ mixin DatabaseChatMixin {
 
   /// Chat from a document snapshot
   static models.Chat chatFromDocumentSnapshot(DocumentSnapshot snapshot) {
-    return models.Chat.fromFirebaseObject(snapshot.documentID, snapshot.data);
+    return models.Chat.fromFirebaseObject(snapshot.id, snapshot.data());
   }
 
   /// List of chat from a query snapshot
   static List<models.Chat> chatFromQuerySnapshot(QuerySnapshot querySnapshot) {
-    return querySnapshot.documents.map(chatFromDocumentSnapshot).toList();
+    return querySnapshot.docs.map(chatFromDocumentSnapshot).toList();
   }
 
 
@@ -30,6 +30,7 @@ mixin DatabaseChatMixin {
   }
 
   // TODO(Valentin): Remove this function
+  /**
   static Future<String> createNewChat(List<String> usernames) async {
     /// Creates a new chat from the usernames and a user
 
@@ -41,20 +42,20 @@ mixin DatabaseChatMixin {
     }).toList();
     members.sort();
     // Test the chat doesn't exists already
-    final QuerySnapshot querySnapshot = await collections.chatCollection.where(models.ChatKeys.members, isEqualTo: members).getDocuments();
-    if (querySnapshot.documents.isNotEmpty) {
+    final QuerySnapshot querySnapshot = await collections.chatCollection.where(models.ChatKeys.members, isEqualTo: members).get();
+    if (querySnapshot.docs.isNotEmpty) {
       // The chat already exists
       return Future<String>.error('A chat already exists with these users');
     }
 
     // * ----- Create the chat -----
-    models.Chat newChat = models.Chat(
+    final models.Chat newChat = models.Chat(
       id: '',
       name: '',
       members: members,
     );
     final DocumentReference documentReference = await collections.chatCollection.add(newChat.toFirebaseObject());
-    final String chatid = documentReference.documentID;
+    final String chatid = documentReference.id;
     newChat.id = chatid;
 
     if (chatid == null) {
@@ -75,5 +76,6 @@ mixin DatabaseChatMixin {
     });
     return Future<String>.value(chatid);
   }
+      */
 
 }

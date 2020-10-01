@@ -20,8 +20,8 @@ class Chat with EquatableMixin {
 
   Chat.fromFirebaseObject(this.id, Map<String, dynamic> firebaseObject) {
     if (firebaseObject != null) {
-      name = firebaseObject.containsKey(ChatKeys.name) ? firebaseObject[ChatKeys.name].toString() : 'Unkown name';
-      members = firebaseObject.containsKey(ChatKeys.members) ? List<String>.from(firebaseObject[ChatKeys.members] as Iterable<dynamic>) : <String>[];
+      name = firebaseObject.containsKey(ChatKeys.name) ? firebaseObject[ChatKeys.name].toString() : '';
+      members = firebaseObject.containsKey(ChatKeys.members) ? List<String>.from(firebaseObject[ChatKeys.members] as List<dynamic>) : <String>[];
       members.sort();
     }
   }

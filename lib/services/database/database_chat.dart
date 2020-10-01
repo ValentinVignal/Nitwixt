@@ -16,24 +16,25 @@ class DatabaseChat with DatabaseChatMixin{
 
   /// The stream of a chat
   Stream<models.Chat> get stream {
-    return DatabaseChatMixin.chatCollection.document(id).snapshots().map(chatFromDocumentSnapshot);
+    return DatabaseChatMixin.chatCollection.doc(id).snapshots().map(DatabaseChatMixin.chatFromDocumentSnapshot);
   }
 
   /// Value of the chat
   Future<models.Chat> get future async {
-    final DocumentSnapshot documentSnapshot = await DatabaseChatMixin.chatCollection.document(id).get();
+    final DocumentSnapshot documentSnapshot = await DatabaseChatMixin.chatCollection.doc(id).get();
     return DatabaseChatMixin.chatFromDocumentSnapshot(documentSnapshot);
   }
 
 
   Future<void> update(Map<String, dynamic> obj) async {
-    return await DatabaseChatMixin.chatCollection.document(id).updateData(obj);
+    return await DatabaseChatMixin.chatCollection.doc(id).update(obj);
   }
+  /**
 
-  Future updateMembers(List<String> usernames) async {
+  Future<void> updateMembers(List<String> usernames) async {
     final List<models.User> allUserList = await DatabaseUserMixin.usersFromField(usernames);
-    final DocumentSnapshot documentSnapshot = await DatabaseChatMixin.chatCollection.document(id).get();
-    models.Chat chat = DatabaseChatMixin.chatFromDocumentSnapshot(documentSnapshot);
+    final DocumentSnapshot documentSnapshot = await DatabaseChatMixin.chatCollection.doc(id).get();
+    final models.Chat chat = DatabaseChatMixin.chatFromDocumentSnapshot(documentSnapshot);
 
     // members field of the new chat
     final List<String> members = allUserList.map<String>((models.User user) {
@@ -57,7 +58,9 @@ class DatabaseChat with DatabaseChatMixin{
     });
     return Future<void>.value(null);
   }
+      */
 
+  /**
   /// Delete the chat
   Future delete({List<models.User> members}) async {
     // Reconstruct members if not provided
@@ -77,4 +80,5 @@ class DatabaseChat with DatabaseChatMixin{
     // Remove the chat
     return DatabaseChatMixin.chatCollection.document(id).delete();
   }
+      */
 }

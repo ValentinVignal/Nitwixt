@@ -6,7 +6,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:nitwixt/screens/home/home.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:nitwixt/screens/home/loading_screen.dart';
+import 'file:///D:/Valentin/Code/Nitwixt/Nitwixt/lib/screens/loading_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
 
@@ -22,11 +22,12 @@ class NotificationsWrapper extends StatefulWidget {
 }
 
 class _NotificationsWrapperState extends State<NotificationsWrapper> {
-  _NotificationsWrapperState({@required this.user});
+  _NotificationsWrapperState({
+    @required this.user,
+  });
 
   final models.User user;
   models.PushToken pushToken;
-
 
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -58,7 +59,7 @@ class _NotificationsWrapperState extends State<NotificationsWrapper> {
   void configLocalNotification() {
     const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
     const IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings();
-    const InitializationSettings  initializationSettings = InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
+    const InitializationSettings initializationSettings = InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
@@ -73,7 +74,7 @@ class _NotificationsWrapperState extends State<NotificationsWrapper> {
       importance: Importance.Max,
       priority: Priority.High,
     );
-    const IOSNotificationDetails iOSPlatformChannelSpecifics =IOSNotificationDetails();
+    const IOSNotificationDetails iOSPlatformChannelSpecifics = IOSNotificationDetails();
     final NotificationDetails platformChannelSpecifics = NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     // print('message showNotification $message');
 
