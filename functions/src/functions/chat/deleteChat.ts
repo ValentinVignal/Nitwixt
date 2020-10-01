@@ -5,7 +5,7 @@ import * as admin from 'firebase-admin';
 /**
  * This function deletes all the messages on the deletion of a chat
  */
-export const _deleteChat = functions.firestore.document('chats/{chatId}').onDelete(async function (snapshot, context) {
+export const _onDeleteChat = functions.firestore.document('chats/{chatId}').onDelete(async function (snapshot, context) {
     console.log('---------- Start function ----------');
 
     // const ref: FirebaseFirestore.DocumentReference = snapshot.ref;

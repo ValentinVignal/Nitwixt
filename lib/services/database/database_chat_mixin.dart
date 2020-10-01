@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nitwixt/models/models.dart' as models;
+import 'package:cloud_functions/cloud_functions.dart';
 
 import 'collections.dart' as collections;
 import 'database_chat.dart';
@@ -30,8 +31,25 @@ mixin DatabaseChatMixin {
   }
 
   // TODO(Valentin): Remove this function
-  /**
   static Future<String> createNewChat(List<String> usernames) async {
+    try {
+      final HttpsCallable httpsCallable = CloudFunctions.instance.getHttpsCallable(functionName: 'createChat');
+      final HttpsCallableResult response = await httpsCallable.call(<String, dynamic>{
+        'usernames': usernames,
+      });
+      final Map<String, dynamic> data = response.data as Map<String, dynamic>;
+      final String error = data.containsKey('error') ? data['error'] as String : '';
+      if (error.isNotEmpty) {
+        return Future<String>.error(error);
+      } else {
+        final String chatId = data.containsKey('chatId') ? data['chatId'] as String : '';
+        return Future<String>.value(chatId);
+      }
+    } catch (error) {
+      return Future<String>.error('The chat couldn\'t be created');
+    }
+
+    /**
     /// Creates a new chat from the usernames and a user
 
     final List<models.User> allUserList = await DatabaseUserMixin.usersFromField(usernames);
@@ -75,7 +93,7 @@ mixin DatabaseChatMixin {
 //      });
     });
     return Future<String>.value(chatid);
+     */
   }
-      */
 
 }

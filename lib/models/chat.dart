@@ -1,9 +1,11 @@
 import 'package:equatable/equatable.dart';
+
 import 'package:nitwixt/models/models.dart';
 import 'package:nitwixt/services/database/database_user.dart';
 import 'package:nitwixt/services/database/database_files.dart';
-import 'utils/picture_url.dart';
 import 'package:nitwixt/src/src.dart' as src;
+
+import 'utils/picture_url.dart';
 
 class ChatKeys {
   static const String id = 'id';
@@ -26,7 +28,6 @@ class Chat with EquatableMixin {
     }
   }
 
-
   // * -------------------- Stored in Firebase --------------------
   String id; // The id of the chat
   String name; // The name of the chat
@@ -36,7 +37,8 @@ class Chat with EquatableMixin {
 
   final PictureUrl _pictureUrl = PictureUrl();
 
-  @override List<Object> get props => <Object>[id, name];
+  @override
+  List<Object> get props => <Object>[id, name];
 
   // * -------------------- Constructed later Firebase --------------------
   Map<String, String> _nameToDisplay; // user id -> other user name (user for private chat with 2 persons)

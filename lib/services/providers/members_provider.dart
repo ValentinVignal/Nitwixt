@@ -8,16 +8,15 @@ class MembersProvider extends StatelessWidget {
   const MembersProvider({
     @required this.chat,
     @required this.child,
-  }): super();
+  }) : super();
 
   final models.Chat chat;
   final Widget child;
 
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Stream<Map<String, models.User>>>(
-      future: DatabaseUserMixin.getUserMap(chatid: chat.id) ,
+      future: DatabaseUserMixin.getUserMap(chatid: chat.id),
       builder: (BuildContext context, AsyncSnapshot<Stream<Map<String, models.User>>> snapshot) {
         Stream<Map<String, models.User>> stream = Stream<Map<String, models.User>>.value(<String, models.User>{});
         if (!snapshot.hasError && snapshot.hasData) {
@@ -29,13 +28,12 @@ class MembersProvider extends StatelessWidget {
             child: child,
           ),
         );
-      }
+      },
     );
   }
 }
 
 class MembersMapReceiver extends StatelessWidget {
-
   const MembersMapReceiver({
     @required this.child,
   }) : super();

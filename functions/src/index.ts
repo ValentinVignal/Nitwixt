@@ -1,10 +1,11 @@
 import * as admin from 'firebase-admin';
 
-import { _deleteChat } from './functions/chat/deleteChat';
-import { _newMessage } from './functions/message/newMessage';
-import { _deleteMessage } from './functions/message/deleteMessage';
+import { _onDeleteChat } from './functions/chat/deleteChat';
+import { _onNewMessage } from './functions/message/newMessage';
+import { _onDeleteMessage } from './functions/message/deleteMessage';
 
 import { _migrateChatsToPrivate } from './migrations/migrateChatsToPrivate';
+import { _createChat } from './functions/chat/createChat';
 
 admin.initializeApp();
 
@@ -19,13 +20,15 @@ admin.initializeApp();
 
 // * ------------------------------ Chats ------------------------------
 
-export const deleteChat = _deleteChat;
+export const createChat = _createChat;
+
+export const onDeleteChat = _onDeleteChat;
 
 // * ------------------------------ Messages ------------------------------
 
-export const newMessage = _newMessage;
+export const onNewMessage = _onNewMessage;
 
-export const deleteMessage = _deleteMessage;
+export const onDeleteMessage = _onDeleteMessage;
 
 // ----------------------------------------------------------------------------------------------------
 

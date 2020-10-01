@@ -6,7 +6,7 @@ import * as chats from '../../chats/chats';
 /**
  * This function send notification to all the members of a chat when a message is written
  */
-export const _newMessage = functions.firestore.document('chats/{chatId}/messages/{messageId}').onCreate(async function (snapshot, context) {
+export const _onNewMessage = functions.firestore.document('chats/{chatId}/messages/{messageId}').onCreate(async function (snapshot, context) {
     console.log('---------- Start function ----------');
 
     const ref: FirebaseFirestore.DocumentReference = snapshot.ref;

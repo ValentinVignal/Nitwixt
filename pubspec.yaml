@@ -29,6 +29,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   badges: ^1.1.1
   cloud_firestore: ^0.14.0+2
+  cloud_functions: ^0.6.0+1
   cupertino_icons: ^0.1.3
   custom_navigator: ^0.3.0
   dash_chat: ^1.1.3
