@@ -16,11 +16,20 @@ class MembersProvider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<Map<String, models.User>>.value(
-      value: DatabaseUserMixin.getUserMap(chatid: chat.id),
-      child: MembersMapReceiver(
-        child: child,
-      ),
+    return FutureBuilder<Stream<Map<String, models.User>>>(
+      future: DatabaseUserMixin.getUserMap(chatid: chat.id) ,
+      builder: (BuildContext context, AsyncSnapshot<Stream<Map<String, models.User>>> snapshot) {
+        Stream<Map<String, models.User>> stream = Stream<Map<String, models.User>>.value(<String, models.User>{});
+        if (!snapshot.hasError && snapshot.hasData) {
+          stream = snapshot.data;
+        }
+        return StreamProvider<Map<String, models.User>>.value(
+          value: stream,
+          child: MembersMapReceiver(
+            child: child,
+          ),
+        );
+      }
     );
   }
 }

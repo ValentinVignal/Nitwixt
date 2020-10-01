@@ -31,13 +31,13 @@ mixin DatabaseUserMixin {
     return Future<Stream<List<models.User>>>.value(streams.combineListOfStreams<models.User>(listStream));
   }
 
-  static Stream<Map<String, models.User>> getUserMap({String chatid}) {
-    final Query query = collections.userPrivateCollection.where('id', isEqualTo: 'chats').where('chats', arrayContains: chatid);
-    return query.snapshots().map((QuerySnapshot querySnapshot) {
-      return userFromQuerySnapshot(querySnapshot).asMap().map<String, models.User>((int index, models.User user) {
-        return MapEntry<String, models.User>(user.id, user);
+  static Future<Stream<Map<String, models.User>>> getUserMap({String chatid}) async {
+      final Stream<List<models.User>> streamUserList = await getUserList(chatid: chatid);
+      return streamUserList.map<Map<String, models.User>>((List<models.User> userList) {
+        return userList.asMap().map<String, models.User>((int index, models.User user) {
+          return MapEntry<String, models.User>(user.id, user);
+        });
       });
-    });
   }
 
 //  static Stream<List<models.User>> getUserList({String chatid}) {
