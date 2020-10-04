@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:nitwixt/services/database/database.dart';
 
 import 'collections.dart' as collections;
 

@@ -29,7 +29,6 @@ class DatabaseChat with DatabaseChatMixin{
   Future<void> update(Map<String, dynamic> obj) async {
     return await DatabaseChatMixin.chatCollection.doc(id).update(obj);
   }
-  /**
 
   Future<void> updateMembers(List<String> usernames) async {
     final List<models.User> allUserList = await DatabaseUserMixin.usersFromField(usernames);
@@ -58,25 +57,9 @@ class DatabaseChat with DatabaseChatMixin{
     });
     return Future<void>.value(null);
   }
-      */
 
   /// Delete the chat
   Future<void> delete({List<models.User> members}) async {
-//    // Reconstruct members if not provided
-//    if (members == null) {
-//      final models.Chat chat = await future;
-//      members = await DatabaseUserMixin.usersFromField(chat.members, fieldName: 'id');
-//    }
-//
-//    // Delete the chat in the user documents
-//    members.forEach((models.User member) async {
-//      member.chats.remove(id);
-//      await DatabaseUser(id: member.id).update(<String, dynamic>{
-//        models.UserKeys.chats: member.toFirebaseObject()[models.UserKeys.chats],
-//      });
-//    });
-//
-    // Remove the chat
     return await DatabaseChatMixin.chatCollection.doc(id).delete();
   }
 }

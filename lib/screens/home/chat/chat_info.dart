@@ -64,7 +64,6 @@ class _ChatInfo extends State<ChatInfo> {
     }
 
     Future<void> _applyChanges() async {
-//      TODO(Valentin): Put bakb function
       if (_hasChanges()) {
         if (_formKey.currentState.validate()) {
           setState(() {
@@ -86,7 +85,7 @@ class _ChatInfo extends State<ChatInfo> {
                   members.values.map<String>((models.User user) {
                     return user.username;
                   }).toList();
-//              await database.DatabaseChat(id: chat.id).updateMembers(allUsernames);
+              await database.DatabaseChat(id: chat.id).updateMembers(allUsernames);
             }
             // * ----- Image -----
             if (image != null) {
