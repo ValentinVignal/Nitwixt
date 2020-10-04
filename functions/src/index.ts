@@ -1,6 +1,6 @@
-import { _onDeleteChat } from './functions/chat/deleteChat';
-import { _onNewMessage } from './functions/message/newMessage';
-import { _onDeleteMessage } from './functions/message/deleteMessage';
+import { _onDeleteChat } from './functions/chat/onDeleteChat';
+import { _onNewMessage } from './functions/message/onNewMessage';
+import { _onDeleteMessage } from './functions/message/onDeleteMessage';
 
 import { _migrateChatsToPrivate } from './migrations/migrateChatsToPrivate';
 import { _createChat } from './functions/chat/createChat';

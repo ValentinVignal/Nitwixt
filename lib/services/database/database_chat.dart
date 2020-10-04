@@ -60,25 +60,23 @@ class DatabaseChat with DatabaseChatMixin{
   }
       */
 
-  /**
   /// Delete the chat
-  Future delete({List<models.User> members}) async {
-    // Reconstruct members if not provided
-    if (members == null) {
-      final models.Chat chat = await future;
-      members = await DatabaseUserMixin.usersFromField(chat.members, fieldName: 'id');
-    }
-
-    // Delete the chat in the user documents
-    members.forEach((models.User member) async {
-      member.chats.remove(id);
-      await DatabaseUser(id: member.id).update(<String, dynamic>{
-        models.UserKeys.chats: member.toFirebaseObject()[models.UserKeys.chats],
-      });
-    });
-
+  Future<void> delete({List<models.User> members}) async {
+//    // Reconstruct members if not provided
+//    if (members == null) {
+//      final models.Chat chat = await future;
+//      members = await DatabaseUserMixin.usersFromField(chat.members, fieldName: 'id');
+//    }
+//
+//    // Delete the chat in the user documents
+//    members.forEach((models.User member) async {
+//      member.chats.remove(id);
+//      await DatabaseUser(id: member.id).update(<String, dynamic>{
+//        models.UserKeys.chats: member.toFirebaseObject()[models.UserKeys.chats],
+//      });
+//    });
+//
     // Remove the chat
-    return DatabaseChatMixin.chatCollection.document(id).delete();
+    return await DatabaseChatMixin.chatCollection.doc(id).delete();
   }
-      */
 }

@@ -38,6 +38,7 @@ class _ChatInfo extends State<ChatInfo> {
   @override
   Widget build(BuildContext context) {
     final models.Chat chat = Provider.of<models.Chat>(context);
+    print('chat, ${chat.id}, ${chat.members}');
     final Map<String, models.User> members = Provider.of<Map<String, models.User>>(context);
     final models.User user = Provider.of<models.User>(context);
 
@@ -63,8 +64,7 @@ class _ChatInfo extends State<ChatInfo> {
     }
 
     Future<void> _applyChanges() async {
-      /*
-      TODO(Valentin): Put bakb function
+//      TODO(Valentin): Put bakb function
       if (_hasChanges()) {
         if (_formKey.currentState.validate()) {
           setState(() {
@@ -86,7 +86,7 @@ class _ChatInfo extends State<ChatInfo> {
                   members.values.map<String>((models.User user) {
                     return user.username;
                   }).toList();
-              await database.DatabaseChat(id: chat.id).updateMembers(allUsernames);
+//              await database.DatabaseChat(id: chat.id).updateMembers(allUsernames);
             }
             // * ----- Image -----
             if (image != null) {
@@ -114,7 +114,6 @@ class _ChatInfo extends State<ChatInfo> {
         });
       }
 
-       */
     }
 
     void _cancelChanges() {

@@ -1,13 +1,9 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:nitwixt/services/database/database.dart';
 
 import 'collections.dart' as collections;
-import 'database_chat.dart';
-import 'database_user.dart';
-import 'database_user_mixin.dart';
 
 mixin DatabaseChatMixin {
 
@@ -32,8 +28,11 @@ mixin DatabaseChatMixin {
     return query.snapshots().map(chatFromQuerySnapshot);
   }
 
-  // TODO(Valentin): Remove this function
   static Future<String> createNewChat(List<String> usernames) async {
+    final users =await  DatabaseUserMixin.usersFromField(usernames);
+    print('users');
+    print(users.map((user) { return '${user.id} - ${user.name} - ${user.username}'; } ));
+
     try {
       final HttpsCallable httpsCallable = CloudFunctions.instance.getHttpsCallable(functionName: 'createChat');
       final HttpsCallableResult response = await httpsCallable.call(<String, dynamic>{
