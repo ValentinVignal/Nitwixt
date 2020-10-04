@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
-import admin from '../admin';
+import * as admin from 'firebase-admin';
+try {admin.initializeApp();} catch(e) {} // You do that because the admin SDK can only be initialized once.
 
 /**
  * Use to put the chats in a private field:

@@ -1,4 +1,5 @@
-import admin from '../admin';
+import * as admin from 'firebase-admin';
+try {admin.initializeApp();} catch(e) {} // You do that because the admin SDK can only be initialized once.
 
 export const chatsCollection = admin.firestore().collection('chats');
 

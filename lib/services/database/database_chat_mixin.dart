@@ -29,10 +29,6 @@ mixin DatabaseChatMixin {
   }
 
   static Future<String> createNewChat(List<String> usernames) async {
-    final users =await  DatabaseUserMixin.usersFromField(usernames);
-    print('users');
-    print(users.map((user) { return '${user.id} - ${user.name} - ${user.username}'; } ));
-
     try {
       final HttpsCallable httpsCallable = CloudFunctions.instance.getHttpsCallable(functionName: 'createChat');
       final HttpsCallableResult response = await httpsCallable.call(<String, dynamic>{

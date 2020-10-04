@@ -1,9 +1,14 @@
+import * as admin from 'firebase-admin';
+try {admin.initializeApp();} catch(e) {} // You do that because the admin SDK can only be initialized once.
+
 import { _onDeleteChat } from './functions/chat/onDeleteChat';
 import { _onNewMessage } from './functions/message/onNewMessage';
 import { _onDeleteMessage } from './functions/message/onDeleteMessage';
 
 import { _migrateChatsToPrivate } from './migrations/migrateChatsToPrivate';
 import { _createChat } from './functions/chat/createChat';
+
+
 
 
 // // Start writing Firebase Functions
