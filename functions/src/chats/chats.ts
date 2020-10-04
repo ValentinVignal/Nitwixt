@@ -1,3 +1,7 @@
+import admin from '../admin';
+
+export const chatsCollection = admin.firestore().collection('chats');
+
 /**
  * @function
  * @name nameToDisplay
