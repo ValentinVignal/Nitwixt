@@ -20,7 +20,9 @@ export const _migrateChatsToPrivate = functions.https.onRequest(async function (
         chats.sort();
         await admin.firestore().collection('users').doc(user.id).collection('user.private').doc('chats').set({
             chats: chats,
-            id: 'chats'
+            id: 'chats',
+            userId: user.id,
+            username: user.username
         });
         await admin.firestore().collection('users').doc(user.id).collection('private').doc('chats').delete();
     });

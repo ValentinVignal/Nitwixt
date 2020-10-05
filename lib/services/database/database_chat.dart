@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:nitwixt/models/models.dart' as models;
 
 import 'collections.dart' as collections;
 import 'database_chat_mixin.dart';
 import 'database_user.dart';
 import 'database_user_mixin.dart';
+
 
 class DatabaseChat with DatabaseChatMixin{
   DatabaseChat({
@@ -30,7 +32,25 @@ class DatabaseChat with DatabaseChatMixin{
     return await DatabaseChatMixin.chatCollection.doc(id).update(obj);
   }
 
-  Future<void> updateMembers(List<String> usernames) async {
+  Future<String> updateMembers(List<String> usernames) async {
+    try {
+      final HttpsCallable httpsCallable = CloudFunctions.instance.getHttpsCallable(functionName: 'updateChat');
+      final HttpsCallableResult response = await httpsCallable.call(<String, dynamic>{
+        'type': 'members',
+        'value': usernames,
+        'chatId': id,
+      });
+      final Map<String, dynamic> data = Map<String, dynamic>.from(response.data as Map<dynamic, dynamic>);
+      final String error = data.containsKey('error') ? data['error'] as String : '';
+      if (error.isNotEmpty) {
+        return Future<String>.error(error);
+      } else {
+        return Future<String>.value('');
+      }
+    } catch (error) {
+      return Future<String>.error('The members couldn\'t be updated');
+    }
+    /*
     final List<models.User> allUserList = await DatabaseUserMixin.usersFromField(usernames);
     final DocumentSnapshot documentSnapshot = await DatabaseChatMixin.chatCollection.doc(id).get();
     final models.Chat chat = DatabaseChatMixin.chatFromDocumentSnapshot(documentSnapshot);
@@ -56,6 +76,7 @@ class DatabaseChat with DatabaseChatMixin{
       });
     });
     return Future<void>.value(null);
+     */
   }
 
   /// Delete the chat
