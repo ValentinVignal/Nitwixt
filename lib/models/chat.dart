@@ -68,7 +68,7 @@ class Chat with EquatableMixin {
   Future<String> nameToDisplay(User user) async {
     if (!members.contains(user.id)) {
       // The user is not in this chat
-      return null;
+      return '';
     } else {
       // the user is this chat
       if (name.isNotEmpty) {

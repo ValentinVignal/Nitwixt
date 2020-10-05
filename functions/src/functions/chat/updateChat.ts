@@ -6,11 +6,9 @@ import * as chatUtils from '../../chats/chats';
 import * as userUtils from '../../users/users';
 import { ChatInterface } from '../../models/chat';
 import MultiValue from '../../utils/Mutlivalue';
-import { UserInterface } from '../../models/user';
-import { user } from 'firebase-functions/lib/providers/auth';
 
 enum UpdateTypes {
-    members= 'members'
+    members = 'members'
 };
 
 interface UpdateData {
@@ -27,6 +25,7 @@ export const _updateChat = functions.https.onCall(async function(data : UpdateDa
             }
         }
     } catch (error) {
+        console.warn(error.toString());
         return {
             error: error.toString()
         };
@@ -44,33 +43,36 @@ async function updateMembers(data: UpdateData) : Promise<Object> {
         };
     }
     const chat = chatDocumentSnapshot.data() as ChatInterface;
-    const currentMemberUsernames = new MultiValue<string>(chat.members);
+    const currentMemberIds = new MultiValue<string>(chat.members);
 
     // Get the new users
     data.value.sort();
     const newMembers = await userUtils.userList(data.value);      // Data value are the usernames
-    const newMemberUsernames = new MultiValue<string>(newMembers.map(function(member) {
-        return member.username;
+    const newMemberIds = new MultiValue<string>(newMembers.map(function(member) {
+        return member.id;
     }));
 
-    if (currentMemberUsernames.equals(newMemberUsernames)) {
+    if (currentMemberIds.equals(newMemberIds)) {
         return {};
     }
 
     // -------------------- There are some changes --------------------
     // ---------- Update the chat ----------
     await chatDocumentReference.update({
-        members: data.value
+        members: newMemberIds.values
     });
 
     // ---------- update the users ----------
-    const usernamesToAdd = newMemberUsernames.diff(currentMemberUsernames);
-    const usernamesToRemove = currentMemberUsernames.diff(newMemberUsernames);
+    const idsToAdd = newMemberIds.diff(currentMemberIds);
+    const idsToRemove = currentMemberIds.diff(newMemberIds);
 
     // ----- Add -----
-    for (const usernameToAdd in usernamesToAdd) {
+
+    for (let index=0; index < idsToAdd.length; index++) {
+        const idToAdd = idsToAdd.values[index];
+        console.log('userName to add', idToAdd);
         try {
-            const userChatsDocumentReference = admin.firestore().collectionGroup('user.private').where('id', '==', 'chats').where('username', '==', usernameToAdd);
+            const userChatsDocumentReference = admin.firestore().collectionGroup('user.private').where('id', '==', 'chats').where('userId', '==', idToAdd);
             const userChatsDocumentSnapshot = await userChatsDocumentReference.get();
             if (userChatsDocumentSnapshot.empty) {
                 throw Error('Empty document');
@@ -85,13 +87,15 @@ async function updateMembers(data: UpdateData) : Promise<Object> {
                 chats: chats
             });
         } catch (error) {
-            console.warn(`Could not add the chat ${data.chatId} to user ${usernameToAdd} - error: ${error.toString()}`);
+            console.warn(`Could not add the chat ${data.chatId} to user ${idToAdd} - error: ${error.toString()}`);
         }
     }
 
-    for (const usernameToRemove in usernamesToRemove) {
+    for (let index=0; index < idsToRemove.length; index++) {
+        const idToRemove = idsToRemove.values[index];
+        console.log('userName to remove', idToRemove);
         try {
-            const userChatsDocumentReference = admin.firestore().collectionGroup('user.private').where('id', '==', 'chats').where('username', '==', usernameToRemove);
+            const userChatsDocumentReference = admin.firestore().collectionGroup('user.private').where('id', '==', 'chats').where('userId', '==', idToRemove);
             const userChatsDocumentSnapshot = await userChatsDocumentReference.get();
             if (userChatsDocumentSnapshot.empty) {
                 throw Error('Empty document');
@@ -108,7 +112,7 @@ async function updateMembers(data: UpdateData) : Promise<Object> {
                 chats: chats
             });
         } catch (error) {
-            console.warn(`Could not remove the chat ${data.chatId} from user ${usernameToRemove} - error: ${error.toString()}`);
+            console.warn(`Could not remove the chat ${data.chatId} from user ${idToRemove} - error: ${error.toString()}`);
         }
     }
     return {};

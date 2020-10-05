@@ -24,6 +24,7 @@ mixin DatabaseUserMixin {
 
   static Future<Stream<List<models.User>>> getUserList({String chatid}) async {
     final Query queryUserChats = collections.userPrivateCollection.where('id', isEqualTo: 'chats').where('chats', arrayContains: chatid);
+    // TODO(Valentin): Replace get by snapshot
     final QuerySnapshot querySnapshotUserChats = await queryUserChats.get();
     final List<Stream<models.User>> listStream =  querySnapshotUserChats.docs.map((QueryDocumentSnapshot queryDocumentSnapshot) {
       return queryDocumentSnapshot.reference.parent.parent.snapshots().map<models.User>(userFromDocumentSnapshot);

@@ -83,13 +83,13 @@ export default class MultiValue<T extends number|string> {
         const result = new MultiValue<T>();
         let thisIndex = 0;
         let otherIndex = 0;
-        while (thisIndex < this.length && otherIndex < other.length) {
+        while (thisIndex < this.length) {
             const thisValue = this.values[thisIndex];
-            const otherValue = other.values[otherIndex];
-            if (thisValue === otherIndex) {
+            const otherValue = otherIndex < other.length ? other.values[otherIndex] : null;
+            if (thisValue === otherValue) {
                 thisIndex++;
                 otherIndex++;
-            } else if (thisValue < otherValue) {
+            } else if (otherValue === null || thisValue < otherValue) {
                 result.add(thisValue);
                 thisIndex++;
             } else {

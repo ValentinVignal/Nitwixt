@@ -33,6 +33,12 @@ class DatabaseChat with DatabaseChatMixin{
   }
 
   Future<String> updateMembers(List<String> usernames) async {
+//    final user = await collections.userPrivateCollection.where('id', isEqualTo: 'chats').where('username', isEqualTo: 'e').get();
+//    print('user ${user.docs.length}');
+//    final user1 = user.docs[0].data();
+//    print('user $user, ${user1['username']}, ${user1['chats']}');
+//    return Future<String>.value('ok');
+  // S0uZHm99wAPT72RySQfR
     try {
       final HttpsCallable httpsCallable = CloudFunctions.instance.getHttpsCallable(functionName: 'updateChat');
       final HttpsCallableResult response = await httpsCallable.call(<String, dynamic>{
