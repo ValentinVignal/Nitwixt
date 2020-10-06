@@ -43,9 +43,9 @@ class _SetUsernameState extends State<SetUsername> {
           // Username doesn't exist -> update the user record
           user.username = username;
           user.name = username;
-          await DatabaseUserMixin.createUser(user: user).catchError((String errorMessage) {
+          await DatabaseUserMixin.createUser(user: user).catchError((dynamic error) {
             setState(() {
-              errorMessage = 'Could not set the username $username';
+              errorMessage = 'Could not set the username $username\n${error.toString()}';
               loading = false;
             });
           });

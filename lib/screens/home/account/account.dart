@@ -165,12 +165,8 @@ class _AccountState extends State<Account> {
               child: ListView(
                 padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
                 children: <Widget>[
-                  if (error.isNotEmpty)
-                    Text(
-                      error,
-                      style: const TextStyle(color: Colors.red),
-                    ),
                   imageWidget,
+                  const SizedBox(height: 20),
                   // Username
                   TextInfo(
                     title: 'Username',
@@ -198,6 +194,12 @@ class _AccountState extends State<Account> {
                     mode: _isEditing ? TextInfoMode.blocked : TextInfoMode.show,
                     scrollDirection: Axis.horizontal,
                   ),
+                  const SizedBox(height: 20),
+                  if (error.isNotEmpty)
+                    Text(
+                      error,
+                      style: const TextStyle(color: Colors.red),
+                    ),
                 ],
               ),
             ),
