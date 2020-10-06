@@ -1,5 +1,6 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:stream_transform/stream_transform.dart';
+import 'package:rxdart/rxdart.dart';
 
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/src/utils/streams.dart' as streams;
@@ -25,11 +26,19 @@ mixin DatabaseUserMixin {
   static Future<Stream<List<models.User>>> getUserList({String chatid}) async {
     final Query queryUserChats = collections.userPrivateCollection.where('id', isEqualTo: 'chats').where('chats', arrayContains: chatid);
     // TODO(Valentin): Replace get by snapshot
-    final QuerySnapshot querySnapshotUserChats = await queryUserChats.get();
-    final List<Stream<models.User>> listStream =  querySnapshotUserChats.docs.map((QueryDocumentSnapshot queryDocumentSnapshot) {
-      return queryDocumentSnapshot.reference.parent.parent.snapshots().map<models.User>(userFromDocumentSnapshot);
-    }).toList();
-    return Future<Stream<List<models.User>>>.value(streams.combineListOfStreams<models.User>(listStream));
+    final Stream<QuerySnapshot> querySnapshotStreamUserChats = queryUserChats.snapshots();
+
+    //final List<Stream<models.User>> listStream =
+    final Stream<Stream<List<models.User>>> streamStreamUsers = querySnapshotStreamUserChats.map((QuerySnapshot querySnapshotUserChats) {
+      final List<Stream<models.User>> listStream = querySnapshotUserChats .docs.map((QueryDocumentSnapshot queryDocumentSnapshot) {
+        return queryDocumentSnapshot.reference.parent.parent.snapshots().map<models.User>(userFromDocumentSnapshot);
+      }).toList();
+      return streams.combineListOfStreams<models.User>(listStream);
+    });
+
+    // Flatten the streams
+    final Stream<List<models.User>> streamUsers = Rx.switchLatest(streamStreamUsers);
+    return streamUsers;
   }
 
   static Future<Stream<Map<String, models.User>>> getUserMap({String chatid}) async {
@@ -40,20 +49,6 @@ mixin DatabaseUserMixin {
         });
       });
   }
-
-//  static Stream<List<models.User>> getUserList({String chatid}) {
-//    final Query query = collections.userCollection.where(models.UserKeys.chats, arrayContains: chatid);
-//    return query.snapshots().map(userFromQuerySnapshot);
-//  }
-//
-//  static Stream<Map<String, models.User>> getUserMap({String chatid}) {
-//    final Query query = collections.userCollection.where(models.UserKeys.chats, arrayContains: chatid);
-//    return query.snapshots().map((QuerySnapshot querySnapshot) {
-//      return userFromQuerySnapshot(querySnapshot).asMap().map<String, models.User>((int index, models.User user) {
-//        return MapEntry<String, models.User>(user.id, user);
-//      });
-//    });
-//  }
 
   static Future<void> createEmptyUser({String id}) async {
     /// id is used when I when to create a user with a fixed id (from the FirebaseUser id)
