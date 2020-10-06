@@ -20,6 +20,7 @@ class _SetUsernameState extends State<SetUsername> {
   bool loading = false;
   String username = '';
   String errorMessage = '';
+  bool olderThan13Yo = false;
 
   @override
   Widget build(BuildContext context) {
@@ -27,12 +28,17 @@ class _SetUsernameState extends State<SetUsername> {
     final double height = MediaQuery.of(context).size.height;
 
     Future<void> _validate() async {
-      if (_formKey.currentState.validate()) {
+      /*
+      if (!olderThan13Yo) {
+        setState(() {
+          errorMessage = 'Please confirm you are older than 13 years old';
+        });
+      } else */ if (_formKey.currentState.validate()) {
         setState(() {
           loading = true;
         });
-        final QuerySnapshot documents = await userCollection.where(UserKeys.username, isEqualTo: username).getDocuments();
-        if (documents.documents.isNotEmpty) {
+        final QuerySnapshot documents = await userCollection.where(UserKeys.username, isEqualTo: username).get();
+        if (documents.docs.isNotEmpty) {
           // There is already a user with this username
           setState(() {
             errorMessage = 'Username $username is already used';
@@ -53,9 +59,7 @@ class _SetUsernameState extends State<SetUsername> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.grey[900],
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey[800],
         title: const Text('Nitwixt'),
         leading: IconButton(
           onPressed: () => AuthService().signOut(),
@@ -95,18 +99,35 @@ class _SetUsernameState extends State<SetUsername> {
                       }
                       return null;
                     },
-                    onChanged: (val) {
+                    onChanged: (String val) {
                       setState(() => username = val);
                     },
                   ),
                   const SizedBox(
-                    height: 10.0,
+                    height: 30.0,
+                  ),
+                  CheckboxFormField(
+                      title: const Text('I have more than 13 years old'),
+                      initialValue: olderThan13Yo,
+                      validator: (bool val) {
+                        if (val) {
+                          return null;
+                        } else {
+                          return 'This field is mandatory';
+                        }
+                      },
+                  ),
+                  const SizedBox(
+                    height: 30.0,
                   ),
                   ButtonSimple(
                     onTap: _validate,
                     color: Colors.cyan[200],
                     icon: Icons.check,
                     text: 'Confirm',
+                  ),
+                  const SizedBox(
+                    height: 30.0,
                   ),
                   Text(
                     errorMessage,
@@ -125,3 +146,4 @@ class _SetUsernameState extends State<SetUsername> {
     );
   }
 }
+
