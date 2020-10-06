@@ -28,12 +28,7 @@ class _SetUsernameState extends State<SetUsername> {
     final double height = MediaQuery.of(context).size.height;
 
     Future<void> _validate() async {
-      /*
-      if (!olderThan13Yo) {
-        setState(() {
-          errorMessage = 'Please confirm you are older than 13 years old';
-        });
-      } else */ if (_formKey.currentState.validate()) {
+      if (_formKey.currentState.validate()) {
         setState(() {
           loading = true;
         });
