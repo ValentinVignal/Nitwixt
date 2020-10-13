@@ -36,5 +36,5 @@ export const onDeleteMessage = _onDeleteMessage;
 
 // ----------------------------------------------------------------------------------------------------
 
-export const migrateChatsToPrivate = _migrateChatsToPrivate;
+// export const migrateChatsToPrivate = _migrateChatsToPrivate;
 

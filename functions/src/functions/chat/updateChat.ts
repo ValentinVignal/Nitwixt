@@ -5,7 +5,7 @@ try {admin.initializeApp();} catch(e) {} // You do that because the admin SDK ca
 import * as chatUtils from '../../chats/chats';
 import * as userUtils from '../../users/users';
 import { ChatInterface } from '../../models/chat';
-import MultiValue from '../../utils/Mutlivalue';
+import MultiValue from '../../utils/MultiValue';
 
 enum UpdateTypes {
     members = 'members'
