@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nitwixt/models/models.dart';
 import 'package:nitwixt/services/auth/auth.dart';
 import 'package:slider_button/slider_button.dart';
 
@@ -7,9 +8,10 @@ import 'package:nitwixt/widgets/widgets.dart';
 import 'package:nitwixt/widgets/widgets.dart' as widgets;
 
 class SignIn extends StatefulWidget {
-  final Function toggleView;
 
-  SignIn({this.toggleView});
+  const SignIn({this.toggleView,});
+
+  final Function toggleView;
 
   @override
   _SignInState createState() => _SignInState();
@@ -19,10 +21,10 @@ class _SignInState extends State<SignIn> {
   final AuthEmailPassword _authEmailPassword = AuthEmailPassword();
   final AuthGoogle _authGoogle = AuthGoogle();
   final AuthFacebook _authFacebook = AuthFacebook();
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool loading = false;
   bool _passwordVisible = false;
-  final focus = FocusNode();
+  final FocusNode focus = FocusNode();
 
 
   // text filed state
@@ -32,7 +34,7 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
+    final double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
 //      backgroundColor: Colors.black12,
@@ -40,17 +42,17 @@ class _SignInState extends State<SignIn> {
         Container(
           height: double.infinity,
           width: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
+              colors: <Color>[
                 Color(0xFF101040),
                 Color(0xFF182050),
                 Color(0xFF253060),
                 Color(0xFF104070),
               ],
-              stops: [0.1, 0.4, 0.7, 0.8],
+              stops: <double>[0.1, 0.4, 0.7, 0.8],
             ),
           ),
         ),
@@ -58,31 +60,31 @@ class _SignInState extends State<SignIn> {
           child: SizedBox(
             height: height,
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+              padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
               child: Form(
                 key: _formKey,
                 child: Column(
                   children: <Widget>[
-                    SizedBox(height: 10.0),
+                    const SizedBox(height: 10.0),
                     Image.asset(
                       'assets/images/logo.png',
                       scale: 8.0,
                     ),
-                    SizedBox(height: 10.0),
-                    Text(
+                    const SizedBox(height: 10.0),
+                    const Text(
                       'Nitwixt',
                       style: TextStyle(color: Colors.blueAccent, fontSize: 25.0),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     TextFormField(
                       initialValue: email,
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                       keyboardType: TextInputType.emailAddress,
                       decoration: textInputDecoration.copyWith(
                         hintText: 'Email',
                         labelText: 'Email',
                       ),
-                      validator: (val) {
+                      validator: (String val) {
                         if (val.isEmpty) {
                           return 'Enter an email';
                         } else if (!validateEmail(val)) {
@@ -90,18 +92,18 @@ class _SignInState extends State<SignIn> {
                         }
                         return null;
                       },
-                      onChanged: (val) {
+                      onChanged: (String val) {
                         setState(() => email = val);
                       },
                       textInputAction: TextInputAction.next,
-                      onFieldSubmitted: (v){
+                      onFieldSubmitted: (String val){
                         FocusScope.of(context).requestFocus(focus);
                       },
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     TextFormField(
                       initialValue: password,
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                       decoration: textInputDecoration.copyWith(
                         hintText: 'Password',
                         labelText: 'Password',
@@ -121,31 +123,31 @@ class _SignInState extends State<SignIn> {
                           },
                         ),
                       ),
-                      validator: (val) => val.isEmpty ? 'Enter a password' : null,
+                      validator: (String val) => val.isEmpty ? 'Enter a password' : null,
                       obscureText: !_passwordVisible,
-                      onChanged: (val) {
+                      onChanged: (String val) {
                         setState(() => password = val);
                       },
                       focusNode: focus,
                       textInputAction: TextInputAction.done,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20.0,
                     ),
-                    SizedBox(height: 12.0),
+                    const SizedBox(height: 12.0),
                     Text(
                       error,
-                      style: TextStyle(color: Colors.red, fontSize: 14.0),
+                      style: const TextStyle(color: Colors.red, fontSize: 14.0),
                     ),
-                    loading ? LoadingCircle() : Container(),
+                    if (loading) LoadingCircle(),
                     Expanded(child: Container()),
-                    SizedBox(height: 12.0),
+                    const SizedBox(height: 12.0),
                     SliderButton(
-                      label: Text(
+                      label: const Text(
                         'Sign in',
                         style: TextStyle(color: Colors.black),
                       ),
-                      icon: Center(
+                      icon: const Center(
                         child: Icon(Icons.arrow_forward_ios),
                       ),
                       height: 55.0,
@@ -153,7 +155,7 @@ class _SignInState extends State<SignIn> {
                       action: () async {
                         if (_formKey.currentState.validate()) {
                           setState(() => loading = true);
-                          dynamic result = await _authEmailPassword.signInEmailPassword(email, password);
+                          final UserAuth result = await _authEmailPassword.signInEmailPassword(email, password);
                           if (result == null) {
                             setState(() {
                               error = 'Email or wrong password';
@@ -163,17 +165,17 @@ class _SignInState extends State<SignIn> {
                         }
                       },
                       dismissible: false,
-                      alignLabel: Alignment(0.0, 0.0),
+                      alignLabel: const Alignment(0.0, 0.0),
                       vibrationFlag: false,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20.0,
                     ),
-                    Text(
+                    const Text(
                       'Sign in with',
                       style: TextStyle(color: Colors.grey),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10.0,
                     ),
                     Row(
@@ -182,7 +184,7 @@ class _SignInState extends State<SignIn> {
                         GestureDetector(
                           onTap: () async {
                             setState(() => loading = true);
-                            dynamic result = await _authGoogle.signInWithGoogle();
+                            final UserAuth result = await _authGoogle.signInWithGoogle();
                             if (result == null) {
                               setState(() {
                                 error = 'Could not sign in with google';
@@ -190,7 +192,7 @@ class _SignInState extends State<SignIn> {
                               });
                             }
                           },
-                          child: Image(
+                          child: const Image(
                             image: AssetImage('assets/images/google_logo.png'),
                             height: 35.0,
                           ),
@@ -198,7 +200,7 @@ class _SignInState extends State<SignIn> {
                         GestureDetector(
                           onTap: () async {
                             setState(() => loading = true);
-                            dynamic result = await _authFacebook.signInWithFacebook();
+                            final UserAuth result = await _authFacebook.signInWithFacebook();
                             if (result == null) {
                               setState(() {
                                 error = 'Could not sign in with Facebook';
@@ -206,14 +208,14 @@ class _SignInState extends State<SignIn> {
                               });
                             }
                           },
-                          child: Image(
+                          child: const Image(
                             image: AssetImage('assets/images/facebook_logo.png'),
                             height: 35.0,
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20.0,
                     ),
                     widgets.ButtonSimple(
@@ -224,7 +226,7 @@ class _SignInState extends State<SignIn> {
                       fontSize: 20.0,
                       horizontalPadding: 20.0,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10.0,
                     ),
                   ],

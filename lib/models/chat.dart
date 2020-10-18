@@ -18,7 +18,9 @@ class Chat with EquatableMixin {
     this.id,
     this.name,
     this.members,
-  });
+  }) {
+    _pictureUrl.defaultAvatarId = (name != null && name.isNotEmpty) ? name : id;
+  }
 
   Chat.fromFirebaseObject(this.id, Map<String, dynamic> firebaseObject) {
     if (firebaseObject != null) {
@@ -26,6 +28,7 @@ class Chat with EquatableMixin {
       members = firebaseObject.containsKey(ChatKeys.members) ? List<String>.from(firebaseObject[ChatKeys.members] as List<dynamic>) : <String>[];
       members.sort();
     }
+    _pictureUrl.defaultAvatarId = (name != null && name.isNotEmpty) ? name : id;
   }
 
   // * -------------------- Stored in Firebase --------------------
@@ -45,7 +48,7 @@ class Chat with EquatableMixin {
 
   Map<String, Object> toFirebaseObject() {
     members.sort();
-    return {
+    return <String, dynamic>{
       ChatKeys.id: id,
       ChatKeys.name: name,
       ChatKeys.members: members,
@@ -87,7 +90,7 @@ class Chat with EquatableMixin {
           } else {
             // Let's construct the object _nameToDisplay
             // First get the other user from database
-            final User otherUser = await this._otherUser(user);
+            final User otherUser = await _otherUser(user);
             // construct map
             _nameToDisplay = <String, String>{};
             _nameToDisplay[user.id] = otherUser.name;
@@ -109,28 +112,30 @@ class Chat with EquatableMixin {
   }
 
   Future<String> pictureUrl(User user) async {
-    if (_pictureUrl.isEmpty && _pictureUrl.hasUrl) {
-      _pictureUrl.url = await DatabaseFiles(path: picturePath).url;
-      if (_pictureUrl.isEmpty) {
+    if (_pictureUrl.isEmpty && _pictureUrl.hasCustomUrl) {
+      String url = await DatabaseFiles(path: picturePath).url;
+      if (url.isEmpty) {
         if (members.length == 1) {
           // Chat alone
-          _pictureUrl.url = await user.pictureUrl;
+          url = await user.pictureUrl;
         } else if (members.length == 2) {
           // Private chat
           final User otherUser = await _otherUser(user);
-          _pictureUrl.url = await otherUser.pictureUrl;
+          url = await otherUser.pictureUrl;
         }
       }
+      _pictureUrl.setUrl(url);
+
       if (_pictureUrl.isEmpty) {
-        _pictureUrl.hasUrl = false;
+        _pictureUrl.hasCustomUrl = false;
       }
     }
-    return _pictureUrl.getUrl(defaultAdorableAvatar: name ?? id);
+    return _pictureUrl.url;
   }
 
-  String emptyPictureUrl() {
+  Future<String> emptyPictureUrl() async {
     _pictureUrl.empty();
-    return _pictureUrl.url;
+    return await _pictureUrl.url;
   }
 
   bool equals(Chat chat) {

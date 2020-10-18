@@ -23,6 +23,7 @@ mixin DatabaseChatMixin {
 
   /// Stream of list of chat of a user
   static Stream<List<models.Chat>> getChatList({String userid, int limit = 10}) {
+    print('userid $userid');
     final Query query = collections.chatCollection.where(models.ChatKeys.members, arrayContains: userid).limit(limit);
     return query.snapshots().map(chatFromQuerySnapshot);
   }

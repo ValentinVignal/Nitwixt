@@ -15,8 +15,8 @@ class TextInfo extends StatelessWidget {
     this.maxLines,
     this.scrollDirection,
   }) : super() {
-    assert(value == null || controller == null);
-    assert(!((maxLines == null) && (scrollDirection == Axis.vertical)));
+    assert(value == null || controller == null, 'Controller and value can\' be defined at the same time');
+    assert(!((maxLines == null) && (scrollDirection == Axis.vertical)), 'maxLines cannot be null for a vertical scrollDirection');
     textStyleInfo = TextStyle(
       fontSize: fontSize,
       color: Colors.white,

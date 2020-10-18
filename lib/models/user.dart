@@ -20,7 +20,9 @@ class User {
     this.name,
     this.pushToken,
     this.defaultPictureUrl='',
-  });
+  }) {
+    _pictureUrl.defaultAvatarId = username ?? id;
+  }
 
   User.fromFirebaseObject(this.id, Map<String, dynamic> firebaseObject) {
     if (firebaseObject != null) {
@@ -29,6 +31,7 @@ class User {
       pushToken = firebaseObject.containsKey(UserKeys.pushToken) ? List<String>.from(firebaseObject[UserKeys.pushToken] as List<dynamic>) : <String>[];
       defaultPictureUrl = firebaseObject.containsKey(UserKeys.defaultPictureUrl) ? firebaseObject[UserKeys.defaultPictureUrl] as String : '';
     }
+    _pictureUrl.defaultAvatarId = username ?? id;
   }
 
 
@@ -76,14 +79,11 @@ class User {
   }
 
   Future<String> get pictureUrl async {
-    if (_pictureUrl.isEmpty && _pictureUrl.hasUrl) {
+    if (_pictureUrl.isEmpty && _pictureUrl.hasCustomUrl) {
       final String url = await DatabaseFiles(path: picturePath).url;
-      _pictureUrl.url = url.isNotEmpty ? url: defaultPictureUrl;
-      if (_pictureUrl.isEmpty) {
-        _pictureUrl.hasUrl = false;
-      }
+      _pictureUrl.setUrl(url.isNotEmpty ? url : defaultPictureUrl);
     }
-    return _pictureUrl.getUrl(defaultAdorableAvatar: username ?? id);
+    return await _pictureUrl.url;
   }
 
   Future<String> emptyPictureUrl ({bool reload=false}) async {
@@ -91,7 +91,7 @@ class User {
     if (reload) {
       return pictureUrl;
     }
-    return _pictureUrl.url;
+    return await _pictureUrl.url;
   }
 }
 

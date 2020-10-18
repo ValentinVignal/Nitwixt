@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nitwixt/models/models.dart';
 import 'package:nitwixt/services/auth/auth.dart';
 import 'package:nitwixt/widgets/widgets.dart';
 import 'package:slider_button/slider_button.dart';
@@ -8,9 +9,11 @@ import 'package:nitwixt/widgets/widgets.dart' as widgets;
 import '../../shared/constants.dart';
 
 class Register extends StatefulWidget {
-  final Function toggleView;
+  const Register({
+    this.toggleView,
+  });
 
-  Register({this.toggleView});
+  final Function toggleView;
 
   @override
   _RegisterState createState() => _RegisterState();
@@ -18,12 +21,12 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   final AuthEmailPassword _auth = AuthEmailPassword();
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool loading = false;
   bool _passwordVisible1 = false;
   bool _passwordVisible2 = false;
-  final focus1 = FocusNode();
-  final focus2 = FocusNode();
+  final FocusNode focus1 = FocusNode();
+  final FocusNode focus2 = FocusNode();
 
   // text field state
   String email = '';
@@ -33,7 +36,7 @@ class _RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
+    final double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: Colors.white70,
@@ -41,17 +44,17 @@ class _RegisterState extends State<Register> {
         Container(
           height: double.infinity,
           width: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
+              colors: <Color>[
                 Color(0xFF101040),
                 Color(0xFF182050),
                 Color(0xFF253060),
                 Color(0xFF104070),
               ],
-              stops: [0.1, 0.4, 0.7, 0.8],
+              stops: <double>[0.1, 0.4, 0.7, 0.8],
             ),
           ),
         ),
@@ -59,22 +62,22 @@ class _RegisterState extends State<Register> {
           child: SizedBox(
             height: height,
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+              padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
               child: Form(
                 key: _formKey,
                 child: Column(
                   children: <Widget>[
-                    SizedBox(height: 10.0),
+                    const SizedBox(height: 10.0),
                     Image.asset(
                       'assets/images/logo.png',
                       scale: 8.0,
                     ),
-                    SizedBox(height: 10.0),
-                    Text(
+                    const SizedBox(height: 10.0),
+                    const Text(
                       'Register to Nitwixt',
                       style: TextStyle(color: Colors.blueAccent, fontSize: 25.0),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     TextFormField(
                       initialValue: email,
                       keyboardType: TextInputType.emailAddress,
@@ -82,7 +85,7 @@ class _RegisterState extends State<Register> {
                         hintText: 'Email',
                         labelText: 'Email',
                       ),
-                      validator: (val) {
+                      validator: (String val) {
                         if (val.isEmpty) {
                           return 'Enter an email';
                         } else if (!validateEmail(val)) {
@@ -90,16 +93,16 @@ class _RegisterState extends State<Register> {
                         }
                         return null;
                       },
-                      onChanged: (val) {
+                      onChanged: (String val) {
                         setState(() => email = val);
                       },
                       textInputAction: TextInputAction.next,
-                      onFieldSubmitted: (v){
+                      onFieldSubmitted: (String val) {
                         FocusScope.of(context).requestFocus(focus1);
                       },
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     TextFormField(
                       initialValue: _password1,
                       decoration: textInputDecoration.copyWith(
@@ -121,32 +124,32 @@ class _RegisterState extends State<Register> {
                           },
                         ),
                       ),
-                      validator: (val) {
+                      validator: (String val) {
                         if (val.isEmpty) {
                           return 'Enter a password';
                         } else if (val.length < 8) {
-                          return 'Password should be at least 8 caracters';
+                          return 'Password should be at least 8 characters';
                         }
                         return null;
                       },
                       obscureText: !_passwordVisible1,
-                      onChanged: (val) {
+                      onChanged: (String val) {
                         setState(() => _password1 = val);
                       },
                       textInputAction: TextInputAction.next,
-                      onFieldSubmitted: (v){
+                      onFieldSubmitted: (String val) {
                         FocusScope.of(context).requestFocus(focus2);
                       },
                       focusNode: focus1,
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10.0,
                     ),
                     FlutterPasswordStrength(
                       password: _password1,
                     ),
-                    SizedBox(height: 10.0),
+                    const SizedBox(height: 10.0),
                     TextFormField(
                       initialValue: _password2,
                       decoration: textInputDecoration.copyWith(
@@ -168,7 +171,7 @@ class _RegisterState extends State<Register> {
                           },
                         ),
                       ),
-                      validator: (val) {
+                      validator: (String val) {
                         if (val.isEmpty) {
                           return 'Enter a password';
                         } else if (val != _password1) {
@@ -177,24 +180,24 @@ class _RegisterState extends State<Register> {
                         return null;
                       },
                       obscureText: !_passwordVisible2,
-                      onChanged: (val) {
+                      onChanged: (String val) {
                         setState(() => _password2 = val);
                       },
                       focusNode: focus2,
                       textInputAction: TextInputAction.done,
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20.0,
                     ),
-                    loading ? LoadingCircle() : Container(),
-                    Spacer(),
+                    if (loading) LoadingCircle(),
+                    const Spacer(),
                     SliderButton(
-                      label: Text(
+                      label: const Text(
                         'Register',
                         style: TextStyle(color: Colors.black),
                       ),
-                      icon: Center(
+                      icon: const Center(
                         child: Icon(Icons.arrow_forward_ios),
                       ),
                       height: 55.0,
@@ -202,7 +205,7 @@ class _RegisterState extends State<Register> {
                       action: () async {
                         if (_formKey.currentState.validate()) {
                           setState(() => loading = true);
-                          dynamic result = await _auth.registerEmailPassword(email, _password1);
+                          final UserAuth result = await _auth.registerEmailPassword(email, _password1);
                           if (result == null) {
                             setState(() {
                               error = 'Please supply a valid email';
@@ -212,15 +215,15 @@ class _RegisterState extends State<Register> {
                         }
                       },
                       dismissible: false,
-                      alignLabel: Alignment(0.0, 0.0),
+                      alignLabel: const Alignment(0.0, 0.0),
                       vibrationFlag: false,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10.0,
                     ),
                     Text(
                       error,
-                      style: TextStyle(color: Colors.red, fontSize: 14.0),
+                      style: const TextStyle(color: Colors.red, fontSize: 14.0),
                     ),
                     widgets.ButtonSimple(
                       onTap: () {
@@ -230,7 +233,7 @@ class _RegisterState extends State<Register> {
                       fontSize: 20.0,
                       horizontalPadding: 20.0,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10.0,
                     ),
                   ],
