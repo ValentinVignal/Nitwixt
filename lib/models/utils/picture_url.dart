@@ -94,11 +94,9 @@ class PictureUrl {
     for (final String url in defaultUrls(id: defaultAvatarId)) {
       final http.Response response = await http.head(url);
       if (<int>[200, 304].contains(response.statusCode)) {
-        print('url $url k ${response.statusCode}');
         _defaultUrl = url;
         break;
       }
-      print('url $url not ok ${response.statusCode}');
     }
     _hasLoadedDefault = true;
 
