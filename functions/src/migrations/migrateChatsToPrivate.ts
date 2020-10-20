@@ -1,54 +1,36 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import { UserPublicChats } from '../interfaces';
 try {admin.initializeApp();} catch(e) {} // You do that because the admin SDK can only be initialized once.
+
 
 /**
  * Use to put the chats in a private field:
  * 
- * user.chats => user / private / chats.chats
+ * user / private / chats.chats => user / public / chats.chats
  */
-export const _migrateChatsToPrivate = functions.https.onRequest(async function (request, response) {
-    const queryUsers = await admin.firestore().collection('users').get();
-    const users: Array<FirebaseFirestore.DocumentData> = [];
+export const _migrateChatsToPublic = functions.https.onRequest(async function (request, response) {
+    const queryUserChats = await admin.firestore().collectionGroup('user.private').get();
+    const usersChats: UserPublicChats[] = [];
 
-    console.log('start');
+    functions.logger.log('start', queryUserChats.docs.length);
 
     // Get all the users
-    for (let i=0; i<queryUsers.docs.length; i++) {
-        const user = queryUsers.docs[i].data();
-        users.push(user);
+    for (let i=0; i<queryUserChats.docs.length; i++) {
+        const userChats : UserPublicChats = queryUserChats.docs[i].data() as UserPublicChats;
+        usersChats.push(userChats);
     }
 
-    console.log('got the users');
+    functions.logger.log('got the users');
 
     // Add private chat
-    for (let i=0; i<users.length; i++) {
-        const user = users[i];
-        let chats = user.chats;
-        if (!chats) {
-            chats = [];
-            console.log(`user ${user.username} has no chat`);
-        }
-        chats.sort();
-        await admin.firestore().collection('users').doc(user.id).collection('user.private').doc('chats').set({
-            chats: chats,
-            id: 'chats',
-            userId: user.id,
-            username: user.username
-        });
-        await admin.firestore().collection('users').doc(user.id).collection('private').doc('chats').delete();
+    for (let i=0; i<usersChats.length; i++) {
+        const userChats = usersChats[i];
+        await admin.firestore().collection('users').doc(userChats.userId).collection('user.public').doc('chats').set(userChats);
     };
-    console.log('add the chats');
+    functions.logger.log('add the chats');
 
-    // Remove previous chat
-    for (let i=0; i<queryUsers.docs.length; i++) {
-        const queryUser = queryUsers.docs[i];
-        await queryUser.ref.update({
-            chats: admin.firestore.FieldValue.delete()
-        });
-    }
-
-    console.log('done');
+    functions.logger.log('Done');
 
     response.send('Done');
 });
