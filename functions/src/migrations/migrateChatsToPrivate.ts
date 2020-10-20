@@ -30,7 +30,12 @@ export const _migrateChatsToPublic = functions.https.onRequest(async function (r
     };
     functions.logger.log('add the chats');
 
+    for (let i=0; i<queryUserChats.docs.length; i++) {
+        await queryUserChats.docs[i].ref.delete();
+    }
+
     functions.logger.log('Done');
 
     response.send('Done');
+
 });
