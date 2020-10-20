@@ -116,7 +116,6 @@ class _DeleteChatDialogState extends State<DeleteChatDialog> {
                     const SizedBox(width: 5.0),
                     ButtonSimple(
                       onTap: () async {
-//                        TODO(Valentin): Put back function
                         if (_formKey.currentState.validate()) {
                           setState(() {
                             isLoading = true;

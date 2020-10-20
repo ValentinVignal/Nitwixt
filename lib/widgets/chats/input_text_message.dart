@@ -43,7 +43,6 @@ class _InputTextMessageState extends State<InputTextMessage> {
 
   void _activateSendButton() {
     setState(() {
-//      showSendButton = _textController.text.trim().isNotEmpty || image != null;
     });
   }
 
@@ -69,50 +68,49 @@ class _InputTextMessageState extends State<InputTextMessage> {
 
   void _showSelectedImage(BuildContext context) {
     showDialog<void>(
-        context: context,
-        barrierDismissible: true,
-        builder: (BuildContext buildContext) {
-          final Image _image = Image.file(image, height: 300.0);
-          return SizedBox(
-//            width: _image.width,
-//            height: _image.height,
-            child: Dialog(
-              child: Stack(
-                alignment: Alignment.topCenter,
-                children: <Widget>[
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(20.0),
-                    child: _image,
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext buildContext) {
+        final Image _image = Image.file(image, height: 300.0);
+        return SizedBox(
+          child: Dialog(
+            child: Stack(
+              alignment: Alignment.topCenter,
+              children: <Widget>[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20.0),
+                  child: _image,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      ButtonSimple(
+                        icon: Icons.arrow_back_ios,
+                        backgroundColor: Colors.black,
+                        onTap: () => Navigator.of(buildContext).pop(),
+                      ),
+                      const SizedBox(width: 100.0),
+                      ButtonSimple(
+                        icon: Icons.delete,
+                        color: Colors.red,
+                        backgroundColor: Colors.black,
+                        onTap: () {
+                          _removeImage();
+                          Navigator.of(buildContext).pop();
+                        },
+                      )
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        ButtonSimple(
-                          icon: Icons.arrow_back_ios,
-                          backgroundcolor: Colors.black,
-                          onTap: () => Navigator.of(buildContext).pop(),
-                        ),
-                        const SizedBox(width: 100.0),
-                        ButtonSimple(
-                          icon: Icons.delete,
-                          color: Colors.red,
-                          backgroundcolor: Colors.black,
-                          onTap: () {
-                            _removeImage();
-                            Navigator.of(buildContext).pop();
-                          },
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                )
+              ],
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -132,7 +130,7 @@ class _InputTextMessageState extends State<InputTextMessage> {
           if (widget.allowImages)
             Container(
               child: Badge(
-                position: BadgePosition.topRight(top: 0, right: 0),
+                position: BadgePosition.topEnd(top: 0, end: 0),
                 badgeContent: const Text('1'),
                 showBadge: image != null,
                 child: IconButton(

@@ -39,7 +39,7 @@ class DatabaseMessage extends DatabaseChat {
     final models.Message message = models.Message(
       id: '',
       date: Timestamp.now(),
-      text: text,
+      text: text.replaceAll('\n', '\n'),
       userid: userid,
       previousMessageId: previousMessageId ?? '',
       chatid: id,

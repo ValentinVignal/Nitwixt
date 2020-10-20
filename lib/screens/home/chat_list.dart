@@ -70,7 +70,7 @@ class _ChatListState extends State<ChatList> {
                 children: <Widget>[
                   RichText(
                     text: const TextSpan(
-                      children: [
+                      children: <TextSpan>[
                         TextSpan(text: 'You don\'t have any chat yet...', style: textStyle),
                       ],
                     ),

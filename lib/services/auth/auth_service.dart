@@ -44,7 +44,7 @@ class AuthService {
         firebaseUser = auth.currentUser;
 //        await database.DatabasePushToken(id: firebaseUser.uid).removeToken(pushToken);
       }
-      void res = await auth.signOut().then((void res) async {
+      final void res = await auth.signOut().then((void res) async {
         if (await googleSignIn.isSignedIn()) {
           return googleSignIn.signOut();
         } else if (await facebookLogin.isLoggedIn) {

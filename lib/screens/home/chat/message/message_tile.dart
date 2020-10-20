@@ -11,7 +11,6 @@ import 'package:nitwixt/widgets/widgets.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/src/shortcuts/shortcuts.dart' as shortcuts;
 import 'package:nitwixt/screens/home/chat/message/react_dialog.dart';
-import 'package:nitwixt/services/database/database.dart' as database;
 
 import 'delete_dialog.dart';
 

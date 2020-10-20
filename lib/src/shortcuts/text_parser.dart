@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_emoji/flutter_emoji.dart';
 
+// ignore: avoid_classes_with_only_static_members
 class TextParser {
   static final EmojiParser _emojiParser = EmojiParser();
   static final RegExp _onlyEmojiRegexp = RegExp(r'^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])*$');
@@ -20,8 +21,9 @@ class TextParser {
   }
 }
 
+// ignore: avoid_classes_with_only_static_members
 class SmileyParser {
-  static final Map<String, String> _smileyMap = {
+  static final Map<String, String> _smileyMap = <String, String>{
     'blush': r':\)',
     'stuck_out_tongue': r':p',
     'smiley': r':D',

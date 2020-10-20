@@ -16,7 +16,7 @@ class IndexedListProvider<T> {
     _controller = StreamController<List<Map>>.broadcast();
     _isLoading = false;
     stream = _controller.stream.map<List<T>>((List<Map> postsData) {
-      return postsData.map<T>(this.dataBuilder).toList();
+      return postsData.map<T>(dataBuilder).toList();
     });
     hasMore = true;
     refresh();

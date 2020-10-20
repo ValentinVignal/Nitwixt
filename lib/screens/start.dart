@@ -1,11 +1,11 @@
+import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/screens/authenticate/verify_email.dart';
 import 'package:nitwixt/screens/home/user_provider.dart';
-import 'authenticate/authenticate.dart';
-import 'package:flutter/foundation.dart' as foundation;
+import 'package:provider/provider.dart';
 
-import 'package:nitwixt/models/models.dart' as models;
+import 'authenticate/authenticate.dart';
 
 class Start extends StatelessWidget {
   @override

@@ -45,21 +45,21 @@ class _DraggableListenerState extends State<DraggableListener> with SingleTicker
     );
     // Calculate the velocity relative to the unit interval, [0,1],
     // used by the animation controller.
-    final unitsPerSecondX = pixelsPerSecond.dx / size.width;
-    final unitsPerSecondY = pixelsPerSecond.dy / size.height;
-    final unitsPerSecond = Offset(
+    final double unitsPerSecondX = pixelsPerSecond.dx / size.width;
+    final double unitsPerSecondY = pixelsPerSecond.dy / size.height;
+    final Offset unitsPerSecond = Offset(
       widget.dragHorizontal ? unitsPerSecondX : 0.0,
       widget.dragVertical ? unitsPerSecondY : 0.0,
     );
-    final unitVelocity = unitsPerSecond.distance;
+    final double unitVelocity = unitsPerSecond.distance;
 
-    const spring = SpringDescription(
+    const SpringDescription spring = SpringDescription(
       mass: 30,
       stiffness: 1,
       damping: 1,
     );
 
-    final simulation = SpringSimulation(spring, 0, 1, -unitVelocity);
+    final SpringSimulation simulation = SpringSimulation(spring, 0, 1, -unitVelocity);
 
     _controller.animateWith(simulation);
   }
@@ -87,10 +87,10 @@ class _DraggableListenerState extends State<DraggableListener> with SingleTicker
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     return GestureDetector(
-      onPanDown: (details) {
+      onPanDown: (DragDownDetails details) {
         _controller.stop();
       },
-      onPanUpdate: (details) {
+      onPanUpdate: (DragUpdateDetails details) {
         setState(() {
           _dragAlignment += Alignment(
             widget.dragHorizontal ? details.delta.dx / (size.width / 2) : 0.0,
@@ -101,7 +101,7 @@ class _DraggableListenerState extends State<DraggableListener> with SingleTicker
           }
         });
       },
-      onPanEnd: (details) {
+      onPanEnd: (DragEndDetails details) {
         if (widget.onDragEnd != null && _hasBeenTriggered) {
           widget.onDragEnd();
           setState(() {
@@ -137,7 +137,7 @@ class _DgState extends State<Dg> {
         print('dragged');
       },
       onDragStarted: () {
-        print('dragg started');
+        print('drag started');
       },
       child: widget.child,
       feedback: Container(

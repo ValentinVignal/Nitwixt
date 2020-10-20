@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ButtonSimple extends StatelessWidget {
-  ButtonSimple({
+  const ButtonSimple({
     this.onTap,
     this.text = '',
     this.icon,
@@ -9,10 +9,8 @@ class ButtonSimple extends StatelessWidget {
     this.fontSize = 18.0,
     this.horizontalPadding = 10.0,
     this.withBorder = true,
-    this.backgroundcolor,
-  }) {
-    backgroundcolor ??= Color(0x00000000);
-  }
+    this.backgroundColor = const Color(0x00000000),
+  });
 
   final void Function() onTap;
   final String text;
@@ -21,7 +19,7 @@ class ButtonSimple extends StatelessWidget {
   final IconData icon;
   final double horizontalPadding;
   final bool withBorder;
-  Color backgroundcolor;
+  final Color backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +37,7 @@ class ButtonSimple extends StatelessWidget {
                   color: color,
                   width: 2.0,
                 ),
-                color: backgroundcolor,
+                color: backgroundColor,
               )
             : null,
         child: Row(

@@ -15,7 +15,7 @@ class ReactsDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     print('member map');
     print(membersMap);
-    membersMap.forEach((key, value) { print('${value.username} - ${value.id}');});
+    membersMap.forEach((String key, models.User value) { print('${value.username} - ${value.id}');});
     return AlertDialog(
       title: const Center(child: Text('Reacts')),
       shape: RoundedRectangleBorder(

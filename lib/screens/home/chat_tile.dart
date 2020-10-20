@@ -122,10 +122,11 @@ class ChatTileState extends State<ChatTile> {
         Navigator.push(
           context,
           MaterialPageRoute<Widget>(
-              builder: (BuildContext context) => ChatProvider(
-                    id: widget.chat.id,
-                    child: ChatHome(),
-                  )),
+            builder: (BuildContext context) => ChatProvider(
+              id: widget.chat.id,
+              child: ChatHome(),
+            ),
+          ),
         );
       },
     );
