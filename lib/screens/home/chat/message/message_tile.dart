@@ -1,3 +1,4 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -39,6 +40,16 @@ class MessageTile extends StatefulWidget {
 
 class _MessageTileState extends State<MessageTile> {
   bool _showInfo = false;
+
+  final flushbar = Flushbar<dynamic>(
+  message: 'Message copied in clipboard',
+  flushbarPosition: FlushbarPosition.BOTTOM,
+  flushbarStyle: FlushbarStyle.FLOATING,
+  backgroundColor: Colors.black,
+  boxShadows: [BoxShadow(color: Colors.blue[800], offset: Offset(0.0, 2.0), blurRadius: 3.0)],
+  backgroundGradient: LinearGradient(colors: [Colors.blueGrey, Colors.black]),
+  isDismissible: false,
+  duration: Duration(seconds: 3),);
   final RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   @override
@@ -266,7 +277,10 @@ class _MessageTileState extends State<MessageTile> {
           color: const Color(0x00000000),
           icon: Icons.content_copy,
           foregroundColor: Colors.grey,
-          onTap: () => Clipboard.setData(ClipboardData(text: widget.message.text)),
+          onTap: () => {
+            Clipboard.setData(ClipboardData(text: widget.message.text)),
+            flushbar.show(context)
+            },
         ),
     ];
     if (isMyMessage) {

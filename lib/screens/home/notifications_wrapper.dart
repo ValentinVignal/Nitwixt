@@ -6,7 +6,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:nitwixt/screens/home/home.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:fluttertoast/fluttertoast.dart';
-import 'file:///D:/Valentin/Code/Nitwixt/Nitwixt/lib/screens/loading_screen.dart';
+import 'package:nitwixt/screens/loading_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
 
