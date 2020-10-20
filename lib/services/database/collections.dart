@@ -6,10 +6,10 @@ mixin CollectionNames {
   static const String messages = 'messages';
 
   // * ---------- Group collection ----------
-  static const String userPrivate = 'user.private';
+  static const String userPublic = 'user.public';
 }
 
 CollectionReference userCollection = FirebaseFirestore.instance.collection(CollectionNames.users);
 CollectionReference chatCollection = FirebaseFirestore.instance.collection(CollectionNames.chats);
-Query userPrivateCollection = FirebaseFirestore.instance.collectionGroup(CollectionNames.userPrivate);
+Query userPublicCollection = FirebaseFirestore.instance.collectionGroup(CollectionNames.userPublic);
 

@@ -14,7 +14,7 @@ export const _onDeleteChat = functions.firestore.document('chats/{chatId}').onDe
     const chat: ChatInterface = snapshot.data() as ChatInterface;
     // Delete the chats on the user side
     try {
-        const membersQuerySnapshot = await admin.firestore().collectionGroup('user.private').where('id', '==', 'chats').where('chats', "array-contains", chat.id).get();
+        const membersQuerySnapshot = await admin.firestore().collectionGroup('user.public').where('id', '==', 'chats').where('chats', "array-contains", chat.id).get();
         for (const doc of membersQuerySnapshot.docs) {
             const data = doc.data();
             let userChats = data.chats ? data.chats as string[] : [];

@@ -23,7 +23,7 @@ mixin DatabaseUserMixin {
   }
 
   static Future<Stream<List<models.User>>> getUserList({String chatid}) async {
-    final Query queryUserChats = collections.userPrivateCollection.where('id', isEqualTo: 'chats').where('chats', arrayContains: chatid);
+    final Query queryUserChats = collections.userPublicCollection.where('id', isEqualTo: 'chats').where('chats', arrayContains: chatid);
     // TODO(Valentin): Replace get by snapshot
     final Stream<QuerySnapshot> querySnapshotStreamUserChats = queryUserChats.snapshots();
 
@@ -73,7 +73,7 @@ mixin DatabaseUserMixin {
       await collections.userCollection.doc(realId).set(user.toFirebaseObject());
     }
     // Create user private chat
-    await collections.userCollection.doc(realId).collection('user.private').doc('chats').set(<String, dynamic>{
+    await collections.userCollection.doc(realId).collection('user.public').doc('chats').set(<String, dynamic>{
       'id': 'chats',
       'userId': realId,
       'username': user.username,

@@ -36,7 +36,7 @@ export const _createChat = functions.https.onCall(async function(data, context: 
         });
         // ---------- Update the users ----------
         for (const user of users ) {
-            const userChatsDocumentReference = userUtils.usersCollection.doc(user.id).collection('user.private').doc('chats');
+            const userChatsDocumentReference = userUtils.usersCollection.doc(user.id).collection('user.public').doc('chats');
             const userChatsDocument = await userChatsDocumentReference.get();
             if (!userChatsDocument.exists) {
                 await userChatsDocumentReference.set({

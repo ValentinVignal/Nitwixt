@@ -72,7 +72,7 @@ async function updateMembers(data: UpdateData) : Promise<Object> {
         const idToAdd = idsToAdd.values[index];
         console.log('userName to add', idToAdd);
         try {
-            const userChatsDocumentReference = admin.firestore().collectionGroup('user.private').where('id', '==', 'chats').where('userId', '==', idToAdd);
+            const userChatsDocumentReference = admin.firestore().collectionGroup('user.public').where('id', '==', 'chats').where('userId', '==', idToAdd);
             const userChatsDocumentSnapshot = await userChatsDocumentReference.get();
             if (userChatsDocumentSnapshot.empty) {
                 throw Error('Empty document');
@@ -95,7 +95,7 @@ async function updateMembers(data: UpdateData) : Promise<Object> {
         const idToRemove = idsToRemove.values[index];
         console.log('userName to remove', idToRemove);
         try {
-            const userChatsDocumentReference = admin.firestore().collectionGroup('user.private').where('id', '==', 'chats').where('userId', '==', idToRemove);
+            const userChatsDocumentReference = admin.firestore().collectionGroup('user.public').where('id', '==', 'chats').where('userId', '==', idToRemove);
             const userChatsDocumentSnapshot = await userChatsDocumentReference.get();
             if (userChatsDocumentSnapshot.empty) {
                 throw Error('Empty document');
