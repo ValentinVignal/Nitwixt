@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:nitwixt/src/clipboard/clipboard.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:nitwixt/services/database/database.dart';
@@ -35,7 +36,8 @@ class LinkPreview extends StatefulWidget {
             FlatButton(
               child: const Text('Copy'),
               onPressed: () {
-                Clipboard.setData(ClipboardData(text: url));
+                copyToClipboard(url).show(context);
+                Navigator.of(dialogContext).pop();
               },
             ),
             FlatButton(
