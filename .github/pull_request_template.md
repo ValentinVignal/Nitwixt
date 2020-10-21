@@ -21,3 +21,4 @@ I have:
 - [ ] Added the link to the trello card in the PR's description
 - [ ] Added the link of the PR in the Trello Card
 - [ ] Included some screenshots when I changed the UI
+- [ ] Tested the app
