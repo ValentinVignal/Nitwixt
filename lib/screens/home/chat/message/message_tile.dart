@@ -1,7 +1,9 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:nitwixt/src/clipboard/clipboard.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -266,7 +268,9 @@ class _MessageTileState extends State<MessageTile> {
           color: const Color(0x00000000),
           icon: Icons.content_copy,
           foregroundColor: Colors.grey,
-          onTap: () => Clipboard.setData(ClipboardData(text: widget.message.text)),
+          onTap: () {
+            copyToClipboard(widget.message.text).show(context);
+            },
         ),
     ];
     if (isMyMessage) {
