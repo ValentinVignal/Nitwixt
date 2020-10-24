@@ -25,9 +25,9 @@ class UserPushTokens {
     }
   }
 
-  String userId;
-  String username;
-  List<String> tokens;
+  String userId = '';
+  String username = '';
+  List<String> tokens = <String>[];
 
   final int maxTokens = 3;
 
@@ -70,5 +70,12 @@ class UserPushTokens {
       hasChange = true;
     }
     return hasChange;
+  }
+
+  String removeCurrent() {
+    if (tokens.isEmpty) {
+      return null;
+    }
+    return tokens.removeLast();
   }
 }

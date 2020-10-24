@@ -3,12 +3,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
+import 'package:logger/logger.dart';
+
+import 'package:nitwixt/screens/loading_screen.dart';
 import 'package:nitwixt/screens/home/home.dart';
 import 'package:nitwixt/models/models.dart' as models;
-import 'package:fluttertoast/fluttertoast.dart';
-import 'file:///D:/Valentin/Code/Nitwixt/Nitwixt/lib/screens/loading_screen.dart';
-import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
+
 
 class NotificationsWrapper extends StatefulWidget {
   const NotificationsWrapper({
@@ -88,19 +91,28 @@ class _NotificationsWrapperState extends State<NotificationsWrapper> {
   }
 
   Future<models.UserPushTokens> getUserPushToken() async {
-    final database.DatabaseUserPushTokens databaseUserPushTokens = database.DatabaseUserPushTokens(userId: user.id);
-    final models.UserPushTokens userPushTokens = await databaseUserPushTokens.userPushTokens;
-    final String newToken = await firebaseMessaging.getToken();
-    final bool isNewToken = userPushTokens.add(newToken);
-    final bool hasUpdateUserInfo = userPushTokens.updateFromUser(user);
-    if (hasUpdateUserInfo) {
-      // It is a new document, set everything
-      await databaseUserPushTokens.set(userPushTokens);
-    }
-    else if(isNewToken) {
-      // Update firebase
-      
-      await databaseUserPushTokens.update();
+    try {
+      final database.DatabaseUserPushTokens databaseUserPushTokens = database.DatabaseUserPushTokens(userId: user.id);
+      final models.UserPushTokens userPushTokens = await databaseUserPushTokens.userPushTokens;
+      final String newToken = await firebaseMessaging.getToken();
+      final bool isNewToken = userPushTokens.add(newToken);
+      final bool hasUpdateUserInfo = userPushTokens.updateFromUser(user);
+      if (hasUpdateUserInfo) {
+        // It is a new document, set everything
+        await databaseUserPushTokens.set(userPushTokens);
+      }
+      else if(isNewToken) {
+        // Update firebase
+
+        await databaseUserPushTokens.update(<String, dynamic>{
+          models.UserPushTokensKeys.tokens: userPushTokens.toFirebaseObject()[models.UserPushTokensKeys.tokens]
+        });
+      }
+      return userPushTokens;
+    } catch(error) {
+      Logger().e('Error push tokens $error');
+      Fluttertoast.showToast(msg: error.toString());
+
     }
 
   }
@@ -108,15 +120,7 @@ class _NotificationsWrapperState extends State<NotificationsWrapper> {
   @override
   Widget build(BuildContext context) {
     return FutureProvider<models.UserPushTokens>.value(
-      value: firebaseMessaging.getToken().then<models.UserPushTokens>((String token) async {
-        // print('token $token');
-        pushToken = models.UserPushTokens(current: token);
-        await database.DatabaseUserPushTokens(userId: user.id).newToken(token);
-        return pushToken;
-      }).catchError((dynamic err) {
-        print('err $err');
-        Fluttertoast.showToast(msg: err.toString());
-      }),
+      value: getUserPushToken(),
       child: PushTokenReceiver(),
     );
   }
