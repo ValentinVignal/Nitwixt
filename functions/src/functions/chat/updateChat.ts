@@ -2,10 +2,10 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 try {admin.initializeApp();} catch(e) {} // You do that because the admin SDK can only be initialized once.
 
-import * as chatUtils from '../../chats/chats';
 import * as userUtils from '../../users/users';
-import { ChatInterface } from '../../models/chat';
 import MultiValue from '../../utils/MultiValue';
+import * as interfaces from '../../interfaces';
+import * as models from '../../models';
 
 enum UpdateTypes {
     members = 'members'
@@ -25,7 +25,7 @@ export const _updateChat = functions.https.onCall(async function(data : UpdateDa
             }
         }
     } catch (error) {
-        console.warn(error.toString());
+        functions.logger.warn(error.toString());
         return {
             error: error.toString()
         };
@@ -35,14 +35,14 @@ export const _updateChat = functions.https.onCall(async function(data : UpdateDa
 async function updateMembers(data: UpdateData) : Promise<Object> {
     // hello im here to interrupt valentin's app code :p if you delete it you will have a bad luck
     // Get the chat
-    const chatDocumentReference = chatUtils.chatsCollection.doc(data.chatId);
+    const chatDocumentReference = admin.firestore().collection(models.Chat.collection).doc(data.chatId);
     const chatDocumentSnapshot = await chatDocumentReference.get();
     if (!chatDocumentSnapshot.exists) {
         return {
             error: `Chat of id ${data.chatId} doesn't exist`
         };
     }
-    const chat = chatDocumentSnapshot.data() as ChatInterface;
+    const chat = chatDocumentSnapshot.data() as interfaces.Chat;
     const currentMemberIds = new MultiValue<string>(chat.members);
 
     // Get the new users

@@ -2,13 +2,13 @@
 import * as admin from 'firebase-admin';
 try {admin.initializeApp();} catch(e) {} // You do that because the admin SDK can only be initialized once.
 
-import {UserInterface} from '../models/user';
+import * as interfaces from '../interfaces';
 
 
 export const usersCollection = admin.firestore().collection('users');
 
 
-export async function userList(usernames: string[]): Promise<UserInterface[]> {
+export async function userList(usernames: string[]): Promise<interfaces.User[]> {
     return await usersFromField(usernames);
 }
 
@@ -17,7 +17,7 @@ export async function userList(usernames: string[]): Promise<UserInterface[]> {
  * @param values 
  * @param [fieldName]
  */
-export async function usersFromField(values: string[], fieldName: string = 'username') : Promise<UserInterface[]> {
+export async function usersFromField(values: string[], fieldName: string = 'username') : Promise<interfaces.User[]> {
     // Check inputs
     if (!fieldName || !values.length)  {
         return Promise.reject('fieldName and values can\'t be empty');
@@ -37,7 +37,7 @@ export async function usersFromField(values: string[], fieldName: string = 'user
     if (unknownUsers.length) {
         return Promise.reject(`Users with ${fieldName} ${unknownUsers.join(', ')} don't exist`);
     }
-    return querySnapshots.map<UserInterface> (function(document) {
-        return document.docs[0].data() as UserInterface;
+    return querySnapshots.map<interfaces.User> (function(document) {
+        return document.docs[0].data() as interfaces.User;
     });
 }

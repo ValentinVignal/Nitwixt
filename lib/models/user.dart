@@ -5,7 +5,6 @@ mixin UserKeys {
   static const String id = 'id';
   static const String username = 'username';
   static const String name = 'name';
-  static const String pushToken = 'pushToken';
   static const String defaultPictureUrl = 'defaultPictureUrl';
 
 }
@@ -18,7 +17,6 @@ class User {
     this.id,
     this.username,
     this.name,
-    this.pushToken,
     this.defaultPictureUrl='',
   }) {
     _pictureUrl.defaultAvatarId = username ?? id;
@@ -28,7 +26,6 @@ class User {
     if (firebaseObject != null) {
       username = firebaseObject.containsKey(UserKeys.username) ? firebaseObject[UserKeys.username] as String : '';
       name = firebaseObject.containsKey(UserKeys.name) ? firebaseObject[UserKeys.name] as String : '';
-      pushToken = firebaseObject.containsKey(UserKeys.pushToken) ? List<String>.from(firebaseObject[UserKeys.pushToken] as List<dynamic>) : <String>[];
       defaultPictureUrl = firebaseObject.containsKey(UserKeys.defaultPictureUrl) ? firebaseObject[UserKeys.defaultPictureUrl] as String : '';
     }
     _pictureUrl.defaultAvatarId = username ?? id;
@@ -59,7 +56,6 @@ class User {
       UserKeys.id: id,
       UserKeys.username: username,
       UserKeys.name: name,
-      UserKeys.pushToken: pushToken,
       UserKeys.defaultPictureUrl: defaultPictureUrl,
     };
   }

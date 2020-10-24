@@ -15,6 +15,6 @@ export const _onDeleteMessage = functions.firestore.document('chats/{chatId}/mes
             prefix: folderPath
         });
     } catch (err) {
-        console.log(`Error when deleting files of message ${message.chatid}, ${message.text} :`, err);
+        functions.logger.log(`Error when deleting files of message ${message.chatid}, ${message.text} :`, err);
     }
 });

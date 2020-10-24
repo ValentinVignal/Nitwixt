@@ -7,6 +7,7 @@ mixin CollectionNames {
 
   // * ---------- Group collection ----------
   static const String userPublic = 'user.public';
+  static const String userPrivate = 'user.private';
 }
 
 CollectionReference userCollection = FirebaseFirestore.instance.collection(CollectionNames.users);

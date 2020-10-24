@@ -1,8 +1,11 @@
+import * as admin from 'firebase-admin';
+try {admin.initializeApp();} catch(e) {} // You do that because the admin SDK can only be initialized once.
 import * as functions from 'firebase-functions';
 import { CallableContext } from 'firebase-functions/lib/providers/https';
-import * as chatUtils from '../../chats/chats';
 import * as userUtils from '../../users/users';
-import { ChatInterface } from '../../models/chat';
+
+import * as models from '../../models';
+import * as interfaces from '../../interfaces';
 
 /**
  * To create a new chat
@@ -16,26 +19,27 @@ export const _createChat = functions.https.onCall(async function(data, context: 
         });
         userIds.sort();
         // Check the chat doesn't exist
-        const query = await chatUtils.chatsCollection.where('members', '==', userIds).get();
+        const query = await admin.firestore().collection(models.Chat.collection).where('members', '==', userIds).get();
         if (!query.empty) {
             throw Error('Chat already exists');
         }
         // ---------- Create the chat ----------
-        const chat: ChatInterface = {
+        const chat: interfaces.Chat = {
             id: '',
             name: '',
             members: userIds
         };
-        const documentReference = await chatUtils.chatsCollection.add(chat);
+        const documentReference = await admin.firestore().collection(models.Chat.collection).add(chat);
         chat.id = documentReference.id;
         if (!chat.id) {
             throw Error('Could not create the new chat');
         }
-        await chatUtils.chatsCollection.doc(chat.id).update({
+        await admin.firestore().collection(models.Chat.collection).doc(chat.id).update({
             'id': chat.id
         });
         // ---------- Update the users ----------
-        for (const user of users ) {
+        for (let i=0; i<users.length; i++ ) {
+            const user = users[i];
             const userChatsDocumentReference = userUtils.usersCollection.doc(user.id).collection('user.public').doc('chats');
             const userChatsDocument = await userChatsDocumentReference.get();
             if (!userChatsDocument.exists) {
