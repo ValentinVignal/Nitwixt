@@ -85,7 +85,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final models.User user = Provider.of<models.User>(context);
-    final models.PushToken pushToken = Provider.of<models.PushToken>(context);
+    final models.UserPushTokens pushToken = Provider.of<models.UserPushTokens>(context);
 
     void _showCreateNewChatPanel() {
       showDialog<Widget>(

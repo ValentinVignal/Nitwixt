@@ -54,7 +54,7 @@ class AuthService {
         }
       });
       if (pushToken != null) {
-        return await database.DatabasePushToken(id: firebaseUser.uid).removeToken(pushToken);
+        return await database.DatabaseUserPushTokens(userId: firebaseUser.uid).removeToken(pushToken);
       } else {
         return res;
       }

@@ -27,7 +27,7 @@ class _NotificationsWrapperState extends State<NotificationsWrapper> {
   });
 
   final models.User user;
-  models.PushToken pushToken;
+  models.UserPushTokens pushToken;
 
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -87,13 +87,31 @@ class _NotificationsWrapperState extends State<NotificationsWrapper> {
     );
   }
 
+  Future<models.UserPushTokens> getUserPushToken() async {
+    final database.DatabaseUserPushTokens databaseUserPushTokens = database.DatabaseUserPushTokens(userId: user.id);
+    final models.UserPushTokens userPushTokens = await databaseUserPushTokens.userPushTokens;
+    final String newToken = await firebaseMessaging.getToken();
+    final bool isNewToken = userPushTokens.add(newToken);
+    final bool hasUpdateUserInfo = userPushTokens.updateFromUser(user);
+    if (hasUpdateUserInfo) {
+      // It is a new document, set everything
+      await databaseUserPushTokens.set(userPushTokens);
+    }
+    else if(isNewToken) {
+      // Update firebase
+      
+      await databaseUserPushTokens.update();
+    }
+
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FutureProvider<models.PushToken>.value(
-      value: firebaseMessaging.getToken().then<models.PushToken>((String token) async {
+    return FutureProvider<models.UserPushTokens>.value(
+      value: firebaseMessaging.getToken().then<models.UserPushTokens>((String token) async {
         // print('token $token');
-        pushToken = models.PushToken(current: token);
-        await database.DatabasePushToken(id: user.id).newToken(token);
+        pushToken = models.UserPushTokens(current: token);
+        await database.DatabaseUserPushTokens(userId: user.id).newToken(token);
         return pushToken;
       }).catchError((dynamic err) {
         print('err $err');
@@ -107,7 +125,7 @@ class _NotificationsWrapperState extends State<NotificationsWrapper> {
 class PushTokenReceiver extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final models.PushToken pushToken = Provider.of<models.PushToken>(context);
+    final models.UserPushTokens pushToken = Provider.of<models.UserPushTokens>(context);
 
     if (pushToken == null) {
       return LoadingScreen();
