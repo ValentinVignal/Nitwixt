@@ -1,9 +1,6 @@
-import Chat from "./chat";
-import User from "./User";
-
 export default interface UserPublicChats { 
-    chats?: Chat['id'][]
+    chats?: string,
     id: 'chats',
-    userId: User['id'],
-    username: User['username']
+    userId: string,
+    username: string
 }

@@ -4,9 +4,9 @@ try {admin.initializeApp();} catch(e) {} // You do that because the admin SDK ca
 import { _onDeleteChat } from './functions/chat/onDeleteChat';
 import { _onNewMessage } from './functions/message/onNewMessage';
 import { _onDeleteMessage } from './functions/message/onDeleteMessage';
-import { _migrateChatsToPublic } from './migrations/migrateChatsToPrivate';
 import { _createChat } from './functions/chat/createChat';
 import { _updateChat } from './functions/chat/updateChat';
+import { _migratePushTokensToPublic } from './migrations/migratePushTokensToPublic';
 
 
 
@@ -36,5 +36,5 @@ export const onDeleteMessage = _onDeleteMessage;
 
 // ----------------------------------------------------------------------------------------------------
 
-export const migrateChatsToPublic = _migrateChatsToPublic;
+export const migratePushTokensToPublic = _migratePushTokensToPublic;
 

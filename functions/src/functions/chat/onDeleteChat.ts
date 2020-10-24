@@ -1,17 +1,17 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 try {admin.initializeApp();} catch(e) {} // You do that because the admin SDK can only be initialized once.
-import { ChatInterface } from '../../models/chat';
 
+import * as interfaces from '../../interfaces';
 
 /**
  * This function deletes all the messages on the deletion of a chat
  */
 export const _onDeleteChat = functions.firestore.document('chats/{chatId}').onDelete(async function (snapshot, context) {
-    console.log('---------- Start function ----------');
+    functions.logger.log('---------- Start function ----------');
 
     // const ref: FirebaseFirestore.DocumentReference = snapshot.ref;
-    const chat: ChatInterface = snapshot.data() as ChatInterface;
+    const chat = snapshot.data() as interfaces.Chat;
     // Delete the chats on the user side
     try {
         const membersQuerySnapshot = await admin.firestore().collectionGroup('user.public').where('id', '==', 'chats').where('chats', "array-contains", chat.id).get();
@@ -29,7 +29,7 @@ export const _onDeleteChat = functions.firestore.document('chats/{chatId}').onDe
             }
         }
     } catch (err) {
-        console.log(`Error when deleting the chats on the user side: ${err}`);
+        functions.logger.error(`Error when deleting the chats on the user side: ${err}`);
     }
     // Delete the pictures in it
     const folderPath: string = `chats/${chat.id}/`;
@@ -40,7 +40,7 @@ export const _onDeleteChat = functions.firestore.document('chats/{chatId}').onDe
             prefix: folderPath
         });
     } catch (err) {
-        console.log(`Error when deleting pictures of chat ${chat.id}, ${chat.name} :`, err)
+        functions.logger.log(`Error when deleting pictures of chat ${chat.id}, ${chat.name} :`, err)
     }
     // Delete all the messages
     const documentReferences: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData> = await admin.firestore().collection('chats').doc(chat.id).collection('messages').get();
@@ -48,7 +48,7 @@ export const _onDeleteChat = functions.firestore.document('chats/{chatId}').onDe
         try {
             await documentData.ref.delete();
         } catch (err) {
-            console.log(`Error when deleting chat ${chat.id}, ${chat.name}:`, err);
+            functions.logger.error(`Error when deleting chat ${chat.id}, ${chat.name}:`, err);
         }
     };
 
