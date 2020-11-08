@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +9,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:nitwixt/widgets/widgets.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/src/shortcuts/shortcuts.dart' as shortcuts;
+import 'package:nitwixt/src/clipboard.dart' as clipboard;
 import 'package:nitwixt/screens/home/chat/message/react_dialog.dart';
 
 import 'delete_dialog.dart';
@@ -266,7 +266,7 @@ class _MessageTileState extends State<MessageTile> {
           color: const Color(0x00000000),
           icon: Icons.content_copy,
           foregroundColor: Colors.grey,
-          onTap: () => Clipboard.setData(ClipboardData(text: widget.message.text)),
+          onTap: () => clipboard.copy(widget.message.text),
         ),
     ];
     if (isMyMessage) {
