@@ -12,19 +12,14 @@ export const _migratePushTokensToPublic = functions.https.onRequest(async functi
     for (let i=0; i<queryUsers.docs.length; i++) {
         // Get data
         const user = queryUsers.docs[i].data() as interfaces.User;
-        const pushTokens = {
-            id: 'pushTokens',
-            userId: user.id,
-            username: user.username,
-            tokens: user.pushToken
-        } as interfaces.UserPushTokens;
+        const documentData = await admin.firestore().collection('users').doc(user.id).collection('user.public').doc('pushTokens').get();
+        const pushTokens = documentData.data() as interfaces.UserPushTokens;
 
-        // Create public 
-        await admin.firestore().collection('users').doc(user.id).collection('user.public').doc('pushTokens').set(pushTokens);
+        // Create private
+        await admin.firestore().collection('users').doc(user.id).collection('user.private').doc('pushTokens').set(pushTokens);
 
         // Delete from user
-
-        await admin.firestore().collection('users').doc(user.id).update({pushToken: FirebaseFirestore.FieldValue.delete()});
+        await admin.firestore().collection('users').doc(user.id).collection('user.public').doc('pushTokens').delete();
     }
     functions.logger.log('Done');
 
