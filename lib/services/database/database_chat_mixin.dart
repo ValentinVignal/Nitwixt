@@ -30,11 +30,11 @@ mixin DatabaseChatMixin {
 
   static Future<String> createNewChat(List<String> usernames) async {
     try {
-      final HttpsCallable httpsCallable = CloudFunctions.instance.getHttpsCallable(functionName: 'createChat');
-      final HttpsCallableResult response = await httpsCallable.call(<String, dynamic>{
+      final HttpsCallable httpsCallable = FirebaseFunctions.instance.httpsCallable('createChat');
+      final HttpsCallableResult<Map<String, dynamic>> response = await httpsCallable.call(<String, dynamic>{
         'usernames': usernames,
       });
-      final Map<String, dynamic> data = Map<String, dynamic>.from(response.data as Map<dynamic, dynamic>);
+      final Map<String, dynamic> data = Map<String, dynamic>.from(response.data);
       final String error = data.containsKey('error') ? data['error'] as String : '';
       if (error.isNotEmpty) {
         return Future<String>.error(error);
