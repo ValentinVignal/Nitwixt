@@ -13,7 +13,7 @@ class DatabaseFiles {
 
   Future<bool> get exists async {
     bool _exists = true;
-    final StorageReference storageReference = FirebaseStorage.instance.ref().child(path);
+    final Reference storageReference = FirebaseStorage.instance.ref().child(path);
     try {
       await storageReference.getDownloadURL();
     } on Exception catch (exc) {
@@ -25,7 +25,7 @@ class DatabaseFiles {
   Future<String> get url async {
     String downloadURL;
     try {
-      final StorageReference storageReference = FirebaseStorage.instance.ref().child(path);
+      final Reference storageReference = FirebaseStorage.instance.ref().child(path);
       downloadURL = await storageReference.getDownloadURL() as String;
     } on Exception catch (exc) {
       downloadURL = '';
@@ -68,8 +68,8 @@ class DatabaseFiles {
   /// replace: if false : won't upload the file if it already exists
   Future<String> uploadFile(File file, {bool replace = true}) async {
     if (replace || !(await exists)) {
-      final StorageReference storageReference = FirebaseStorage.instance.ref().child(path);
-      final StorageUploadTask storageUploadTask = storageReference.putFile(file);
+      final Reference storageReference = FirebaseStorage.instance.ref().child(path);
+      final UploadTask storageUploadTask = storageReference.putFile(file);
       return Future<String>.value('Uploaded');
     } else {
       return Future<String>.value('No upload');
