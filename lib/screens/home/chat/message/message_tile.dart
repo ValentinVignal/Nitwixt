@@ -203,7 +203,7 @@ class _MessageTileState extends State<MessageTile> {
                       data: widget.message.text,
                       selectable: false,
                       styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
-                      onTapLink: (String url) => LinkPreview.launchUrl(context: context, url: url),
+                      onTapLink: (String text, String href, String title) => LinkPreview.launchUrl(context: context, url: href),
                     ),
 //                    imageWidget,
                   ],

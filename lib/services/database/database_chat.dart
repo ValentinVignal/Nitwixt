@@ -31,13 +31,13 @@ class DatabaseChat with DatabaseChatMixin{
 
   Future<String> updateMembers(List<String> usernames) async {
     try {
-      final HttpsCallable httpsCallable = CloudFunctions.instance.getHttpsCallable(functionName: 'updateChat');
-      final HttpsCallableResult response = await httpsCallable.call(<String, dynamic>{
+      final HttpsCallable httpsCallable = FirebaseFunctions.instance.httpsCallable('updateChat');
+      final HttpsCallableResult<Map<String, dynamic>> response = await httpsCallable.call<Map<String, dynamic>>(<String, dynamic>{
         'type': 'members',
         'value': usernames,
         'chatId': id,
       });
-      final Map<String, dynamic> data = Map<String, dynamic>.from(response.data as Map<dynamic, dynamic>);
+      final Map<String, dynamic> data = Map<String, dynamic>.from(response.data);
       final String error = data.containsKey('error') ? data['error'] as String : '';
       if (error.isNotEmpty) {
         return Future<String>.error(error);
