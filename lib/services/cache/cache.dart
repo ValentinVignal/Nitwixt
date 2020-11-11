@@ -1,8 +1,9 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
+import 'package:collection/collection.dart';
 
-abstract class Cachable<T> extends Equatable {
+abstract class Cachable<T> with EquatableMixin {
   T get cacheId;
 }
 
@@ -23,7 +24,10 @@ class CachedStreamList<K, T extends Cachable<K>> {
   Stream<List<T>> get stream {
     return _stream.transform(StreamTransformer<List<T>, List<T>>.fromHandlers(
       handleData: (List<T> data, EventSink<List<T>> sink) {
+        print('in handle data ${data.length}');
+
         if (_update(data)) {
+          print('in update data');
           sink.add(this.data);
         }
       }
@@ -33,12 +37,13 @@ class CachedStreamList<K, T extends Cachable<K>> {
   bool _update(List<T> updatedData) {
     bool isUpdated = false;
     final List<K> newOrder = updatedData.map<K>((T item) => item.cacheId).toList();
-    if (newOrder != _order) {
+    if (!ListEquality<K>().equals(_order, newOrder)) {
+      print('in new order');
       isUpdated = true;
       _order = newOrder;
     }
-    for (T item in updatedData) {
-      if (!_cache.containsKey(item.cacheId) || item != _cache[item.cacheId]) {
+    for (final T item in updatedData) {
+      if (!_cache.containsKey(item.cacheId) || !(item == _cache[item.cacheId])) {
         isUpdated = true;
         _cache[item.cacheId] = item;
       }

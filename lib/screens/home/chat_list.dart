@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:nitwixt/services/cache/cache.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -46,8 +47,13 @@ class _ChatListState extends State<ChatList> {
   Widget build(BuildContext context) {
     final models.User user = Provider.of<models.User>(context);
 
+    final CachedStreamList<String, models.Chat> cachedChatList = CachedStreamList<String, models.Chat>(
+      DatabaseChatMixin.getChatList(userid: user.id, limit: _nbChats),
+    );
+
     return StreamBuilder<List<models.Chat>>(
-      stream: DatabaseChatMixin.getChatList(userid: user.id, limit: _nbChats),
+      // stream: DatabaseChatMixin.getChatList(userid: user.id, limit: _nbChats),
+      stream: cachedChatList.stream,
       builder: (BuildContext context, AsyncSnapshot<List<models.Chat>> snapshot) {
         if (!snapshot.hasData && _chatsCache.isEmpty) {
           return LoadingCircle();

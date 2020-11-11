@@ -30,6 +30,7 @@ dependencies:
   badges: ^1.1.4
   cloud_firestore: ^0.14.3
   cloud_functions: ^0.7.0+1
+  collection: ^1.14.13
   cupertino_icons: ^1.0.0
   custom_navigator:
     git:

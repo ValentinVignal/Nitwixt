@@ -5,8 +5,6 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'collections.dart' as collections;
 
 mixin DatabaseChatMixin {
-
-
   /// Chat collection
   static final CollectionReference chatCollection = collections.chatCollection;
 
@@ -20,10 +18,15 @@ mixin DatabaseChatMixin {
     return querySnapshot.docs.map(chatFromDocumentSnapshot).toList();
   }
 
-
   /// Stream of list of chat of a user
   static Stream<List<models.Chat>> getChatList({String userid, int limit = 10}) {
-    final Query query = collections.chatCollection.where(models.ChatKeys.members, arrayContains: userid).orderBy(models.ChatKeys.date).limit(limit);
+    final Query query = collections.chatCollection
+        .where(models.ChatKeys.members, arrayContains: userid)
+        .orderBy(
+          models.ChatKeys.date,
+          descending: true,
+        )
+        .limit(limit);
     return query.snapshots().map(chatFromQuerySnapshot);
   }
 
@@ -44,7 +47,5 @@ mixin DatabaseChatMixin {
     } catch (error) {
       return Future<String>.error('The chat couldn\'t be created');
     }
-
   }
-
 }

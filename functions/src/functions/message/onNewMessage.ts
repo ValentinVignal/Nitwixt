@@ -16,7 +16,7 @@ export const _onNewMessage = functions.firestore.document('chats/{chatId}/messag
     const message = snapshot.data() as interfaces.Message;
     const chatRef = ref.parent.parent;
     if (chatRef === null) {
-        console.log(`chatRef is null`);
+        functions.logger.error(`chatRef is null`);
         return null;
     }
 
@@ -25,9 +25,13 @@ export const _onNewMessage = functions.firestore.document('chats/{chatId}/messag
     const chat = new models.Chat(chatSnapshot.data() as interfaces.Chat);
 
     // Update the correct date if people change the time of their phone
-    message.date = admin.firestore.Timestamp.now();
+    const now = admin.firestore.Timestamp.now();
+    message.date = now;
     await ref.update({
         date: message.date
+    });
+    await chatRef.update({
+        date: now
     });
 
 
