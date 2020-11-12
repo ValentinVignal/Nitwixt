@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:equatable/equatable.dart';
 
 import 'package:nitwixt/models/models.dart';
 import 'package:nitwixt/services/cache/cache.dart';
@@ -154,6 +153,7 @@ class Chat extends Cachable<String> {
     return chat is Chat && chat != null && chat.id == id && chat.name == name && src.listEquals(chat.members, members);
   }
 
+  @override
   Chat copy() {
     return Chat(
       id: id,

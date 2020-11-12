@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:nitwixt/screens/home/chat/message/edited_message.dart';
+import 'package:nitwixt/services/cache/cache.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -11,7 +12,6 @@ import 'package:nitwixt/widgets/widgets.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/services/database/database.dart' as database;
 
-import 'chat_messages_cache.dart';
 import 'message/message_tile.dart';
 import 'message/message_to_answer_to.dart';
 
@@ -32,7 +32,7 @@ class _ChatMessagesState extends State<ChatMessages> {
   models.Message messageToAnswer;
   models.Message messageToEdit;
 
-  final ChatMessagesCache _chatMessagesCache = ChatMessagesCache();
+  final CachedWidgets<String, models.Message> cachedMessages = CachedWidgets<String, models.Message>();
 
   @override
   void dispose() {
@@ -127,7 +127,7 @@ class _ChatMessagesState extends State<ChatMessages> {
       stream: _databaseMessage.getList(limit: _nbMessages),
       builder: (BuildContext context, AsyncSnapshot<List<models.Message>> snapshot) {
         if (snapshot.hasData) {
-          _chatMessagesCache.addMessageList(
+          cachedMessages.setAll(
             snapshot.data,
             snapshot.data.map((models.Message message) {
               return MessageTile(
@@ -142,7 +142,7 @@ class _ChatMessagesState extends State<ChatMessages> {
             }).toList(),
           );
         }
-        if (!snapshot.hasData && _chatMessagesCache.isEmpty) {
+        if (!snapshot.hasData && cachedMessages.isEmpty) {
           return LoadingCircle();
         }
         return Column(
@@ -163,11 +163,10 @@ class _ChatMessagesState extends State<ChatMessages> {
                     onLoading: _onLoading,
                     child: ListView.builder(
                       scrollDirection: Axis.vertical,
-                      itemCount: _chatMessagesCache.messageList.length,
+                      itemCount: cachedMessages.length,
                       reverse: true,
                       itemBuilder: (BuildContext context, int index) {
-                        final models.Message message = _chatMessagesCache.messageList[index];
-                        return _chatMessagesCache.widgets[message.id];
+                        return cachedMessages.widgets[index];
                       },
                       shrinkWrap: true,
                     ),

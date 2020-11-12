@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:nitwixt/services/cache/cache.dart';
 import 'package:nitwixt/services/database/database.dart';
 import 'package:equatable/equatable.dart';
 import 'package:nitwixt/src/src.dart' as src;
@@ -18,7 +19,7 @@ class MessageKeys {
   static const String chatid = 'chatid';
 }
 
-class Message with EquatableMixin {
+class Message extends Cachable<String> {
   Message({
     this.id,
     this.date,
@@ -60,6 +61,11 @@ class Message with EquatableMixin {
 
   @override
   List<Object> get props => <Object>[id, date, text, userid, previousMessageId, chatid];
+
+  @override
+  String get cacheId {
+    return id;
+  }
 
   Map<String, Object> toFirebaseObject() {
     final Map<String, Object> firebaseObject = <String, Object>{};
@@ -107,6 +113,7 @@ class Message with EquatableMixin {
         message.chatid == chatid;
   }
 
+  @override
   Message copy() {
     return Message(
       id: id,
