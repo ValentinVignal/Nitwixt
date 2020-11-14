@@ -54,7 +54,6 @@ class _ChatListState extends State<ChatList> {
       // stream: DatabaseChatMixin.getChatList(userid: user.id, limit: _nbChats),
       stream: cachedChatList.stream,
       builder: (BuildContext context, AsyncSnapshot<List<models.Chat>> snapshot) {
-        print('in build');
         if (!snapshot.hasData && chatsCache.isEmpty) {
           return LoadingCircle();
         }

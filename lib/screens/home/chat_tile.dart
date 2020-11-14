@@ -1,4 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
+import 'package:nitwixt/src/date/date_formater.dart';
 import 'package:provider/provider.dart';
 
 import 'package:nitwixt/services/database/database.dart' as database;
@@ -9,7 +13,10 @@ import 'package:nitwixt/models/models.dart' as models;
 import 'chat/chat_home.dart';
 
 class ChatTile extends StatefulWidget {
-  const ChatTile({this.chat, Key key}) : super(key: key);
+  const ChatTile({
+    this.chat,
+    Key key,
+  }) : super(key: key);
 
   final models.Chat chat;
 
@@ -19,6 +26,7 @@ class ChatTile extends StatefulWidget {
 
 class ChatTileState extends State<ChatTile> {
   database.DatabaseMessage _databaseMessage;
+  final DateFormatter dateFormater = DateFormatter();
 
   @override
   void initState() {
@@ -33,6 +41,8 @@ class ChatTileState extends State<ChatTile> {
   @override
   Widget build(BuildContext context) {
     final models.User user = Provider.of<models.User>(context);
+
+    final Stream<List<models.Message>> lastMessageListStream = _databaseMessage.getList(limit: 1);
 
     return GestureDetector(
       child: Container(
@@ -50,36 +60,59 @@ class ChatTileState extends State<ChatTile> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  FutureBuilder<String>(
-                    future: widget.chat.nameToDisplay(user),
-                    builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return LoadingDots(
-                          color: Colors.grey,
-                          fontSize: 18.0,
-                        );
-                      } else {
-                        if (snapshot.hasError) {
-                          return const Text(
-                            'Could not display name',
-                            style: TextStyle(color: Colors.red, fontSize: 18.0),
-                            textAlign: TextAlign.left,
-                          );
-                        } else {
-                          return Text(
-                            snapshot.data,
-                            style: const TextStyle(fontSize: 18.0),
-                            textAlign: TextAlign.left,
-                            overflow: TextOverflow.ellipsis,
-                          );
-                        }
-                      }
-                    },
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Expanded(
+                        child: FutureBuilder<String>(
+                          future: widget.chat.nameToDisplay(user),
+                          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return LoadingDots(
+                                color: Colors.grey,
+                                fontSize: 18.0,
+                              );
+                            } else {
+                              if (snapshot.hasError) {
+                                return const Text(
+                                  'Could not display name',
+                                  style: TextStyle(color: Colors.red, fontSize: 18.0),
+                                  textAlign: TextAlign.left,
+                                  overflow: TextOverflow.ellipsis,
+                                );
+                              } else {
+                                return Text(
+                                  snapshot.data,
+                                  style: const TextStyle(fontSize: 18.0),
+                                  textAlign: TextAlign.left,
+                                  overflow: TextOverflow.ellipsis,
+                                );
+                              }
+                            }
+                          },
+                        ),
+                      ),
+                      StreamBuilder<List<models.Message>>(
+                          stream: lastMessageListStream,
+                          builder: (BuildContext buildContext, AsyncSnapshot<List<models.Message>> snapshot) {
+                            if (snapshot.hasError || !snapshot.hasData || snapshot.data.isEmpty) {
+                              return const SizedBox.shrink();
+                            }
+
+                            final DateTime date = snapshot.data.first.date.toDate();
+                            return Text(
+                              dateFormater.short(date),
+                              key: Key('date-${snapshot.data.first.id}'),
+                              style: Theme.of(context).textTheme.subtitle1,
+                            );
+                          })
+                    ],
                   ),
                   StreamBuilder<List<models.Message>>(
-                    stream: _databaseMessage.getList(limit: 1),
+                    stream: lastMessageListStream,
                     builder: (BuildContext contextStreamBuilder, AsyncSnapshot<List<models.Message>> snapshot) {
                       String text = '';
+                      Key key;
                       if (!snapshot.hasData) {
                         return LoadingDots(
                           color: Colors.grey,
@@ -91,6 +124,7 @@ class ChatTileState extends State<ChatTile> {
                           text = 'No message yet';
                         } else {
                           final models.Message message = messageList[0];
+                          key = Key(message.id);
                           if (message.hasImages) {
                             text += '📷' * message.images.length + ' ';
                           }
@@ -104,6 +138,7 @@ class ChatTileState extends State<ChatTile> {
                         overflow: TextOverflow.ellipsis,
                         softWrap: true,
                         maxLines: 2,
+                        key: key,
                       );
                     },
                   )

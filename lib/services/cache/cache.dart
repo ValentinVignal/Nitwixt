@@ -4,8 +4,6 @@ import 'package:equatable/equatable.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
-import 'package:nitwixt/models/models.dart' as models;
-
 abstract class Cachable<T> with EquatableMixin {
   T get cacheId;
 
@@ -41,11 +39,7 @@ class CachedStreamList<K, T extends Cachable<K>> {
   bool _update(List<T> updatedData) {
     bool isUpdated = false;
     final List<K> newOrder = updatedData.map<K>((T item) => item.cacheId).toList();
-    print('in update');
-    print('order $_order');
-    print('new order $newOrder');
     if (!ListEquality<K>().equals(_order, newOrder)) {
-      print('new order');
       isUpdated = true;
       _order = newOrder;
     }
