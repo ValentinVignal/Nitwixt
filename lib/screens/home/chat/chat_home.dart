@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:custom_navigator/custom_navigation.dart';
+import 'package:flutter/foundation.dart' as foundation;
 
 import 'package:nitwixt/widgets/widgets.dart';
 import 'package:nitwixt/models/models.dart' as models;
@@ -21,6 +23,10 @@ class _ChatHomeState extends State<ChatHome> {
   Widget build(BuildContext context) {
     final models.Chat chat = Provider.of<models.Chat>(context);
     final models.User user = Provider.of<models.User>(context);
+    if (foundation.kDebugMode) {
+      final Logger logger = Logger();
+      logger.d('chat, ${chat.id}, ${chat.members}');
+    }
 
     return WillPopScope(
       onWillPop: () async {

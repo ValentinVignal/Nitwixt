@@ -60,7 +60,7 @@ class Message extends Cachable<String> {
   final Map<String, String> _imagesUrl = <String, String>{};
 
   @override
-  List<Object> get props => <Object>[id, date, text, userid, previousMessageId, chatid];
+  List<Object> get props => <Object>[id, date, text, userid, previousMessageId, chatid, reacts];
 
   @override
   String get cacheId {
@@ -100,18 +100,18 @@ class Message extends Cachable<String> {
     }
   }
 
-  bool equals(Message message) {
-    return message is Message &&
-        message != null &&
-        message.id == id &&
-        message.date == date &&
-        message.text == text &&
-        message.userid == userid &&
-        message.reacts.equals(reacts) &&
-        message.previousMessageId == previousMessageId &&
-        src.listEquals(message.images, images) &&
-        message.chatid == chatid;
-  }
+  // bool equals(Message message) {
+  //   return message is Message &&
+  //       message != null &&
+  //       message.id == id &&
+  //       message.date == date &&
+  //       message.text == text &&
+  //       message.userid == userid &&
+  //       message.reacts.equals(reacts) &&
+  //       message.previousMessageId == previousMessageId &&
+  //       src.listEquals(message.images, images) &&
+  //       message.chatid == chatid;
+  // }
 
   @override
   Message copy() {
