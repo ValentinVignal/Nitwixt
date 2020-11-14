@@ -38,7 +38,6 @@ class _ChatInfo extends State<ChatInfo> {
   @override
   Widget build(BuildContext context) {
     final models.Chat chat = Provider.of<models.Chat>(context);
-    print('chat, ${chat.id}, ${chat.members}');
     final Map<String, models.User> members = Provider.of<Map<String, models.User>>(context);
     final models.User user = Provider.of<models.User>(context);
 

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:nitwixt/services/cache/cache.dart';
 import 'package:nitwixt/services/database/database.dart';
 import 'package:equatable/equatable.dart';
 import 'package:nitwixt/src/src.dart' as src;
@@ -18,7 +19,7 @@ class MessageKeys {
   static const String chatid = 'chatid';
 }
 
-class Message with EquatableMixin {
+class Message extends Cachable<String> {
   Message({
     this.id,
     this.date,
@@ -59,7 +60,12 @@ class Message with EquatableMixin {
   final Map<String, String> _imagesUrl = <String, String>{};
 
   @override
-  List<Object> get props => <Object>[id, date, text, userid, previousMessageId, chatid];
+  List<Object> get props => <Object>[id, date, text, userid, previousMessageId, chatid, reacts];
+
+  @override
+  String get cacheId {
+    return id;
+  }
 
   Map<String, Object> toFirebaseObject() {
     final Map<String, Object> firebaseObject = <String, Object>{};
@@ -94,19 +100,20 @@ class Message with EquatableMixin {
     }
   }
 
-  bool equals(Message message) {
-    return message is Message &&
-        message != null &&
-        message.id == id &&
-        message.date == date &&
-        message.text == text &&
-        message.userid == userid &&
-        message.reacts.equals(reacts) &&
-        message.previousMessageId == previousMessageId &&
-        src.listEquals(message.images, images) &&
-        message.chatid == chatid;
-  }
+  // bool equals(Message message) {
+  //   return message is Message &&
+  //       message != null &&
+  //       message.id == id &&
+  //       message.date == date &&
+  //       message.text == text &&
+  //       message.userid == userid &&
+  //       message.reacts.equals(reacts) &&
+  //       message.previousMessageId == previousMessageId &&
+  //       src.listEquals(message.images, images) &&
+  //       message.chatid == chatid;
+  // }
 
+  @override
   Message copy() {
     return Message(
       id: id,

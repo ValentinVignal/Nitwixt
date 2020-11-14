@@ -1,11 +1,11 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { UserPublicChats } from '../interfaces';
 try {admin.initializeApp();} catch(e) {} // You do that because the admin SDK can only be initialized once.
+import { UserPublicChats } from '../interfaces';
 
 
 /**
- * Use to put the chats in a private field:
+ * Used to put the chats in a private field:
  * 
  * user / private / chats.chats => user / public / chats.chats
  */

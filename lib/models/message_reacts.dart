@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:nitwixt/services/cache/cache.dart';
 
 import 'package:nitwixt/src/src.dart' as src;
 
@@ -17,6 +18,7 @@ class MessageReacts with EquatableMixin {
 
   @override
   List<Object> get props => <Map<String, String>>[reactMap];
+
 
   Map<String, Object> toFirebaseObject() {
     return reactMap;

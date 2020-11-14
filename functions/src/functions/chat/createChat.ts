@@ -24,10 +24,12 @@ export const _createChat = functions.https.onCall(async function(data, context: 
             throw Error('Chat already exists');
         }
         // ---------- Create the chat ----------
+        const now = admin.firestore.Timestamp.now();
         const chat: interfaces.Chat = {
             id: '',
             name: '',
-            members: userIds
+            members: userIds,
+            date: now,
         };
         const documentReference = await admin.firestore().collection(models.Chat.collection).add(chat);
         chat.id = documentReference.id;

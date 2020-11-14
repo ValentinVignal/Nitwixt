@@ -1,6 +1,7 @@
-import 'package:equatable/equatable.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:nitwixt/models/models.dart';
+import 'package:nitwixt/services/cache/cache.dart';
 import 'package:nitwixt/services/database/database_user.dart';
 import 'package:nitwixt/services/database/database_files.dart';
 import 'package:nitwixt/src/src.dart' as src;
@@ -11,13 +12,15 @@ class ChatKeys {
   static const String id = 'id';
   static const String name = 'name';
   static const String members = 'members';
+  static const String date = 'date';
 }
 
-class Chat with EquatableMixin {
+class Chat extends Cachable<String> {
   Chat({
     this.id,
     this.name,
     this.members,
+    this.date,
   }) {
     _pictureUrl.defaultAvatarId = (name != null && name.isNotEmpty) ? name : id;
   }
@@ -27,6 +30,7 @@ class Chat with EquatableMixin {
       name = firebaseObject.containsKey(ChatKeys.name) ? firebaseObject[ChatKeys.name].toString() : '';
       members = firebaseObject.containsKey(ChatKeys.members) ? List<String>.from(firebaseObject[ChatKeys.members] as List<dynamic>) : <String>[];
       members.sort();
+      date = firebaseObject.containsKey(ChatKeys.date) ? firebaseObject[ChatKeys.date] as Timestamp : null;
     }
     _pictureUrl.defaultAvatarId = (name != null && name.isNotEmpty) ? name : id;
   }
@@ -35,13 +39,19 @@ class Chat with EquatableMixin {
   String id; // The id of the chat
   String name; // The name of the chat
   List<String> members;
+  Timestamp date;
 
   // ----------------------------------------
 
   final PictureUrl _pictureUrl = PictureUrl();
 
   @override
-  List<Object> get props => <Object>[id, name];
+  List<Object> get props => <Object>[id, name, members];
+
+  @override
+  String get cacheId {
+    return id;
+  }
 
   // * -------------------- Constructed later Firebase --------------------
   Map<String, String> _nameToDisplay; // user id -> other user name (user for private chat with 2 persons)
@@ -52,6 +62,7 @@ class Chat with EquatableMixin {
       ChatKeys.id: id,
       ChatKeys.name: name,
       ChatKeys.members: members,
+      ChatKeys.date: date,
     };
   }
 
@@ -138,10 +149,7 @@ class Chat with EquatableMixin {
     return await _pictureUrl.url;
   }
 
-  bool equals(Chat chat) {
-    return chat is Chat && chat != null && chat.id == id && chat.name == name && src.listEquals(chat.members, members);
-  }
-
+  @override
   Chat copy() {
     return Chat(
       id: id,

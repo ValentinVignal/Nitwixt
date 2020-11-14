@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:nitwixt/services/cache/cache.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -7,8 +8,6 @@ import 'package:nitwixt/services/database/database.dart';
 import 'package:nitwixt/widgets/widgets.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/screens/home/chat_tile.dart';
-
-import 'chats_cache.dart';
 
 class ChatList extends StatefulWidget {
   @override
@@ -19,7 +18,8 @@ class _ChatListState extends State<ChatList> {
   int _nbChats = 8;
   final RefreshController _refreshController = RefreshController(initialRefresh: false);
   List<GlobalKey<ChatTileState>> chatTileStateList;
-  final ChatsCache _chatsCache = ChatsCache();
+  // final ChatsCache _chatsCache = ChatsCache();
+  final CachedWidgets<String, models.Chat> chatsCache = CachedWidgets<String, models.Chat>();
 
   @override
   void dispose() {
@@ -29,7 +29,7 @@ class _ChatListState extends State<ChatList> {
 
   void _onRefresh() {
     setState(() {
-      _chatsCache.empty();
+      chatsCache.clear();
       _nbChats = 8;
     });
     _refreshController.refreshCompleted();
@@ -46,20 +46,27 @@ class _ChatListState extends State<ChatList> {
   Widget build(BuildContext context) {
     final models.User user = Provider.of<models.User>(context);
 
+    final CachedStreamList<String, models.Chat> cachedChatList = CachedStreamList<String, models.Chat>(
+      DatabaseChatMixin.getChatList(userid: user.id, limit: _nbChats),
+    );
+
     return StreamBuilder<List<models.Chat>>(
-      stream: DatabaseChatMixin.getChatList(userid: user.id, limit: _nbChats),
+      // stream: DatabaseChatMixin.getChatList(userid: user.id, limit: _nbChats),
+      stream: cachedChatList.stream,
       builder: (BuildContext context, AsyncSnapshot<List<models.Chat>> snapshot) {
-        if (!snapshot.hasData && _chatsCache.isEmpty) {
+        print('in build');
+        if (!snapshot.hasData && chatsCache.isEmpty) {
           return LoadingCircle();
         }
         if (snapshot.hasData) {
-          _chatsCache.addChatList(snapshot.data, snapshot.data.map((models.Chat chat) {
+          chatsCache.setAll(snapshot.data, snapshot.data.map((models.Chat chat) {
             return ChatTile(
               chat: chat,
+              key: Key(chat.id),
             );
           }).toList());
         }
-        if (_chatsCache.isEmpty) {
+        if (chatsCache.isEmpty) {
           // User doesn't have chats yet
           const TextStyle textStyle = TextStyle(color: Colors.white, fontSize: 15.0);
           return Row(
@@ -108,10 +115,9 @@ class _ChatListState extends State<ChatList> {
             onLoading: _onLoading,
             child: ListView.builder(
               physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: _chatsCache.chats.length,
+              itemCount: chatsCache.length,
               itemBuilder: (BuildContext context, int index) {
-                final models.Chat chat = _chatsCache.chatList[index];
-                return _chatsCache.widgets[chat.id];
+                return chatsCache.widgets[index];
               },
             ),
           );
