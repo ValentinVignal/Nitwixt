@@ -6,7 +6,7 @@ import { _onNewMessage } from './functions/message/onNewMessage';
 import { _onDeleteMessage } from './functions/message/onDeleteMessage';
 import { _createChat } from './functions/chat/createChat';
 import { _updateChat } from './functions/chat/updateChat';
-import { _migratePushTokensToPublic } from './migrations/migratePushTokensToPublic';
+import { _addChatsDate } from './migrations/addChatsDate';
 
 
 
@@ -36,5 +36,5 @@ export const onDeleteMessage = _onDeleteMessage;
 
 // ----------------------------------------------------------------------------------------------------
 
-export const migratePushTokensToPublic = _migratePushTokensToPublic;
+export const addChatsDate = _addChatsDate;
 

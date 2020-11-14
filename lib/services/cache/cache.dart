@@ -29,10 +29,10 @@ class CachedStreamList<K, T extends Cachable<K>> {
 
   Stream<List<T>> get stream {
     return _stream.transform(StreamTransformer<List<T>, List<T>>.fromHandlers(
-      handleData: (List<T> data, EventSink<List<T>> sink) {
+      handleData: (List<T> receivedData, EventSink<List<T>> sink) {
 
-        if (_update(data)) {
-          sink.add(this.data);
+        if (_update(receivedData)) {
+          sink.add(data);
         }
       }
     ));
@@ -41,7 +41,11 @@ class CachedStreamList<K, T extends Cachable<K>> {
   bool _update(List<T> updatedData) {
     bool isUpdated = false;
     final List<K> newOrder = updatedData.map<K>((T item) => item.cacheId).toList();
+    print('in update');
+    print('order $_order');
+    print('new order $newOrder');
     if (!ListEquality<K>().equals(_order, newOrder)) {
+      print('new order');
       isUpdated = true;
       _order = newOrder;
     }
@@ -60,6 +64,7 @@ class CachedStreamList<K, T extends Cachable<K>> {
   }
 
   List<T> get data {
+    print('order in data $_order');
     return _order.map((K cacheId) => _cache[cacheId]).toList();
   }
 }
@@ -74,8 +79,8 @@ class CachedWidgets<K, T extends Cachable<K>> {
   /// Whether the hidden objects should be cleared after each update
   final bool shouldClear;
 
-  final Map<K, T> _objects = <K, T>{};
-  final Map<K, Widget> _widgets = <K, Widget>{};
+  Map<K, T> _objects = <K, T>{};
+  Map<K, Widget> _widgets = <K, Widget>{};
   List<K> order = <K>[];
 
   bool get isEmpty => order.isEmpty;
@@ -125,5 +130,9 @@ class CachedWidgets<K, T extends Cachable<K>> {
     _widgets.removeWhere((K cacheId, Widget widget) => !order.contains(cacheId));
   }
 
-
+  void clear() {
+    _objects = <K, T>{};
+    _widgets = <K, Widget>{};
+    order = <K>[];
+  }
 }

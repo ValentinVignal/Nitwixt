@@ -149,10 +149,6 @@ class Chat extends Cachable<String> {
     return await _pictureUrl.url;
   }
 
-  bool equals(Chat chat) {
-    return chat is Chat && chat != null && chat.id == id && chat.name == name && src.listEquals(chat.members, members);
-  }
-
   @override
   Chat copy() {
     return Chat(
