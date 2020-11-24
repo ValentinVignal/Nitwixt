@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:cloud_functions/cloud_functions.dart';
@@ -33,10 +35,10 @@ mixin DatabaseChatMixin {
   static Future<String> createNewChat(List<String> usernames) async {
     try {
       final HttpsCallable httpsCallable = FirebaseFunctions.instance.httpsCallable('createChat');
-      final HttpsCallableResult<Map<String, dynamic>> response = await httpsCallable.call(<String, dynamic>{
+      final HttpsCallableResult<dynamic> response = await httpsCallable.call<dynamic>(<String, dynamic>{
         'usernames': usernames,
       });
-      final Map<String, dynamic> data = Map<String, dynamic>.from(response.data);
+      final Map<String, dynamic> data = Map<String, dynamic>.from(response.data as Map<dynamic, dynamic>);
       final String error = data.containsKey('error') ? data['error'] as String : '';
       if (error.isNotEmpty) {
         return Future<String>.error(error);

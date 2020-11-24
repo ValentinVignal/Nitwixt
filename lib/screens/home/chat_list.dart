@@ -54,9 +54,9 @@ class _ChatListState extends State<ChatList> {
       // stream: DatabaseChatMixin.getChatList(userid: user.id, limit: _nbChats),
       stream: cachedChatList.stream,
       builder: (BuildContext context, AsyncSnapshot<List<models.Chat>> snapshot) {
-        if (!snapshot.hasData && chatsCache.isEmpty) {
-          return LoadingCircle();
-        }
+        // if (!snapshot.hasData && chatsCache.isEmpty) {
+        //   return LoadingCircle();
+        // }
         if (snapshot.hasData) {
           chatsCache.setAll(snapshot.data, snapshot.data.map((models.Chat chat) {
             return ChatTile(
