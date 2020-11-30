@@ -33,6 +33,8 @@ class _ChatMessagesState extends State<ChatMessages> {
   models.Message messageToEdit;
 
   final CachedWidgets<String, models.Message> cachedMessages = CachedWidgets<String, models.Message>();
+  database.DatabaseMessage _databaseMessage;
+  models.User user;
 
   @override
   void dispose() {
@@ -62,11 +64,13 @@ class _ChatMessagesState extends State<ChatMessages> {
   }
 
 
+
+
   @override
   Widget build(BuildContext context) {
-    final models.User user = Provider.of<models.User>(context);
+    user = Provider.of<models.User>(context);
     final models.Chat chat = Provider.of<models.Chat>(context);
-    final database.DatabaseMessage _databaseMessage = database.DatabaseMessage(chatId: chat.id);
+    _databaseMessage = database.DatabaseMessage(chatId: chat.id);
 
     Future<void> setMessageToEdit(models.Message message) async {
       models.Message previousMessage;
@@ -127,6 +131,7 @@ class _ChatMessagesState extends State<ChatMessages> {
       stream: _databaseMessage.getList(limit: _nbMessages),
       builder: (BuildContext context, AsyncSnapshot<List<models.Message>> snapshot) {
         if (snapshot.hasData) {
+          _databaseMessage?.markAsRead(messages: snapshot.data, userId: user.id);
           cachedMessages.setAll(
             snapshot.data,
             snapshot.data.map((models.Message message) {
