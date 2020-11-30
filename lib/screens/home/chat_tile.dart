@@ -98,12 +98,16 @@ class ChatTileState extends State<ChatTile> {
                             if (snapshot.hasError || !snapshot.hasData || snapshot.data.isEmpty) {
                               return const SizedBox.shrink();
                             }
+                            final models.Message message = snapshot.data.first;
+                            final TextStyle style = Theme.of(context).textTheme.subtitle1.copyWith(
+                              fontWeight: message.seenBy.isNotReadBy(user.id)? FontWeight.bold : null,
+                            );
 
-                            final DateTime date = snapshot.data.first.date.toDate();
+                            final DateTime date = message.date.toDate();
                             return Text(
                               dateFormater.short(date),
-                              key: Key('date-${snapshot.data.first.id}'),
-                              style: Theme.of(context).textTheme.subtitle1,
+                              key: Key('date-${message.id}'),
+                              style: style,
                             );
                           })
                     ],
@@ -113,6 +117,7 @@ class ChatTileState extends State<ChatTile> {
                     builder: (BuildContext contextStreamBuilder, AsyncSnapshot<List<models.Message>> snapshot) {
                       String text = '';
                       Key key;
+                      TextStyle style = Theme.of(context).textTheme.subtitle1;
                       if (!snapshot.hasData) {
                         return LoadingDots(
                           color: Colors.grey,
@@ -120,6 +125,7 @@ class ChatTileState extends State<ChatTile> {
                         );
                       } else {
                         final List<models.Message> messageList = snapshot.data;
+
                         if (messageList.isEmpty) {
                           text = 'No message yet';
                         } else {
@@ -129,11 +135,17 @@ class ChatTileState extends State<ChatTile> {
                             text += '📷' * message.images.length + ' ';
                           }
                           text += message.text.replaceAll('\n', ' ');
+                          if(message.seenBy.isNotReadBy(user.id)) {
+                            style = Theme.of(context).textTheme.subtitle1.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blueAccent
+                            );
+                          }
                         }
                       }
                       return Text(
                         text,
-                        style: Theme.of(context).textTheme.subtitle1,
+                        style: style,
                         textAlign: TextAlign.left,
                         overflow: TextOverflow.ellipsis,
                         softWrap: true,

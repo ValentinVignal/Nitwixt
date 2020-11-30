@@ -1,12 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:nitwixt/models/message_seen_by.dart';
 import 'package:nitwixt/services/cache/cache.dart';
 import 'package:nitwixt/services/database/database.dart';
-import 'package:equatable/equatable.dart';
-import 'package:nitwixt/src/src.dart' as src;
 import 'package:nitwixt/widgets/link_preview/fetch_preview.dart';
 
 import 'message_reacts.dart';
-
 
 class MessageKeys {
   static const String id = 'id';
@@ -17,6 +15,7 @@ class MessageKeys {
   static const String previousMessageId = 'previousMessageId';
   static const String images = 'images';
   static const String chatid = 'chatid';
+  static const String seenBy = 'seenBy';
 }
 
 class Message extends Cachable<String> {
@@ -29,8 +28,10 @@ class Message extends Cachable<String> {
     this.previousMessageId = '',
     this.images,
     this.chatid,
+    this.seenBy,
   }) {
     reacts ??= MessageReacts();
+    seenBy ??= MessageSeenBy();
   }
 
   Message.fromFirebaseObject(this.id, Map<String, dynamic> firebaseObject)
@@ -44,6 +45,9 @@ class Message extends Cachable<String> {
     previousMessageId = firebaseObject.containsKey(MessageKeys.previousMessageId) ? firebaseObject[MessageKeys.previousMessageId].toString() : '';
     images = firebaseObject.containsKey(MessageKeys.images) ? List<String>.from(firebaseObject[MessageKeys.images] as Iterable<dynamic>) : <String>[];
     chatid = firebaseObject.containsKey(MessageKeys.chatid) ? firebaseObject[MessageKeys.chatid].toString() : '';
+    seenBy = firebaseObject.containsKey(MessageKeys.seenBy)
+        ? MessageSeenBy.fromFirebaseObject(Map<String, dynamic>.from(firebaseObject[MessageKeys.seenBy] as Map<dynamic, dynamic>))
+        : MessageSeenBy();
   }
 
   String id; // Id of the message
@@ -54,6 +58,7 @@ class Message extends Cachable<String> {
   String previousMessageId;
   List<String> images = <String>[];
   String chatid;
+  MessageSeenBy seenBy;
 
   Message _previousMessage;
   Preview _preview;
@@ -78,12 +83,13 @@ class Message extends Cachable<String> {
     firebaseObject[MessageKeys.previousMessageId] = previousMessageId;
     firebaseObject[MessageKeys.images] = images;
     firebaseObject[MessageKeys.chatid] = chatid;
+    firebaseObject[MessageKeys.seenBy] = seenBy.toFirebaseObject();
 
     return firebaseObject;
   }
 
   Future<Message> get previousMessage async {
-    if (previousMessageId.isEmpty || chatid ==null || chatid.isEmpty) {
+    if (previousMessageId.isEmpty || chatid == null || chatid.isEmpty) {
       return null;
     } else {
       _previousMessage ??= await DatabaseMessage(chatId: chatid).getMessageFuture(previousMessageId);
@@ -100,31 +106,17 @@ class Message extends Cachable<String> {
     }
   }
 
-  // bool equals(Message message) {
-  //   return message is Message &&
-  //       message != null &&
-  //       message.id == id &&
-  //       message.date == date &&
-  //       message.text == text &&
-  //       message.userid == userid &&
-  //       message.reacts.equals(reacts) &&
-  //       message.previousMessageId == previousMessageId &&
-  //       src.listEquals(message.images, images) &&
-  //       message.chatid == chatid;
-  // }
-
   @override
   Message copy() {
     return Message(
-      id: id,
-      date: date,
-      text: text,
-      userid: userid,
-      reacts: reacts.copy(),
-      previousMessageId: previousMessageId,
-      images: List<String>.of(images),
-      chatid: chatid
-    );
+        id: id,
+        date: date,
+        text: text,
+        userid: userid,
+        reacts: reacts.copy(),
+        previousMessageId: previousMessageId,
+        images: List<String>.of(images),
+        chatid: chatid);
   }
 
   bool get hasLink => Preview.getFirstLink(text).isNotEmpty;
@@ -136,7 +128,7 @@ class Message extends Cachable<String> {
     return _preview;
   }
 
-  Future<String> imageUrl({String path, int index=0}) async {
+  Future<String> imageUrl({String path, int index = 0}) async {
     path ??= images[index];
     if (!_imagesUrl.containsKey(path)) {
       _imagesUrl[path] = await DatabaseFiles(path: path).url;
@@ -147,6 +139,4 @@ class Message extends Cachable<String> {
   bool get hasImages {
     return images.isNotEmpty;
   }
-
 }
-
