@@ -100,3 +100,30 @@ class _ChatHomeState extends State<ChatHome> {
     );
   }
 }
+
+class Test extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    const bool myBool = false;
+    return Column(
+      children: <Widget>[
+        Container(),
+        if (myBool)
+          const Text(
+            'True',
+            style: TextStyle(
+              color: Colors.black,
+            ),
+          )
+        else
+          const Text(
+            'False',
+            style: TextStyle(
+              color: Colors.grey,
+            ),
+          ),
+        Container(),
+      ],
+    );
+  }
+}

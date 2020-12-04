@@ -34,16 +34,16 @@ class _SettingsState extends State<Settings> {
         final List<InlineSpan> spans = <InlineSpan>[];
         if (!snapshot.hasError && snapshot.hasData) {
           final VersionStatus versionStatus = snapshot.data;
+          onTap = () {
+            LinkPreview.launchUrl(
+              context: context,
+              url: versionStatus.appStoreLink,
+            );
+          };
           if (versionStatus.canUpdate) {
             message = 'Nitwixt ${versionStatus.storeVersion} is available  ';
             icon = Icons.warning_outlined;
             iconColor = Colors.orange;
-            onTap = () {
-              LinkPreview.launchUrl(
-                context: context,
-                url: versionStatus.appStoreLink,
-              );
-            };
           } else {
             message = 'Your app is up to date  ';
             icon = Icons.check;

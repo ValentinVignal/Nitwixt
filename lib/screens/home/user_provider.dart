@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'file:///D:/Valentin/Code/Nitwixt/Nitwixt/lib/screens/loading_screen.dart';
 import 'package:nitwixt/screens/home/notifications_wrapper.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 
 import 'package:nitwixt/models/models.dart' as models;
 import 'package:nitwixt/screens/home/set_username.dart';
@@ -11,6 +12,8 @@ import 'package:nitwixt/view/themes/theme.dart';
 class UserProvider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    FlutterStatusbarcolor.setStatusBarColor(Colors.black);
+
     final models.UserAuth userAuth = Provider.of<models.UserAuth>(context);
 
     final database.DatabaseUser databaseUser = database.DatabaseUser(id: userAuth.id);
