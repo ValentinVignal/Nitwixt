@@ -44,6 +44,134 @@ class ChatTileState extends State<ChatTile> {
 
     final Stream<List<models.Message>> lastMessageListStream = _databaseMessage.getList(limit: 1);
 
+    return StreamBuilder<List<models.Message>>(
+      stream: lastMessageListStream,
+      builder: (BuildContext context, AsyncSnapshot<List<models.Message>> messageListSnapshot) {
+        final List<models.Message> messageList = messageListSnapshot.data;
+        models.Message message;
+        bool isRead = true;
+        if (messageListSnapshot.hasData && messageListSnapshot.data.isNotEmpty) {
+          message = messageList[0];
+          isRead = message.isReadBy(user.id);
+        }
+        return ListTile(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Flexible(
+                  child: FutureBuilder<String>(
+                    future: widget.chat.nameToDisplay(user),
+                    builder: (BuildContext context, AsyncSnapshot<String> chatNameSnapshot) {
+                      if (chatNameSnapshot.connectionState == ConnectionState.waiting) {
+                        return LoadingDots(
+                          color: Colors.grey,
+                          fontSize: 18.0,
+                        );
+                      } else if (chatNameSnapshot.hasError) {
+                        return const Text(
+                          'Could not display name',
+                          style: TextStyle(color: Colors.red, fontSize: 18.0),
+                          textAlign: TextAlign.left,
+                          overflow: TextOverflow.ellipsis,
+                        );
+                      } else {
+                        return Text(
+                          chatNameSnapshot.data,
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            color: isRead ? Colors.white : Colors.blue,
+                            fontWeight: isRead ? FontWeight.normal : FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.left,
+                          overflow: TextOverflow.ellipsis,
+                        );
+                      }
+                    },
+                  ),
+                ),
+                Visibility(
+                  visible: message != null,
+                  child: Builder(
+                    builder: (BuildContext context) {
+                      final TextStyle style = Theme.of(context).textTheme.subtitle1.copyWith(
+                            fontWeight: message.seenBy.isNotReadBy(user.id) ? FontWeight.bold : null,
+                            color: isRead ? Colors.grey : Colors.grey[300],
+                          );
+
+                      final DateTime date = message.date.toDate();
+                      return Text(
+                        dateFormater.short(date),
+                        key: Key('date-${message.id}'),
+                        style: style,
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+            subtitle: Builder(
+              builder: (BuildContext context) {
+                String text = '';
+                Key key;
+                TextStyle style = Theme.of(context).textTheme.subtitle1;
+                if (messageList == null) {
+                  return LoadingDots(
+                    color: Colors.grey,
+                    fontSize: 14.0,
+                  );
+                } else {
+                  if (messageList.isEmpty) {
+                    text = 'No message yet';
+                  } else {
+                    key = Key(message.id);
+                    if (message.hasImages) {
+                      text += '📷' * message.images.length + ' ';
+                    }
+                    text += message.text.replaceAll('\n', ' ');
+                    if (!isRead) {
+                      style = Theme.of(context).textTheme.subtitle1.copyWith(
+                            color: Colors.grey[300],
+                          );
+                    }
+                  }
+                }
+                return Text(
+                  text,
+                  style: style,
+                  textAlign: TextAlign.left,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: true,
+                  maxLines: 2,
+                  key: key,
+                );
+              },
+            ),
+            leading: ChatPicture(
+              chat: widget.chat,
+              user: user,
+              size: 25.0,
+            ),
+            trailing: Visibility(
+              visible: !isRead,
+              child: const Icon(
+                Icons.circle,
+                color: Colors.blue,
+              ),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<Widget>(
+                  builder: (BuildContext context) => ChatProvider(
+                    id: widget.chat.id,
+                    child: ChatHome(),
+                  ),
+                ),
+              );
+            });
+      },
+    );
+
     return GestureDetector(
       child: Container(
         height: 55.0,
@@ -100,8 +228,8 @@ class ChatTileState extends State<ChatTile> {
                             }
                             final models.Message message = snapshot.data.first;
                             final TextStyle style = Theme.of(context).textTheme.subtitle1.copyWith(
-                              fontWeight: message.seenBy.isNotReadBy(user.id)? FontWeight.bold : null,
-                            );
+                                  fontWeight: message.seenBy.isNotReadBy(user.id) ? FontWeight.bold : null,
+                                );
 
                             final DateTime date = message.date.toDate();
                             return Text(
@@ -135,11 +263,8 @@ class ChatTileState extends State<ChatTile> {
                             text += '📷' * message.images.length + ' ';
                           }
                           text += message.text.replaceAll('\n', ' ');
-                          if(message.seenBy.isNotReadBy(user.id)) {
-                            style = Theme.of(context).textTheme.subtitle1.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blueAccent
-                            );
+                          if (message.seenBy.isNotReadBy(user.id)) {
+                            style = Theme.of(context).textTheme.subtitle1.copyWith(fontWeight: FontWeight.bold, color: Colors.blueAccent);
                           }
                         }
                       }
