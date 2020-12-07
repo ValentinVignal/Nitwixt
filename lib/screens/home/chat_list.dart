@@ -18,6 +18,7 @@ class _ChatListState extends State<ChatList> {
   int _nbChats = 8;
   final RefreshController _refreshController = RefreshController(initialRefresh: false);
   List<GlobalKey<ChatTileState>> chatTileStateList;
+
   // final ChatsCache _chatsCache = ChatsCache();
   final CachedWidgets<String, models.Chat> chatsCache = CachedWidgets<String, models.Chat>();
 
@@ -58,12 +59,14 @@ class _ChatListState extends State<ChatList> {
         //   return LoadingCircle();
         // }
         if (snapshot.hasData) {
-          chatsCache.setAll(snapshot.data, snapshot.data.map((models.Chat chat) {
-            return ChatTile(
-              chat: chat,
-              key: Key(chat.id),
-            );
-          }).toList());
+          chatsCache.setAll(
+              snapshot.data,
+              snapshot.data.map((models.Chat chat) {
+                return ChatTile(
+                  chat: chat,
+                  key: Key(chat.id),
+                );
+              }).toList());
         }
         if (chatsCache.isEmpty) {
           // User doesn't have chats yet
@@ -112,12 +115,16 @@ class _ChatListState extends State<ChatList> {
 //              scrollController: _scrollController,
             onRefresh: _onRefresh,
             onLoading: _onLoading,
-            child: ListView.builder(
+            child: ListView.separated(
               physics: const AlwaysScrollableScrollPhysics(),
               itemCount: chatsCache.length,
               itemBuilder: (BuildContext context, int index) {
                 return chatsCache.widgets[index];
               },
+              separatorBuilder: (BuildContext context, int index) => const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 50.0),
+                child: Divider(color: Colors.grey),
+              ),
             ),
           );
         }

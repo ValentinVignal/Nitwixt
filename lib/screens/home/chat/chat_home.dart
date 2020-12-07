@@ -66,9 +66,16 @@ class _ChatHomeState extends State<ChatHome> {
                         return const Text(
                           'Could not display name',
                           style: TextStyle(color: Colors.red, fontSize: 18.0),
+                          overflow: TextOverflow.ellipsis,
                         );
                       } else {
-                        return Text(snapshot.data, style: const TextStyle(color: Colors.white, fontSize: 18.0));
+                        return Flexible(
+                          child: Text(
+                            snapshot.data,
+                            style: const TextStyle(color: Colors.white, fontSize: 18.0),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        );
                       }
                     }
                   },

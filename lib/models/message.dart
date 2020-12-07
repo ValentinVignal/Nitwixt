@@ -139,4 +139,20 @@ class Message extends Cachable<String> {
   bool get hasImages {
     return images.isNotEmpty;
   }
+
+  bool isReadBy(String userId) {
+    if (userId == userid) {
+      return true;
+    } else {
+      return seenBy.isReadBy(userId);
+    }
+  }
+
+  bool isNotReadBy(String userId) {
+    if (userId == userid) {
+      return false;
+    } else {
+      return seenBy.isNotReadBy(userId);
+    }
+  }
 }
