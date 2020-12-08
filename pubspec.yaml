@@ -51,7 +51,7 @@ dependencies:
   flutter_password_strength: ^0.1.4
   flutter_slidable: ^0.5.4
   flutter_spinkit: ^4.1.2
-  flutter_statusbarcolor: ^0.2.3
+#  flutter_statusbarcolor: ^0.2.3
   fluttertoast: ^7.1.1
   google_sign_in: ^4.4.4
   html: ^0.14.0+3
