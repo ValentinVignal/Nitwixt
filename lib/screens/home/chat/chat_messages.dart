@@ -63,9 +63,6 @@ class _ChatMessagesState extends State<ChatMessages> {
     });
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     user = Provider.of<models.User>(context);
@@ -97,13 +94,10 @@ class _ChatMessagesState extends State<ChatMessages> {
             image: image,
           );
         } else {
-          _databaseMessage.updateMessage(
-            messageId: messageToEdit.id,
-            obj: <String, String>{
-              models.MessageKeys.text: text.trim(),
-              models.MessageKeys.previousMessageId: messageToAnswer != null ? messageToAnswer.id : null,
-            }
-          );
+          _databaseMessage.updateMessage(messageId: messageToEdit.id, obj: <String, String>{
+            models.MessageKeys.text: text.trim(),
+            models.MessageKeys.previousMessageId: messageToAnswer != null ? messageToAnswer.id : null,
+          });
         }
         setMessageToAnswer(null);
         setMessageToEdit(null);
@@ -150,6 +144,9 @@ class _ChatMessagesState extends State<ChatMessages> {
         if (!snapshot.hasData && cachedMessages.isEmpty) {
           return LoadingCircle();
         }
+        final models.Message defaultEditMessage = cachedMessages.objects.firstWhere((models.Message message) {
+          return message.userid == user.id;
+        }, orElse: () => null);
         return Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.end,
@@ -203,7 +200,12 @@ class _ChatMessagesState extends State<ChatMessages> {
               ),
             InputTextMessage(
               sendMessage: _sendMessage,
-              sendIcon: messageToEdit == null ? Icons.send : Icons.check,
+              isEditing: messageToEdit != null,
+              onEdit: defaultEditMessage != null
+                  ? () {
+                      setMessageToEdit(defaultEditMessage);
+                    }
+                  : null,
               initialText: messageToEdit != null ? messageToEdit.text : null,
               allowImages: messageToEdit == null,
             )

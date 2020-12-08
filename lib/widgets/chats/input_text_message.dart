@@ -10,13 +10,15 @@ import 'package:nitwixt/widgets/widgets.dart';
 class InputTextMessage extends StatefulWidget {
   const InputTextMessage({
     @required this.sendMessage,
-    this.sendIcon = Icons.send,
+    this.isEditing,
+    this.onEdit,
     this.initialText,
     this.allowImages,
   }) : super();
 
   final Function sendMessage;
-  final IconData sendIcon;
+  final bool isEditing;
+  final void Function() onEdit;
   final String initialText;
   final bool allowImages;
 
@@ -31,8 +33,38 @@ class _InputTextMessageState extends State<InputTextMessage> {
 
   File image;
 
-  bool get showSendButton {
-    return _textController.text.trim().isNotEmpty || image != null;
+  IconData get icon {
+    if (_textController.text.trim().isNotEmpty || image != null) {
+      if (widget.isEditing) {
+        return Icons.check;
+      } else {
+        return Icons.send;
+      }
+    } else {
+      if (widget.onEdit != null) {
+        return Icons.edit;
+      } else {
+        return null;
+      }
+    }
+  }
+
+  void Function() get onPressed {
+    if (_textController.text.trim().isNotEmpty || image != null) {
+      return () {
+        final String parsedText = sc.TextParser.parse(_textController.text).trim();
+        widget.sendMessage(
+          text: parsedText,
+          image: image,
+        );
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _textController.clear();
+          image = null;
+        });
+      };
+    } else {
+      return widget.onEdit;
+    }
   }
 
   @override
@@ -42,8 +74,7 @@ class _InputTextMessageState extends State<InputTextMessage> {
   }
 
   void _activateSendButton() {
-    setState(() {
-    });
+    setState(() {});
   }
 
   @override
@@ -162,23 +193,13 @@ class _InputTextMessageState extends State<InputTextMessage> {
             ),
           ),
           const SizedBox(width: 5.0),
-          if (showSendButton)
+          if (icon != null)
             IconButton(
               icon: Icon(
-                widget.sendIcon,
+                icon,
                 color: Colors.blue,
               ),
-              onPressed: () {
-                final String parsedText = sc.TextParser.parse(_textController.text).trim();
-                widget.sendMessage(
-                  text: parsedText,
-                  image: image,
-                );
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  _textController.clear();
-                  image = null;
-                });
-              },
+              onPressed: onPressed,
             ),
           SizedBox(width: _textController.text.isEmpty ? 0.0 : 5.0),
         ],

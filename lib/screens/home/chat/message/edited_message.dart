@@ -6,11 +6,10 @@ class EditedMessage extends StatelessWidget {
   const EditedMessage({
     @required this.message,
     @required this.onCancel,
-}) : super();
+  }) : super();
 
   final models.Message message;
   final void Function() onCancel;
-
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +18,12 @@ class EditedMessage extends StatelessWidget {
       color: const Color(0xFF101010),
       child: Row(
         children: <Widget>[
-          const Icon(
-            Icons.edit,
-            color: _color,
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 2.0),
+            child: Icon(
+              Icons.edit,
+              color: _color,
+            ),
           ),
           Expanded(
             child: Text(
@@ -37,9 +39,14 @@ class EditedMessage extends StatelessWidget {
               color: _color,
             ),
             onPressed: onCancel,
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            constraints: const BoxConstraints(
+              minWidth: kMinInteractiveDimension,
+              minHeight: kMinInteractiveDimension - 10,
+            ),
           ),
         ],
-      )
+      ),
     );
   }
 }
