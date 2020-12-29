@@ -151,13 +151,12 @@ class ChatTileState extends State<ChatTile> {
               user: user,
               size: 25.0,
             ),
-            trailing: Visibility(
-              visible: !isRead,
-              child: const Icon(
-                Icons.circle,
-                color: Colors.blue,
-              ),
-            ),
+            trailing: !isRead
+                ? const Icon(
+                    Icons.circle,
+                    color: Colors.blue,
+                  )
+                : null,
             onTap: () {
               Navigator.push(
                 context,
