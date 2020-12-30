@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nitwixt/models/models.dart' as models;
+import 'package:nitwixt/services/providers/chat_provider.dart';
 import 'package:nitwixt/widgets/chats/chat_picture.dart';
 import 'package:provider/provider.dart';
 import 'package:nitwixt/services/database/database.dart' as database;
@@ -50,9 +51,12 @@ class _ChatInfo extends State<ChatInfo> {
       showDialog<DeleteChatDialog>(
         context: context,
         builder: (BuildContext contextDialog) {
-          return DeleteChatDialog(
-            chat: chat,
-            members: members,
+          return ChatProvider(
+            context: context,
+            child: DeleteChatDialog(
+              chat: chat,
+              members: members,
+            ),
           );
         },
       );

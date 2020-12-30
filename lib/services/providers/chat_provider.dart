@@ -8,32 +8,39 @@ import '../database/database_chat.dart';
 class ChatProvider extends StatelessWidget {
   const ChatProvider({
     this.id,
-    this.chat,
+    this.context,
     @required this.child,
-  })  : assert((chat == null) != (id == null), 'Either chat or id should be specified'),
+  })  : assert((id == null) != (context == null), 'id and context cannot be null at the same time'),
         super();
 
   final String id; // Id of the chat
-  final models.Chat chat;
+  final BuildContext context;
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
+    Stream<models.Chat> chatStream;
+    models.Chat chat;
     if (id != null) {
-      return StreamProvider<models.Chat>.value(
-        value: DatabaseChat(id: id).stream,
-        child: ChatReceiver(
-          child: child,
-        ),
-      );
+      chatStream = DatabaseChat(id: id).stream;
     } else {
-      return Provider<models.Chat>.value(
-        value: chat,
+      chatStream = Provider.of<Stream<models.Chat>>(this.context);
+      chat = Provider.of<models.Chat>(this.context);
+    }
+    // print('in builder');
+    // chatStream.last.then(( value) {
+    //   print('length $value');
+    // });
+    return InheritedProvider<Stream<models.Chat>>.value(
+      value: chatStream,
+      child: StreamProvider<models.Chat>.value(
+        value: chatStream,
+        initialData: chat,
         child: ChatReceiver(
           child: child,
         ),
-      );
-    }
+      ),
+    );
   }
 }
 
